@@ -1,0 +1,27 @@
+This is TraCI4J, a Java library for high-level interaction with SUMO through
+its TraCI interface.
+
+Copyright (C) 2011 ApPeAL Group, Politecnico di Torino
+
+- INSTALLATION
+
+Import this package as an Eclipse project. It should start rebuilding the
+.class files.
+The library requires no external dependencies, apart from JUnit 4. It comes
+with log4j and Xerces libraries built-in.
+
+- USAGE
+
+Make your project depend on TraCI4J. In your code, declare a variable of the
+SumoTraciConnection type. This is the main class that runs a SUMO instance,
+establishes a connection with it and provides methods/objects to issue commands
+and retrieve information.
+
+Some usage examples can be found in the JUnit tests, in the test/ directory.
+
+For more information, see the Javadoc.
+
+- LICENSE
+
+This program is released under the GNU GPL version 3. See the COPYING file
+for the license.
