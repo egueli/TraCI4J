@@ -21,7 +21,6 @@ package it.polito.appeal.traci.query;
 
 import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.TraCIException.UnexpectedData;
-import it.polito.appeal.traci.TraCIException.UnexpectedResponse;
 
 import java.io.IOException;
 

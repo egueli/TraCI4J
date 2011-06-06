@@ -44,7 +44,7 @@ public class RoadsQuery extends RoadmapQuery {
 	public Set<Road> queryRoads(boolean alsoInternal) throws IOException {
 		int count = queryCount();
 
-		Set out = new HashSet<Road>();
+		Set<Road> out = new HashSet<Road>();
 
 		for (int i = 0; i < count; i++) {
 			String externalID = queryExternalID(i);
@@ -77,7 +77,6 @@ public class RoadsQuery extends RoadmapQuery {
 		return response.readStringASCII();
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<Point2D> queryShape(int id) throws IOException {
 		Storage scenarioCmd = makeCommand(DOMAIN_ROADMAP, id, VAR_SHAPE,
 				DATATYPE_POLYGON);
@@ -87,7 +86,7 @@ public class RoadsQuery extends RoadmapQuery {
 
 		int count = response.readByte();
 
-		List out = new ArrayList();
+		List<Point2D> out = new ArrayList<Point2D>();
 		for (int i = 0; i < count; i++) {
 			out.add(new Point2D.Float(response.readFloat(), response
 					.readFloat()));

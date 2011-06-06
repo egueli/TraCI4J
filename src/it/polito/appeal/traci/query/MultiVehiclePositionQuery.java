@@ -20,13 +20,9 @@
 package it.polito.appeal.traci.query;
 
 import it.polito.appeal.traci.TraCIException;
-import it.polito.appeal.traci.TraCIException.UnexpectedData;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +41,6 @@ public class MultiVehiclePositionQuery extends TraCIQuery {
 	private static final short COMMAND_RETRIEVE_VEHICLE_VALUE = 0xA4;
 	private static final short COMMAND_RETRIEVE_VEHICLE_VALUE_RESP = 0xB4;
 	private static final short VAR_EDGE_ID = 0x50;
-	private static final short VAR_POSITION = 0x42;
 	
 
 	public MultiVehiclePositionQuery(Socket sock) {

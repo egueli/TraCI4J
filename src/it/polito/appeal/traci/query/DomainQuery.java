@@ -21,7 +21,6 @@ package it.polito.appeal.traci.query;
 
 import java.io.IOException;
 
-import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.TraCIException.UnexpectedData;
 import de.uniluebeck.itm.tcpip.Socket;
 import de.uniluebeck.itm.tcpip.Storage;

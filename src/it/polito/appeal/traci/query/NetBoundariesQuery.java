@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
-
 import java.awt.geom.Point2D;
 import java.io.IOException;
 

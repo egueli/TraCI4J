@@ -23,7 +23,6 @@ import it.polito.appeal.traci.Vehicle.NotActiveException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,23 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test case for TraCI4J.
+ * <p>
+ * To run tests, please set the following system variables:
+ * <dl>
+ * <dt>sim.config.location</dt>
+ * <dd>set this to a SUMO config file, e.g.
+ * &lt;SUMO_BASE&gt;/examples/sumo/simple_nets/box/box1l/test.sumo.cfg; see
+ * {@link #SIM_CONFIG_LOCATION_PARAM}</dd>
+ * <dt>it.polito.appeal.traci.sumo_exe</dt>
+ * <dd>set this to the SUMO executable, e.g. &lt;SUMO_BASE&gt;/bin/sumo; see
+ * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd>
+ * </dl>
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public class TraCITest {
 
 	private static final String SIM_CONFIG_LOCATION_PARAM = "sim.config.location";
@@ -48,6 +64,10 @@ public class TraCITest {
 
 	@Before
 	public void setUp() throws Exception {
+		System.out.println();
+		System.out.println("=======================================");
+		System.out.println();
+
 		try {
 			String simConfigLocation = System.getProperty(SIM_CONFIG_LOCATION_PARAM);
 			if (simConfigLocation == null)

@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
-
 import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Socket;

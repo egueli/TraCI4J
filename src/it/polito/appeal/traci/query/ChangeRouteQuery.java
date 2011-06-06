@@ -54,9 +54,9 @@ public class ChangeRouteQuery extends TraCIQuery {
 
 	public void changeRoute(Map<String, Double> travelTimes) throws IOException {
 		Storage cmd = new Storage();
-		for(Map.Entry entry : travelTimes.entrySet())
+		for(Map.Entry<String, Double> entry : travelTimes.entrySet())
 		{
-			addRerouteCommand(cmd, (String)entry.getKey(), (Double)entry.getValue());			
+			addRerouteCommand(cmd, entry.getKey(), entry.getValue());			
 		}
 
 		queryAndGetResponse(cmd, COMMAND_CHANGE_ROUTE);

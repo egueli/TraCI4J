@@ -19,10 +19,7 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
-
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import de.uniluebeck.itm.tcpip.Socket;
 import de.uniluebeck.itm.tcpip.Storage;
