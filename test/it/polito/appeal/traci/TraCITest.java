@@ -51,7 +51,9 @@ public class TraCITest {
 		try {
 			String simConfigLocation = System.getProperty(SIM_CONFIG_LOCATION_PARAM);
 			if (simConfigLocation == null)
-				throw new IllegalArgumentException("please set " + SIM_CONFIG_LOCATION_PARAM);
+				throw new IllegalArgumentException("please set "
+						+ SIM_CONFIG_LOCATION_PARAM
+						+ " to the path of a SUMO config file");
 
 			conn = new SumoTraciConnection(simConfigLocation, 0, false);
 

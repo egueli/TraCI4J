@@ -29,9 +29,10 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class SubscribeVehiclesLifecycle extends TraCIQuery {
 
-	private static final byte COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION = (byte) 0xdb;
-	private static final byte VAR_IDS_OF_DEPARTED_VEHICLES = 0x74;
-	private static final byte VAR_IDS_OF_ARRIVED_VEHICLES = 0x7a;
+	private static final short COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION = 0xdb;
+	private static final short RESPONSE_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION = 0xeb;
+	private static final short VAR_IDS_OF_DEPARTED_VEHICLES = 0x74;
+	private static final short VAR_IDS_OF_ARRIVED_VEHICLES = 0x7a;
 
 	private static final byte[] VARIABLES = new byte[] {
 			VAR_IDS_OF_DEPARTED_VEHICLES, VAR_IDS_OF_ARRIVED_VEHICLES };
@@ -46,7 +47,7 @@ public class SubscribeVehiclesLifecycle extends TraCIQuery {
 		Storage stepCmd = new Storage();
 		// see
 		// http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Value_Retrieval_Subscription
-		stepCmd.writeUnsignedByte(3);
+		stepCmd.writeUnsignedByte(15 + VARIABLES.length);
 		stepCmd.writeUnsignedByte(COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
 		stepCmd.writeInt(0); // begin time
 		stepCmd.writeInt(Integer.MAX_VALUE); // end time
@@ -59,6 +60,13 @@ public class SubscribeVehiclesLifecycle extends TraCIQuery {
 		Storage response = queryAndGetResponse(stepCmd,
 				COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
 
+		/* the following response bytes is the message we're interested in. */
+		readResponseLength(response);
+		
+
+		checkResponseByte(response, "response code", 
+				RESPONSE_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
+		
 		response.readStringASCII(); // simulation ID (ignored)
 
 		checkResponseByte(response, "no. of variables", VARIABLES.length);

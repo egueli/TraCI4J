@@ -129,17 +129,21 @@ public abstract class TraCIQuery {
 	public TraCIQuery(Socket sock) {
 		this.sock = sock;
 	}
-	
+
 	/**
-	 * Sends a command and receives the result, while checking that the 
-	 * response is successful and matches the sent command.
+	 * Sends a command and receives the result; reads the message's length field
+	 * and the first byte (i.e. the command in reply to) in order to verify that
+	 * the response is successful and matches the expected command.
+	 * 
 	 * @param cmd
 	 * @param expectedCommand
-	 * @return the storage object of the response, whose position is already
-	 * set to the first non-status command.
+	 * @return the storage object of the response, whose position is already set
+	 *         to the first non-status command.
 	 * @throws IOException
 	 * @throws TraCIException
-	 * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Status_Response">Status Response</a>
+	 * @see <a
+	 *      href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Status_Response">Status
+	 *      Response</a>
 	 */
 	protected Storage queryAndGetResponse(Storage cmd, int expectedCommand) throws IOException {
 		sock.sendExact(cmd);
@@ -153,18 +157,23 @@ public abstract class TraCIQuery {
 	
 
 	/**
-	 * Checks that the given response is successful and matches the specified
-	 * command.
+	 * Reads the message's length field and the first byte (i.e. the command in
+	 * reply to) in order to verify that the response is successful and matches
+	 * the expected command
+	 * 
 	 * @param response
 	 * @param expectedCommand
-	 * @throws TraCIException.UnexpectedResponse if the response's command and
-	 * the specified command don't match
-	 * @throws TraCIException if the command didn't succeed and SUMO retuned
-	 * a string description; such description is contained in the exception's
-	 * message
-	 * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Status_Response">Status Response</a>
+	 * @throws TraCIException.UnexpectedResponse
+	 *             if the response's command and the specified command don't
+	 *             match
+	 * @throws TraCIException
+	 *             if the command didn't succeed and SUMO retuned a string
+	 *             description; such description is contained in the exception's
+	 *             message
+	 * @see <a
+	 *      href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Status_Response">Status
+	 *      Response</a>
 	 */
-	
 	protected static void checkStatusResponse(Storage response, int expectedCommand) throws TraCIException {
 		readResponseLength(response);
 		

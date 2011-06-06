@@ -15,6 +15,7 @@ import java.util.Map;
 /*
  * Modifications by Enrico Gueli:
  * - replaced LinkedList to ArrayList
+ * - toString() implementation
  */
 
 
@@ -528,4 +529,18 @@ public class Storage {
 		listIt = storageList.listIterator();
 	}
 		
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i<storageList.size(); i++) {
+			if (i == position)
+				sb.append("[");
+			else
+				sb.append(" ");
+			
+			sb.append(String.format("%02X", storageList.get(i)));
+		}
+		
+		return sb.toString();
+	}
 }
