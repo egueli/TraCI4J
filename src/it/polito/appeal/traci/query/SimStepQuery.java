@@ -30,7 +30,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class SimStepQuery extends TraCIQuery {
 
-	private static final int COMMAND_SIMSTEP = 0x02;
+	private static final int COMMAND_SIMSTEP2 = 0x02;
 	
 	private static final int RESPONSE_SIMULATION_VARIABLE = 0xbb;
 
@@ -49,10 +49,10 @@ public class SimStepQuery extends TraCIQuery {
 	public void doCommand() throws IOException {
 		Storage stepCmd = new Storage();
 		stepCmd.writeUnsignedByte(5);
-		stepCmd.writeUnsignedByte(COMMAND_SIMSTEP);
+		stepCmd.writeUnsignedByte(COMMAND_SIMSTEP2);
 		stepCmd.writeInt(step * 1000);
 
-		Storage response = queryAndGetResponse(stepCmd, COMMAND_SIMSTEP);
+		Storage response = queryAndGetResponse(stepCmd, COMMAND_SIMSTEP2);
 		
 		readResponseLength(response);
 		
