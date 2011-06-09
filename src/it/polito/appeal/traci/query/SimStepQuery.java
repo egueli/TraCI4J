@@ -19,49 +19,68 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.TraCIException;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.protocol.StringList;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uniluebeck.itm.tcpip.Socket;
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class SimStepQuery extends TraCIQuery {
+public class SimStepQuery extends Query {
 
-	private static final int COMMAND_SIMSTEP2 = 0x02;
-	
-	private static final int RESPONSE_SIMULATION_VARIABLE = 0xbb;
-
-	
 	private final int step;
 	
 	private Set<String> createdVehicles;
 	private Set<String> destroyedVehicles;
 
-	public SimStepQuery(Socket sock, int step)
+	public SimStepQuery(Socket sock, int step) throws IOException
 	{
 		super(sock);
 		this.step = step;
 	}
 	
 	public void doCommand() throws IOException {
-		Storage stepCmd = new Storage();
-		stepCmd.writeUnsignedByte(5);
-		stepCmd.writeUnsignedByte(COMMAND_SIMSTEP2);
-		stepCmd.writeInt(step * 1000);
+		Command req = new Command(Constants.CMD_SIMSTEP2);
+		req.content().writeInt(step * 1000);
 
-		Storage response = queryAndGetResponse(stepCmd, COMMAND_SIMSTEP2);
+		ResponseContainer respc = queryAndVerifySingle(req);
 		
-		readResponseLength(response);
+		List<String> departed = null;
+		List<String> arrived = null;
 		
-		checkResponseByte(response, "response type", RESPONSE_SIMULATION_VARIABLE);
-
-		List<String> departed = new ArrayList<String>();
-		List<String> arrived = new ArrayList<String>();
-		SubscribeVehiclesLifecycle.readVehicleListFromResponse(response, departed, arrived);
-
+		for (Command subResp : respc.getSubResponses()) {
+			if (subResp.id() == Constants.RESPONSE_SUBSCRIBE_SIM_VARIABLE) {
+				Storage content = subResp.content();
+			
+				content.readStringASCII(); // ignored for sim variables
+				int varCount = content.readByte();
+				
+				for (int i=0; i<varCount; i++) {
+					int var = content.readUnsignedByte();
+					int status = content.readUnsignedByte();
+					if (status == Constants.RTYPE_ERR) {
+						verify("error description type", 
+								Constants.TYPE_STRING, content.readUnsignedByte());
+						throw new TraCIException("error in getting variable "
+								+ var + "subscription response: "
+								+ content.readStringASCII());
+					}
+					
+					if (var == Constants.VAR_DEPARTED_VEHICLES_IDS)
+						departed = new StringList(content, true);
+					else if (var == Constants.VAR_ARRIVED_VEHICLES_IDS)
+						arrived = new StringList(content, true);
+				}
+			}
+		}
+		
 		createdVehicles = new HashSet<String>(departed);
 		destroyedVehicles = new HashSet<String>(arrived);
 	}

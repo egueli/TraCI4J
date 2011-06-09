@@ -19,51 +19,51 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+
 import java.io.IOException;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import java.net.Socket;
 
-public class ChangeVehicleStateQuery extends TraCIQuery {
-	private static final short COMMAND_CHANGE_VEHICLE_STATE = 0xC4;	
-	private static final short VAR_REROUTE = 0x90;
-	private static final short VAR_CHANGE_EDGE_TRAVEL_TIME = 0x58;
-	private String vehicleID;
+public class ChangeVehicleStateQuery extends VehicleQuery {
 
-	public ChangeVehicleStateQuery(Socket sock, String vehicleID) {
-		super(sock);
-		this.vehicleID = vehicleID;
+	public ChangeVehicleStateQuery(Socket sock, String vehicleID) throws IOException {
+		super(sock, vehicleID);
 	}
 
 	public void changeEdgeTravelTime(int beginTime, int endTime, String edgeID, float travelTime) throws IOException {
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+(4+vehicleID.length())+1+1+1+4+1+4+1+4+1+(4+edgeID.length())+1+4);
-		cmd.writeUnsignedByte(COMMAND_CHANGE_VEHICLE_STATE);
-		cmd.writeUnsignedByte(VAR_CHANGE_EDGE_TRAVEL_TIME);
-		cmd.writeStringASCII(vehicleID);
-		cmd.writeUnsignedByte(DATATYPE_COMPOUND);
-		cmd.writeInt(4);
-		cmd.writeUnsignedByte(DATATYPE_INTEGER);
-		cmd.writeInt(beginTime);
-		cmd.writeUnsignedByte(DATATYPE_INTEGER);
-		cmd.writeInt(endTime);
-		cmd.writeUnsignedByte(DATATYPE_STRING);
-		cmd.writeStringASCII(edgeID);
-		cmd.writeUnsignedByte(DATATYPE_FLOAT);
-		cmd.writeFloat(travelTime);
+		Command cmd = 
+			makeChangeStateCommand(Constants.VAR_EDGE_TRAVELTIME, Constants.TYPE_COMPOUND);
+		cmd.content().writeInt(4);
+		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
+		cmd.content().writeInt(beginTime);
+		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
+		cmd.content().writeInt(endTime);
+		cmd.content().writeUnsignedByte(Constants.TYPE_STRING);
+		cmd.content().writeStringASCII(edgeID);
+		cmd.content().writeUnsignedByte(Constants.TYPE_FLOAT);
+		cmd.content().writeFloat(travelTime);
 		
-		queryAndGetResponse(cmd, COMMAND_CHANGE_VEHICLE_STATE);
+		queryAndVerifySingle(cmd);
 	}
 	
 	public void reroute() throws IOException {
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+1+1+4+vehicleID.length()+1+4);
-		cmd.writeUnsignedByte(COMMAND_CHANGE_VEHICLE_STATE);
-		cmd.writeUnsignedByte(VAR_REROUTE);
-		cmd.writeStringASCII(vehicleID);
-		cmd.writeUnsignedByte(DATATYPE_COMPOUND);
-		cmd.writeInt(0);
+		Command cmd = new Command(Constants.CMD_SET_VEHICLE_VARIABLE);
+		cmd.content().writeUnsignedByte(Constants.CMD_REROUTE_TRAVELTIME);
+		cmd.content().writeStringASCII(vehicleID);
+		cmd.content().writeUnsignedByte(Constants.TYPE_COMPOUND);
+		cmd.content().writeInt(0);
 		
-		queryAndGetResponse(cmd, COMMAND_CHANGE_VEHICLE_STATE);
+		queryAndVerifySingle(cmd);
+	}
+	
+	public void setMaxSpeed(float speed) throws IOException
+	{
+		Command cmd = makeChangeStateCommand(Constants.VAR_MAXSPEED, 
+				Constants.TYPE_FLOAT);
+		cmd.content().writeFloat(speed);
+
+		queryAndVerifySingle(cmd);
 	}
 }

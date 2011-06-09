@@ -19,129 +19,101 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.RequestMessage;
+import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.protocol.ResponseMessage;
+import it.polito.appeal.traci.protocol.RoadmapPosition;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+public class MultiVehiclePositionQuery extends Query {
 
-public class MultiVehiclePositionQuery extends TraCIQuery {
-
-	private interface VehicleResponseProcessor {
-		void process(Storage response, String vehicleID) throws TraCIException;
-	}
+	private final Set<String> vehicleIDs;
 	
 	
-	private static final short COMMAND_RETRIEVE_VEHICLE_VALUE = 0xA4;
-	private static final short COMMAND_RETRIEVE_VEHICLE_VALUE_RESP = 0xB4;
-	private static final short VAR_EDGE_ID = 0x50;
-	
-
-	public MultiVehiclePositionQuery(Socket sock) {
+	public MultiVehiclePositionQuery(Socket sock, Set<String> vehicleIDs) throws IOException {
 		super(sock);
+		this.vehicleIDs = vehicleIDs;
 	}
 	
 	
 
-	public Map<String, String> getVehiclesEdge(Set<String> vehicleIDs) throws IOException {
+	public Map<String, RoadmapPosition> getVehiclesPositionRoadmap() throws IOException {
 		if (vehicleIDs.isEmpty())
 			return Collections.emptyMap();
 		
-		short variable = VAR_EDGE_ID;
-		sendCommand(vehicleIDs, variable);
-
-		final Map<String, String> out = new HashMap<String, String>();
+		RequestMessage reqm = new RequestMessage();
 		
-		VehicleResponseProcessor vrp = new VehicleResponseProcessor() {
-			@Override
-			public void process(Storage resp, String vehicleID) throws TraCIException {
-				checkResponseByte(resp, "variable type", DATATYPE_STRING);
-				
-				String edgeID = resp.readStringASCII();
-				
-				out.put(vehicleID, edgeID);
-			}
-		};
+		/*
+		 * Copy the set into a list, whose order is guaranteed to be kept.
+		 * This is needed because we must verify that each response matches
+		 * a vehicleID; if we assume that SUMO gives responses in the same order
+		 * as the requests, we can traverse the vehicleID list and the
+		 * responses list in parallel and always expect matches.
+		 */
+		List<String> vehicleIDList = new ArrayList<String>(vehicleIDs);
 		
+		for (String vehicleID : vehicleIDList) {
+			ReadVehicleVarQuery.addGetRoadmapPositionCommands(vehicleID, reqm);
+		}
 		
-		processResponse(vehicleIDs, variable, vrp);
+		ResponseMessage respm = queryAndVerify(reqm);
+		
+		final Map<String, RoadmapPosition> out = new HashMap<String, RoadmapPosition>();
+		
+		Iterator<ResponseContainer> respcIt = respm.responses().iterator();
+		Iterator<String> vehiclesIt = vehicleIDList.iterator();
+		while (respcIt.hasNext() || vehiclesIt.hasNext()) {
+			String vehicleID = vehiclesIt.next();
+			out.put(vehicleID, 
+					ReadVehicleVarQuery.getRoadmapPositionFromResponse(vehicleID, respcIt));
+		}
 		
 		return out;
 	}
 
-	public Map<String, Point2D> getVehiclesPosition(Set<String> vehicleIDs) throws IOException {
+	public Map<String, Point2D> getVehiclesPosition2D() throws IOException {
 		if (vehicleIDs.isEmpty())
 			return Collections.emptyMap();
 		
-		short variable = VAR_EDGE_ID;
-		sendCommand(vehicleIDs, variable);
-
+		RequestMessage reqm = new RequestMessage();
+		
+		for (String vehicleID : vehicleIDs) {
+			Command cmd = makeReadVarCommand(
+					Constants.CMD_GET_VEHICLE_VARIABLE, Constants.VAR_POSITION,
+					vehicleID);
+			reqm.append(cmd);
+		}
+		
+		ResponseMessage respm = queryAndVerify(reqm);
+		
 		final Map<String, Point2D> out = new HashMap<String, Point2D>();
 		
-		VehicleResponseProcessor vrp = new VehicleResponseProcessor() {
-			@Override
-			public void process(Storage resp, String vehicleID) throws TraCIException {
-				checkResponseByte(resp, "variable type", DATATYPE_3DPOSITION);
-				
-				float x = resp.readFloat();
-				float y = resp.readFloat();
-				resp.readFloat(); // Z axis will be ignored
-
-				out.put(vehicleID, new Point2D.Float(x, y));
-			}
-		};
-		
-		
-		processResponse(vehicleIDs, variable, vrp);
+		for (ResponseContainer respc : respm.responses()) {
+			
+			Command resp = respc.getResponse();
+			String vehicleID = verifyGetVarResponse(resp,
+					Constants.RESPONSE_GET_VEHICLE_VARIABLE,
+					Constants.VAR_POSITION, null);
+			verify("position data type", 1 /* 2DPosition */, (int)resp.content()
+					.readUnsignedByte());
+			float x = resp.content().readFloat();
+			float y = resp.content().readFloat();
+			
+			out.put(vehicleID, new Point2D.Float(x, y));
+		}
 		
 		return out;
 	}
-
-
-	private void processResponse(Set<String> vehicleIDs,
-			short variable, VehicleResponseProcessor responseProcessor)
-			throws IOException {
-		
-		Storage resp = sock.receiveExact();
-		for (int i=0; i<vehicleIDs.size(); i++) {
-			checkStatusResponse(resp, COMMAND_RETRIEVE_VEHICLE_VALUE);
-			// skip 5 bytes, don't now why but it should work
-			resp.readByte();
-			resp.readInt();
-			
-			short responseID = resp.readUnsignedByte();
-			if (responseID != COMMAND_RETRIEVE_VEHICLE_VALUE_RESP)
-				throw new IOException("invalid response ID: " + responseID);
-			
-			short varID = resp.readUnsignedByte();
-			if (varID != variable) {
-				throw new IOException("invalid variable ID: " + varID);
-			}
-			
-			String vehicleID = resp.readStringASCII();
-			
-			responseProcessor.process(resp, vehicleID);
-		}
-	}
-	
-
-
-	private void sendCommand(Set<String> vehicleIDs, short variable)
-			throws IllegalArgumentException, IOException {
-		Storage cmd = new Storage();
-		for (String vehicleID : vehicleIDs) {
-			cmd.writeUnsignedByte(1+1+1+4+vehicleID.length());
-			cmd.writeUnsignedByte(COMMAND_RETRIEVE_VEHICLE_VALUE);
-			cmd.writeUnsignedByte(variable);
-			cmd.writeStringASCII(vehicleID);
-		}
-		sock.sendExact(cmd);
-	}
-
 }

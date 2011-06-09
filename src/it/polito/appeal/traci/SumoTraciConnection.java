@@ -19,16 +19,16 @@
 
 package it.polito.appeal.traci;
 
+import it.polito.appeal.traci.protocol.BoundingBox;
+import it.polito.appeal.traci.protocol.RoadmapPosition;
 import it.polito.appeal.traci.query.ChangeEdgeStateQuery;
 import it.polito.appeal.traci.query.ChangeLaneStateQuery;
 import it.polito.appeal.traci.query.CloseQuery;
 import it.polito.appeal.traci.query.MultiVehiclePositionQuery;
-import it.polito.appeal.traci.query.NetBoundariesQuery;
 import it.polito.appeal.traci.query.RetrieveEdgeStateQuery;
-import it.polito.appeal.traci.query.RoadsQuery;
+import it.polito.appeal.traci.query.RoadmapQuery;
 import it.polito.appeal.traci.query.SimStepQuery;
 import it.polito.appeal.traci.query.SubscribeVehiclesLifecycle;
-import it.polito.appeal.traci.query.VehicleCountMaxQuery;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,8 +57,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import de.uniluebeck.itm.tcpip.Socket;
 
 /**
  * Models a TCP/IP connection to a local SUMO server via the TraCI protocol.
@@ -236,12 +237,13 @@ public class SumoTraciConnection {
 					// it's alive, go ahead.
 				}
 
-				socket = new Socket(remotePort);
+				socket = new Socket();
 				if (log.isDebugEnabled())
 					log.debug("Connecting to local port " + remotePort);
 
 				try {
-					socket.connect();
+					socket.connect(new InetSocketAddress(InetAddress
+							.getLocalHost(), remotePort));
 					log.info("Connection to SUMO established.");
 					break;
 				} catch (ConnectException ce) {
@@ -252,7 +254,7 @@ public class SumoTraciConnection {
 				}
 			}
 
-			if (!socket.has_client_connection()) {
+			if (!socket.isConnected()) {
 				log.error("Couldn't connect to server");
 				throw new IOException("can't connect to SUMO server");
 			}
@@ -264,7 +266,6 @@ public class SumoTraciConnection {
 		currentSimStep = 0;
 
 		subscribeVehiclesLifecycle();
-		maxVehicleID = queryMaxVehicleCount();
 
 		closeQuery = new CloseQuery(socket);
 	}
@@ -359,22 +360,16 @@ public class SumoTraciConnection {
 		cachedRoads = null;
 	}
 
-	private int queryMaxVehicleCount() throws IOException {
-		VehicleCountMaxQuery countMax = new VehicleCountMaxQuery(socket);
-		return countMax.doCommand();
-	}
-
 	/**
-	 * Returns the boundaries (bottom-left and top-right) of the network.
+	 * Returns the boundaries of the network.
 	 * 
-	 * @return a two-element Point2D array, whose first element is the
-	 *         bottom-left corner and the second element is the top-right corner
+	 * @return the boundaries of the network
 	 * 
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 */
-	public Point2D[] queryBounds() throws IOException {
-		return (new NetBoundariesQuery(socket)).doCommand();
+	public BoundingBox queryBounds() throws IOException {
+		return (new RoadmapQuery(socket)).queryBoundaries();
 	}
 
 	/**
@@ -415,10 +410,10 @@ public class SumoTraciConnection {
 		notifyCreated(created);
 
 		MultiVehiclePositionQuery mvpQuery = 
-			new MultiVehiclePositionQuery(socket);
+			new MultiVehiclePositionQuery(socket, activeVehicles);
 		
-		Map<String, Point2D> vehiclesPosition = 
-			mvpQuery.getVehiclesPosition(activeVehicles);
+		Map<String, Point2D> vehiclesPosition = mvpQuery
+				.getVehiclesPosition2D();
 
 		for(Map.Entry<String, Point2D> entry : vehiclesPosition.entrySet()) {
 			String id = entry.getKey();
@@ -431,14 +426,15 @@ public class SumoTraciConnection {
 		}
 		
 		if (getVehiclesEdgeAtSimStep) {
-			Map<String, String> vehiclesEdge = getAllVehiclesEdge();
+			Map<String, RoadmapPosition> vehiclesPos = getAllVehiclesRoadmapPos();
 			for ( Vehicle v : vehicles.values() ) {
 				String name = v.getID();
-				if (vehiclesEdge.containsKey(name)) {
-					v.setCurrentEdge(vehiclesEdge.get(name));
+				if (vehiclesPos.containsKey(name)) {
+					v.setCurrentRoadmapPos(vehiclesPos.get(name));
 				}
 			}
 		}
+		
 	}
 
 	protected void notifyCreated(Set<String> created) {
@@ -536,7 +532,7 @@ public class SumoTraciConnection {
 	public Collection<Road> queryRoads() throws IOException {
 		if (cachedRoads == null) {
 			log.info("Retrieving roads...");
-			Set<Road> roads = (new RoadsQuery(socket)).queryRoads(readInternalLinks);
+			Set<Road> roads = (new RoadmapQuery(socket)).queryRoads(readInternalLinks);
 			log.info("... done, " + roads.size() + " roads read");
 			
 			cachedRoads = new HashMap<String, Road>();
@@ -765,15 +761,16 @@ public class SumoTraciConnection {
 		return resq.getGlobalTravelTime(time);
 	}
 
-	public Map<String, String> getAllVehiclesEdge() throws IOException {
-		MultiVehiclePositionQuery mvpq = new MultiVehiclePositionQuery(socket);
+	public Map<String, RoadmapPosition> getAllVehiclesRoadmapPos() throws IOException {
 		
 		Set<String> vehicleIDs = new HashSet<String>();
 		for (Vehicle v : vehicles.values()) {
 			vehicleIDs.add(v.getID());
 		}
+		MultiVehiclePositionQuery mvpq = new MultiVehiclePositionQuery(socket, 
+				vehicleIDs);
 		
-		return mvpq.getVehiclesEdge(vehicleIDs);
+		return mvpq.getVehiclesPositionRoadmap();
 	}
 	
 	public void setGetVehiclesEdgeAtSimStep(boolean state) {

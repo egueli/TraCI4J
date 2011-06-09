@@ -19,24 +19,22 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+
 import java.io.IOException;
+import java.net.Socket;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
 
-public class CloseQuery extends TraCIQuery {
+public class CloseQuery extends Query {
 
-	private static final short COMMAND_CLOSE = 0x7F;
-
-	public CloseQuery(Socket sock) {
+	public CloseQuery(Socket sock) throws IOException {
 		super(sock);
 	}
 
 	public void doCommand() throws IOException {
-		Storage stepCmd = new Storage();
-		stepCmd.writeUnsignedByte(2);
-		stepCmd.writeUnsignedByte(COMMAND_CLOSE);
+		Command req = new Command(Constants.CMD_CLOSE);
 
-		queryAndGetResponse(stepCmd, COMMAND_CLOSE);
+		queryAndVerifySingle(req);
 	}
 }

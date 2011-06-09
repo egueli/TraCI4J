@@ -19,20 +19,18 @@
 
 package it.polito.appeal.traci;
 
+import it.polito.appeal.traci.protocol.RoadmapPosition;
 import it.polito.appeal.traci.query.ChangeVehicleStateQuery;
-import it.polito.appeal.traci.query.SetMaxSpeedQuery;
-import it.polito.appeal.traci.query.VehiclePositionQuery;
-import it.polito.appeal.traci.query.VehicleRouteQuery;
+import it.polito.appeal.traci.query.ReadVehicleVarQuery;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniluebeck.itm.tcpip.Socket;
+import java.net.Socket;
 
 /**
  * Represents a single vehicle in the simulation. Instances of this class can be
@@ -82,7 +80,7 @@ public class Vehicle {
 	private List<String> routeCache;
 	private final int creationTime;
 	
-	private String currentEdgeCache;
+	private RoadmapPosition currentEdgeCache;
 	private int currentEdgeCacheTimestep;
 	
 	/** set to false by SumoTraciConnection when a vehicle is no longer active */
@@ -141,8 +139,8 @@ public class Vehicle {
 		if (!alive)
 			throw new NotActiveException();
 
-		String routeList = (new VehicleRouteQuery(socket, id)).doCommand();
-		return Arrays.asList(routeList.split(" "));
+		List<String> route = (new ReadVehicleVarQuery(socket, id)).queryRoute();
+		return route;
 	}
 
 	/**
@@ -178,10 +176,11 @@ public class Vehicle {
 
 		int currentSimStep = conn.getCurrentSimStep();
 		if (currentEdgeCache == null || (currentEdgeCacheTimestep < currentSimStep)) {
-			currentEdgeCache = (new VehiclePositionQuery(socket, id)).getPositionRoadmap().edgeID;
+			currentEdgeCache = (new ReadVehicleVarQuery(socket, id))
+				.queryPositionRoadmap();
 			currentEdgeCacheTimestep = currentSimStep;
 		}
-		return currentEdgeCache; 
+		return currentEdgeCache.edgeID; 
 	}
 
 	/**
@@ -219,8 +218,7 @@ public class Vehicle {
 		if (!alive)
 			throw new NotActiveException();
 
-		ChangeVehicleStateQuery cvsq = new ChangeVehicleStateQuery(socket,
-				getName());
+		ChangeVehicleStateQuery cvsq = new ChangeVehicleStateQuery(socket, id);
 		
 		for (Entry<String, ? extends Number> entry : travelTimes.entrySet()) {
 			cvsq.changeEdgeTravelTime(0, Integer.MAX_VALUE, entry.getKey(),
@@ -235,8 +233,8 @@ public class Vehicle {
 		if (!alive)
 			throw new NotActiveException();
 
-		SetMaxSpeedQuery smsq = new SetMaxSpeedQuery(socket, id);
-		smsq.setMaxSpeed(maxSpeed);
+		ChangeVehicleStateQuery cvsq = new ChangeVehicleStateQuery(socket, id);
+		cvsq.setMaxSpeed(maxSpeed);
 	}
 	
 	public String toString() {
@@ -311,8 +309,8 @@ public class Vehicle {
 		routeCache = null;
 	}
 
-	void setCurrentEdge(String curEdge) {
-		currentEdgeCache = curEdge;
+	void setCurrentRoadmapPos(RoadmapPosition pos) {
+		currentEdgeCache = pos;
 		currentEdgeCacheTimestep = conn.getCurrentSimStep();
 	}
 }

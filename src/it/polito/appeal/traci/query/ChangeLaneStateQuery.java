@@ -19,31 +19,29 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+
 import java.io.IOException;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import java.net.Socket;
 
-public class ChangeLaneStateQuery extends TraCIQuery {
-
-	private static final short COMMAND_CHANGE_LANE_STATE = 0xC3;	
-	private static final short VAR_VMAX = 0x41;
+public class ChangeLaneStateQuery extends Query {
 	private String laneID;
 
-	public ChangeLaneStateQuery(Socket sock, String laneID) {
+	public ChangeLaneStateQuery(Socket sock, String edgeID) throws IOException {
 		super(sock);
-		this.laneID = laneID;
+		this.laneID = edgeID;
 	}
 
-	public void changeMaxVelocity (float vmax) throws IOException {
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+1+1+4+laneID.length()+1+4);
-		cmd.writeUnsignedByte(COMMAND_CHANGE_LANE_STATE);
-		cmd.writeUnsignedByte(VAR_VMAX);
-		cmd.writeStringASCII(laneID);
-		cmd.writeUnsignedByte(DATATYPE_FLOAT);
-		cmd.writeFloat(vmax);
+	public void changeMaxVelocity(float velocity) throws IOException {
+		Command cmd = makeChangeStateCommand(
+				Constants.CMD_SET_LANE_VARIABLE, 
+				Constants.VAR_MAXSPEED, 
+				laneID, Constants.TYPE_FLOAT);
 		
-		queryAndGetResponse(cmd, COMMAND_CHANGE_LANE_STATE);
+		cmd.content().writeFloat(velocity);
+		
+		queryAndVerifySingle(cmd);
 	}
 }

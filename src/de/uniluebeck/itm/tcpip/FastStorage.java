@@ -93,11 +93,6 @@ public class FastStorage extends Storage {
 	
 	
 	@Override
-	protected ArrayList<Byte> getStorageList() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public int position() {
 		if(readable)
 			return readBytes;

@@ -21,8 +21,13 @@ package it.polito.appeal.traci.query;
 
 import java.io.IOException;
 
-import it.polito.appeal.traci.TraCIException.UnexpectedData;
-import de.uniluebeck.itm.tcpip.Socket;
+import it.polito.appeal.traci.TraCIException;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.ResponseContainer;
+
+import java.net.Socket;
+
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -34,20 +39,17 @@ import de.uniluebeck.itm.tcpip.Storage;
  *      href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Environment-related_commands#Command_0x73:_Scenario">Scenario
  *      command</a>
  */
-public abstract class DomainQuery extends TraCIQuery {
+public abstract class DomainQuery extends Query {
 
-	protected static final int COMMAND_SCENARIO = 0x73;
 
-	protected static final int DOMAIN_ROADMAP = 0x00;
+	private static final int FLAG_GET = 0;
 
-	protected static final int FLAG_GET = 0x00;
-
-	public DomainQuery(Socket sock) {
+	public DomainQuery(Socket sock) throws IOException {
 		super(sock);
 	}
 
 	/**
-	 * Builds a Storage containing a Scenario reading.
+	 * Builds a Command containing a Scenario reading.
 	 * 
 	 * @param domain
 	 *            the reference domain
@@ -59,16 +61,14 @@ public abstract class DomainQuery extends TraCIQuery {
 	 *            the expected value type
 	 * @return the built Storage
 	 */
-	protected Storage makeCommand(int domain, int domainID, int variable,
+	protected Command makeCommand(int domain, int domainID, int variable,
 			int varType) {
-		Storage scenarioCmd = new Storage();
-		scenarioCmd.writeUnsignedByte(10);
-		scenarioCmd.writeUnsignedByte(COMMAND_SCENARIO);
-		scenarioCmd.writeUnsignedByte(FLAG_GET);
-		scenarioCmd.writeUnsignedByte(domain);
-		scenarioCmd.writeInt(domainID);
-		scenarioCmd.writeByte(variable);
-		scenarioCmd.writeByte(varType);
+		Command scenarioCmd = new Command(Constants.CMD_SCENARIO);
+		scenarioCmd.content().writeUnsignedByte(FLAG_GET);
+		scenarioCmd.content().writeUnsignedByte(domain);
+		scenarioCmd.content().writeInt(domainID);
+		scenarioCmd.content().writeByte(variable);
+		scenarioCmd.content().writeByte(varType);
 
 		return scenarioCmd;
 	}
@@ -88,31 +88,26 @@ public abstract class DomainQuery extends TraCIQuery {
 	 *            the expected variable
 	 * @param varType
 	 *            the expected variable type
-	 * @throws UnexpectedData
+	 * @throws TraCIException 
 	 */
-	protected void readAndCheckResponse(Storage response, int domain,
-			int domainID, int variable, int varType) throws UnexpectedData {
-		readResponseLength(response);
-		checkResponseByte(response, "command", COMMAND_SCENARIO);
-		checkResponseByte(response, "flag", FLAG_GET);
-		checkResponseByte(response, "domain", domain);
-		checkResponseInt(response, "node ID", domainID);
-		checkResponseByte(response, "variable ID", variable);
-		checkResponseByte(response, "variable type", varType);
+	protected void verifyScenarioResponse(Command response, int domain,
+			int domainID, int variable, int varType) throws TraCIException {
+		
+		Storage content = response.content();
+		verify("response ID", Constants.CMD_SCENARIO, content.readUnsignedByte());
+		verify("flag", FLAG_GET, content.readUnsignedByte());
+		verify("domain", domain, content.readUnsignedByte());
+		verify("domain-specific ID", domainID, content.readInt());
+		verify("variable ID", variable, content.readUnsignedByte());
+		verify("variable type", varType, content.readUnsignedByte());
 	}
-
-	/**
-	 * Sends the Scenario command and receives the result, while checking that
-	 * the response is successful and matches the sent command.
-	 * 
-	 * @param cmd
-	 * @return the storage object of the response, whose position is already set
-	 *         to the variable's value.
-	 * @throws IOException
-	 * @see {@link TraCIQuery#queryAndGetResponse(Storage, int)}
-	 */
-	protected Storage queryAndGetResponse(Storage cmd) throws IOException {
-		return super.queryAndGetResponse(cmd, COMMAND_SCENARIO);
+	
+	protected Command queryAndVerifyScenarioCommand(int domain, int domainID,
+			int variable, int varType) throws IOException {
+		Command req = makeCommand(domain, domainID, variable, varType);
+		ResponseContainer respc = queryAndVerifySingle(req);
+		Command resp = respc.getResponse();
+		verifyScenarioResponse(resp, domain, domainID, variable, varType);
+		return resp;
 	}
-
 }

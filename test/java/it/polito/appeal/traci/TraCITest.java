@@ -19,31 +19,23 @@
 
 package it.polito.appeal.traci;
 
+import static org.junit.Assert.*;
 import it.polito.appeal.traci.Vehicle.NotActiveException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Test case for TraCI4J.
  * <p>
- * To run tests, please set the following system variables:
+ * To run tests, please set the following system variable:
  * <dl>
- * <dt>sim.config.location</dt>
- * <dd>set this to a SUMO config file, e.g.
- * &lt;SUMO_BASE&gt;/examples/sumo/simple_nets/box/box1l/test.sumo.cfg; see
- * {@link #SIM_CONFIG_LOCATION_PARAM}</dd>
  * <dt>it.polito.appeal.traci.sumo_exe</dt>
  * <dd>set this to the SUMO executable, e.g. &lt;SUMO_BASE&gt;/bin/sumo; see
  * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd>
@@ -54,8 +46,7 @@ import static org.junit.Assert.*;
  */
 public class TraCITest {
 
-	private static final String SIM_CONFIG_LOCATION_PARAM = "sim.config.location";
-	
+	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
 	private SumoTraciConnection conn;
 	
 	static {
@@ -69,13 +60,7 @@ public class TraCITest {
 		System.out.println();
 
 		try {
-			String simConfigLocation = System.getProperty(SIM_CONFIG_LOCATION_PARAM);
-			if (simConfigLocation == null)
-				throw new IllegalArgumentException("please set "
-						+ SIM_CONFIG_LOCATION_PARAM
-						+ " to the path of a SUMO config file");
-
-			conn = new SumoTraciConnection(simConfigLocation, 0, false);
+			conn = new SumoTraciConnection(SIM_CONFIG_LOCATION, 0, false);
 
 
 			conn.runServer();
@@ -93,12 +78,20 @@ public class TraCITest {
 	}
 	
 	// TODO either add assertXXX() to most of these tests, or delete them. 
-	
+
+	/**
+	 * The sim step at startup must be zero.
+	 */
 	@Test
 	public void testFirstStepIsZero() {
 		assertEquals(0, conn.getCurrentSimStep());
 	}
 	
+	/**
+	 * Calling {@link SumoTraciConnection#nextSimStep()} should move to
+	 * simulation step one.
+	 * @throws IOException
+	 */
 	@Test
 	public void testNextSimStepGoesToOne() throws IOException {
 		conn.nextSimStep();
@@ -106,47 +99,26 @@ public class TraCITest {
 	}
 	
 	@Test
-	public void testStrings() throws IOException, NotActiveException {
-		for (int t=0; t<100; t++) {
-			conn.nextSimStep();
-		}
+	public void testGetSubscriptionResponses() throws IOException {
+		final List<String> departed = new ArrayList<String>();
 		
-		Set<String> vehicles = conn.getActiveVehicles();
-		Map<String, List<String>> dups = new HashMap<String, List<String>>();
-		
-		for (String id : vehicles) {
-			String edge = conn.getVehicle(id).queryCurrentEdge();
-			List<String> dupList;
-			if (!dups.containsKey(edge)) {
-				dupList = new ArrayList<String>();
-				dups.put(edge, dupList);
+		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
+			@Override
+			public void vehicleDestroyed(String id) {
 			}
-			else
-				dupList = dups.get(edge);
-			dupList.add(edge);
-		}
-		
-		for (Map.Entry<String, List<String>> entry : dups.entrySet()) {
-			System.out.println(entry.getKey() + ":");
-			for (String dup : entry.getValue()) {
-				System.out.println("\t" + dup);
+			
+			@Override
+			public void vehicleCreated(String id) {
+				departed.add(id);
 			}
-		}
+		});
+		conn.nextSimStep();
+		conn.nextSimStep();
+		conn.nextSimStep();
+		
+		assertFalse(departed.isEmpty());
 	}
 	
-	@Test
-	public void testFastStoragePerformance() throws IOException {
-		System.out.println("Start reading edges");
-
-		double startTime = System.currentTimeMillis();
-		conn.setReadInternalLinks(true);
-		conn.queryRoads();
-		double endTime = System.currentTimeMillis();
-		
-		System.out.println("End reading edges");
-		System.out.println("Time elapsed: " + (endTime-startTime)/1000 + " s");
-	}
-
 	private String firstVehicleID = null;
 	
 	@Test
@@ -161,15 +133,15 @@ public class TraCITest {
 		List<String> routeBefore = v0.getCurrentRoute();
 		System.out.println("Route before:         " + routeBefore);
 
-		String edgeToSlowDown = routeBefore.get(5);
+		String edgeToSlowDown = "middle";
 		v0.changeRoute(edgeToSlowDown, 10000);
 		
-		System.out.println("Route after:          " + v0.getCurrentRoute());
-		conn.nextSimStep();
-		System.out.println("Route after sim step: " + v0.getCurrentRoute());
+		List<String> routeAfter = v0.getCurrentRoute();
+		System.out.println("Route after:          " + routeAfter);
+		
+		assertFalse(routeBefore.equals(routeAfter));
 	}
 
-	@Test
 	public void getFirstVehicleID()
 			throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
@@ -194,22 +166,17 @@ public class TraCITest {
 		List<String> routeBefore = v0.getCurrentRoute();
 		System.out.println("Route before:         " + routeBefore);
 
-		String edgeToSlowDown = routeBefore.get(5);
-		conn.changeEdgeTravelTime(0, 1000, edgeToSlowDown, 50.0f);
+		String edgeToSlowDown = "middle";
+		conn.changeEdgeTravelTime(0, 1000, edgeToSlowDown, 10000);
 		float newTravelTime = conn.getEdgeTravelTime(edgeToSlowDown);
-		System.out.println("New travel time: " + newTravelTime);
+		assertEquals(10000, newTravelTime, 1e-6);
 
 		v0.reroute();
 
-		String prevEdge = null;
-		while(true) {
-			String edge = v0.queryCurrentEdge();
-			System.out.println("Route before:         " + v0.getCurrentRoute());
-			if (prevEdge != null && !prevEdge.equals(edge)) {
-				System.out.println("Now walking on " + edge);
-			}
-			prevEdge = edge;
-			conn.nextSimStep();
-		}
+		String edge = v0.queryCurrentEdge();
+		List<String> routeAfter = v0.getCurrentRoute();
+		System.out.println("Route after:          " + routeAfter);
+
+		assertFalse(routeBefore.equals(routeAfter));
 	}
 }

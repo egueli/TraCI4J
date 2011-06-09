@@ -19,28 +19,79 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
-import it.polito.appeal.traci.TraCIException.UnexpectedData;
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import it.polito.appeal.traci.Road;
+import it.polito.appeal.traci.protocol.BoundingBox;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.Polygon;
+import it.polito.appeal.traci.protocol.RequestMessage;
+import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.protocol.ResponseMessage;
+import it.polito.appeal.traci.protocol.StringList;
 
-public abstract class RoadmapQuery extends DomainQuery {
+import java.io.IOException;
+import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
-	protected final int nodeID;
+public class RoadmapQuery extends DomainQuery {
 
-	public RoadmapQuery(Socket sock, int edgeID) {
+	public RoadmapQuery(Socket sock) throws IOException {
 		super(sock);
-		this.nodeID = edgeID;
 	}
 
-	protected Storage makeCommand(int variable, int varType)
-			throws TraCIException {
-		return makeCommand(DOMAIN_ROADMAP, nodeID, variable, varType);
+	public BoundingBox queryBoundaries() throws IOException {
+		Command resp = queryAndVerifyScenarioCommand(
+				Constants.DOM_ROADMAP,
+				0,
+				Constants.DOMVAR_BOUNDINGBOX,
+				Constants.TYPE_BOUNDINGBOX);
+		
+		return new BoundingBox(resp.content(), false);
 	}
+	
+	public Set<Road> queryRoads(boolean alsoInternal) throws IOException {
+		Set<Road> out = new HashSet<Road>();
 
-	protected void readAndCheckResponse(Storage response, int variable,
-			int varType) throws UnexpectedData {
-		readAndCheckResponse(response, DOMAIN_ROADMAP, nodeID, variable,
-				varType);
+		Command req = new Command(Constants.CMD_GET_LANE_VARIABLE);
+		req.content().writeUnsignedByte(Constants.ID_LIST);
+		req.content().writeStringASCII("");
+		
+		ResponseContainer respc = queryAndVerifySingle(req);
+		Command resp = respc.getResponse();
+		verify("variable ID", Constants.ID_LIST, resp.content().readUnsignedByte());
+		resp.content().readStringASCII(); // ignored
+		
+		StringList laneIDs = new StringList(respc.getResponse().content(), true);
+		
+		RequestMessage reqm = new RequestMessage();
+		
+		for (String laneID : laneIDs) {
+			if (!alsoInternal && laneID.startsWith(":"))
+				continue;
+
+			Command getShapeCmd = new Command(Constants.CMD_GET_LANE_VARIABLE);
+			getShapeCmd.content().writeUnsignedByte(Constants.VAR_SHAPE);
+			getShapeCmd.content().writeStringASCII(laneID);
+			
+			reqm.append(getShapeCmd);
+		}
+
+		ResponseMessage respm = queryAndVerify(reqm);
+		
+		for (ResponseContainer laneRespC : respm.responses()) {
+			Command laneResp = laneRespC.getResponse();
+			verify("lane response id", Constants.RESPONSE_GET_EDGE_VARIABLE,
+					laneResp.id());
+			verify("lane variable", Constants.VAR_SHAPE, laneResp.content()
+					.readUnsignedByte());
+			
+			String laneID = laneResp.content().readStringASCII();
+			Polygon shape = new Polygon(laneResp.content(), true);
+			
+			out.add(new Road(laneID, shape.getShape()));
+		}
+		
+		return out;
 	}
 }

@@ -19,108 +19,36 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.TraCIException;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
 
 import java.io.IOException;
-import java.util.List;
+import java.net.Socket;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+public class SubscribeVehiclesLifecycle extends Query {
 
-public class SubscribeVehiclesLifecycle extends TraCIQuery {
-
-	private static final short COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION = 0xdb;
-	private static final short RESPONSE_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION = 0xeb;
-	private static final short VAR_IDS_OF_DEPARTED_VEHICLES = 0x74;
-	private static final short VAR_IDS_OF_ARRIVED_VEHICLES = 0x7a;
+	// TODO make this more generalized (SubscribeSimulationVars)
 
 	private static final byte[] VARIABLES = new byte[] {
-			VAR_IDS_OF_DEPARTED_VEHICLES, VAR_IDS_OF_ARRIVED_VEHICLES };
+			Constants.VAR_DEPARTED_VEHICLES_IDS, 
+			Constants.VAR_ARRIVED_VEHICLES_IDS };
 
-	private static final byte VARIABLES_TYPE = TraCIQuery.DATATYPE_STRINGLIST;
-
-	public SubscribeVehiclesLifecycle(Socket sock) {
+	public SubscribeVehiclesLifecycle(Socket sock) throws IOException {
 		super(sock);
 	}
 
 	public void doCommand() throws IOException {
-		Storage stepCmd = new Storage();
+		Command cmd = new Command(Constants.CMD_SUBSCRIBE_SIM_VARIABLE);
 		// see
 		// http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Value_Retrieval_Subscription
-		stepCmd.writeUnsignedByte(15 + VARIABLES.length);
-		stepCmd.writeUnsignedByte(COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
-		stepCmd.writeInt(0); // begin time
-		stepCmd.writeInt(Integer.MAX_VALUE); // end time
-		stepCmd.writeStringASCII(""); // simulation ID (ignored)
-		stepCmd.writeByte(VARIABLES.length); // no. of variables
+		cmd.content().writeInt(0); // begin time
+		cmd.content().writeInt(Integer.MAX_VALUE); // end time
+		cmd.content().writeStringASCII(""); // simulation ID (ignored)
+		cmd.content().writeByte(VARIABLES.length); // no. of variables
 		for (byte var : VARIABLES)
 			// list of variables to return
-			stepCmd.writeByte(var);
+			cmd.content().writeByte(var);
 
-		Storage response = queryAndGetResponse(stepCmd,
-				COMMAND_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
-
-		/* the following response bytes is the message we're interested in. */
-		readResponseLength(response);
-		
-
-		checkResponseByte(response, "response code", 
-				RESPONSE_SUBSCRIBE_INFO_RETRIEVAL_FROM_SIMULATION);
-		
-		response.readStringASCII(); // simulation ID (ignored)
-
-		checkResponseByte(response, "no. of variables", VARIABLES.length);
-
-		for (int i = 0; i < VARIABLES.length; i++) {
-			checkResponseByte(response, "ID of variable #" + i, VARIABLES[i]);
-
-			short varStatus = response.readByte();
-			if (varStatus == 0xff) // RTYPE_ERR
-			{
-				checkResponseByte(response, "Error description datatype",
-						TraCIQuery.DATATYPE_STRING);
-				String errorDesc = response.readStringASCII();
-				throw new TraCIException("Error while retrieving variable "
-						+ VARIABLES[i] + ": " + errorDesc);
-			}
-
-			checkResponseByte(response, "type of variable #" + i,
-					VARIABLES_TYPE);
-
-			// throw away current value of these variables
-			int count = response.readInt();
-			for (int j = 0; j < count; j++)
-				response.readStringASCII();
-		}
-	}
-
-	public static void readVehicleListFromResponse(Storage response,
-			List<String> outDeparted, List<String> outArrived)
-			throws TraCIException {
-
-		for (int i = 0; i < VARIABLES.length; i++) {
-			short varId = response.readByte();
-
-			response.readStringASCII(); // ignored
-			checkResponseByte(response, "type of response variable #" + varId,
-					VARIABLES_TYPE);
-
-			short count = response.readByte();
-
-			switch (varId) {
-			case VAR_IDS_OF_DEPARTED_VEHICLES:
-				for (int j = 0; j < count; j++) {
-					outDeparted.add(response.readStringASCII());
-				}
-				break;
-			case VAR_IDS_OF_ARRIVED_VEHICLES:
-				for (int j = 0; j < count; j++) {
-					outArrived.add(response.readStringASCII());
-				}
-				break;
-			default:
-				throw new TraCIException("unexpected variable " + varId);
-			}
-		}
+		queryAndVerifySingle(cmd);
 	}
 }

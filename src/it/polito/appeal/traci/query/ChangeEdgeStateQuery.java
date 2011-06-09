@@ -19,37 +19,35 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+
 import java.io.IOException;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import java.net.Socket;
 
-public class ChangeEdgeStateQuery extends TraCIQuery {
-	private static final short COMMAND_CHANGE_EDGE_STATE = 0xCA;	
-	private static final short VAR_TRAVEL_TIME = 0x58;
+public class ChangeEdgeStateQuery extends Query {
 	private String edgeID;
 
-	public ChangeEdgeStateQuery(Socket sock, String edgeID) {
+	public ChangeEdgeStateQuery(Socket sock, String edgeID) throws IOException {
 		super(sock);
 		this.edgeID = edgeID;
 	}
 
 	public void changeGlobalTravelTime (int begin, int end, float travelTime) throws IOException {
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+1+1+4+edgeID.length()+1+4+1+4+1+4+1+4);
-		cmd.writeUnsignedByte(COMMAND_CHANGE_EDGE_STATE);
-		cmd.writeUnsignedByte(VAR_TRAVEL_TIME);
-		cmd.writeStringASCII(edgeID);
-		cmd.writeUnsignedByte(DATATYPE_COMPOUND);
-		cmd.writeInt(3);
-		cmd.writeUnsignedByte(DATATYPE_INTEGER);
-		cmd.writeInt(begin);
-		cmd.writeUnsignedByte(DATATYPE_INTEGER);
-		cmd.writeInt(end);
-		cmd.writeUnsignedByte(DATATYPE_FLOAT);
-		cmd.writeFloat(travelTime);
+		Command cmd = makeChangeStateCommand(
+				Constants.CMD_SET_EDGE_VARIABLE, 
+				Constants.VAR_EDGE_TRAVELTIME, 
+				edgeID, Constants.TYPE_COMPOUND);
 		
-		queryAndGetResponse(cmd, COMMAND_CHANGE_EDGE_STATE);
+		cmd.content().writeInt(3);
+		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
+		cmd.content().writeInt(begin);
+		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
+		cmd.content().writeInt(end);
+		cmd.content().writeUnsignedByte(Constants.TYPE_FLOAT);
+		cmd.content().writeFloat(travelTime);
 		
+		queryAndVerifySingle(cmd);
 	}
 }

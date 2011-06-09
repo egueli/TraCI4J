@@ -19,54 +19,37 @@
 
 package it.polito.appeal.traci.query;
 
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.ResponseContainer;
+
 import java.io.IOException;
 
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import java.net.Socket;
 
-public class RetrieveEdgeStateQuery extends TraCIQuery {
-	private static final short COMMAND_RETRIEVE_EDGE_STATE = 0xAA;	
-//	private static final short VAR_TRAVEL_TIME = 0x5A;
-	private static final short VAR_TRAVEL_TIME = 0x58;
-	private static final short COMMAND_RETRIEVE_EDGE_STATE_RESP = 0xBA;
+public class RetrieveEdgeStateQuery extends Query {
 	private String edgeID;
 
-	public RetrieveEdgeStateQuery(Socket sock, String edgeID) {
+	public RetrieveEdgeStateQuery(Socket sock, String edgeID) throws IOException {
 		super(sock);
 		this.edgeID = edgeID;
 	}
 
-//	public float getGlobalTravelTime() throws IOException {
 	public float getGlobalTravelTime(int time) throws IOException {
-		Storage cmd = new Storage();
-//		cmd.writeUnsignedByte(1+1+1+(4+edgeID.length()));
-		cmd.writeUnsignedByte(1+1+1+(4+edgeID.length()+1+4));
-		cmd.writeUnsignedByte(COMMAND_RETRIEVE_EDGE_STATE);
-		cmd.writeUnsignedByte(VAR_TRAVEL_TIME);
-		cmd.writeStringASCII(edgeID);
-		cmd.writeUnsignedByte(DATATYPE_INTEGER);
-		cmd.writeInt(time);
+		Command cmd = makeReadVarCommand(Constants.CMD_GET_EDGE_VARIABLE, 
+				Constants.VAR_EDGE_TRAVELTIME, edgeID);
+		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
+		cmd.content().writeInt(time);
 		
-		Storage resp = queryAndGetResponse(cmd, COMMAND_RETRIEVE_EDGE_STATE);
-		// skip 5 bytes, don't now why but it should work
-		resp.readByte();
-		resp.readInt();
-		short responseID = resp.readUnsignedByte();
-		if (responseID != COMMAND_RETRIEVE_EDGE_STATE_RESP)
-			throw new IOException("invalid response ID: " + responseID);
+		ResponseContainer respc = queryAndVerifySingle(cmd);
+		Command resp = respc.getResponse();
 		
-		short varID = resp.readUnsignedByte();
-		if (varID != VAR_TRAVEL_TIME)
-			throw new IOException("invalid variable response: " + varID);
+		verifyGetVarResponse(resp, Constants.RESPONSE_GET_EDGE_VARIABLE,
+				Constants.VAR_EDGE_TRAVELTIME, edgeID);
 		
-		String respEdgeID = resp.readStringASCII();
-		if (!respEdgeID.equals(edgeID))
-			throw new IOException("invalid edge ID response: " + respEdgeID);
+		verify("edge travel time data type", Constants.TYPE_FLOAT, (int)resp
+				.content().readUnsignedByte());
 		
-		short varType = resp.readUnsignedByte();
-		if (varType != DATATYPE_FLOAT) 
-			throw new IOException("invalid variable type response: " + varType);
-	
-		return resp.readFloat();
+		return resp.content().readFloat();
 	}
 }

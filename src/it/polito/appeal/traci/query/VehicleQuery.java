@@ -19,58 +19,82 @@
 
 package it.polito.appeal.traci.query;
 
-import java.io.IOException;
-
 import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.TraCIException.UnexpectedData;
-import de.uniluebeck.itm.tcpip.Socket;
-import de.uniluebeck.itm.tcpip.Storage;
+import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.ResponseContainer;
 
-public abstract class VehicleQuery extends TraCIQuery {
+import java.io.IOException;
+import java.net.Socket;
 
-	private final short COMMAND_GET_VEHICLE_VARIABLE = 0xa4;
-	private final short COMMAND_CHANGE_VEHICLE_STATE = 0xc4;
-	
+public abstract class VehicleQuery extends Query {
+
 	protected final String vehicleID;
 
-	public VehicleQuery(Socket sock, String nodeID) {
+	public VehicleQuery(Socket sock, String nodeID) throws IOException {
 		super(sock);
 		this.vehicleID = nodeID;
 	}
 
-	protected Storage makeReadVarCommand(int variable, int varType)
+	protected Command makeReadVarCommand(int variable)
 			throws TraCIException {
-		
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+1+1+4+vehicleID.length());
-		cmd.writeUnsignedByte(COMMAND_GET_VEHICLE_VARIABLE);
-		cmd.writeUnsignedByte(variable);
-		cmd.writeStringASCII(vehicleID);
-		
-		return cmd;
+		return makeReadVarCommand(Constants.CMD_GET_VEHICLE_VARIABLE, variable,
+				vehicleID);
 	}
 	
-	protected Storage makeChangeStateCommand(int variable, int varType, int valueLength) {
-		Storage cmd = new Storage();
-		cmd.writeUnsignedByte(1+1+1+4+vehicleID.length()+1+valueLength);
-		cmd.writeUnsignedByte(COMMAND_CHANGE_VEHICLE_STATE);
-		cmd.writeUnsignedByte(variable);
-		cmd.writeStringASCII(vehicleID);
-		cmd.writeUnsignedByte(varType);
+	protected Command makeChangeStateCommand(int variable, int varType) {
+		return super.makeChangeStateCommand(
+				Constants.CMD_SET_VEHICLE_VARIABLE,
+				variable,
+				vehicleID, 
+				varType);
+	}
+
+	/**
+	 * Like {@link #queryAndVerifyGetVarCommand(int)}, but verifies the variable
+	 * type too.
+	 * @param variable
+	 * @param varType
+	 * @return
+	 * @throws IOException
+	 */
+	protected Command queryAndVerifyGetVarCommand(int variable, int varType) throws IOException {
+		Command req = makeReadVarCommand(variable);
+		ResponseContainer respc = queryAndVerifySingle(req);
+		Command resp = respc.getResponse();
+		verifyGetVarResponse(resp, variable, varType);
 		
-		return cmd;
+		return resp;
+	}
+
+	/**
+	 * Sends a "get vehicle variable" command and checks that the received
+	 * response matches the response code, variable ID and vehicle ID.
+	 * Returns the command whose content pointer is already set to the data to
+	 * read.
+	 * @param variable the variable ID
+	 * @return
+	 * @throws IOException 
+	 */
+	protected Command queryAndVerifyGetVarCommand(int variable) throws IOException {
+		Command req = makeReadVarCommand(variable);
+		ResponseContainer respc = queryAndVerifySingle(req);
+		Command resp = respc.getResponse();
+		verifyGetVarResponse(resp, variable);
+		
+		return resp;
+	}
+
+	protected void verifyGetVarResponse(Command resp, int variable)
+			throws UnexpectedData, IllegalStateException,
+			IllegalArgumentException {
+		verifyGetVarResponse(resp, Constants.RESPONSE_GET_VEHICLE_VARIABLE,
+				variable, vehicleID);
 	}
 	
-
-	protected void readAndCheckResponse(Storage response, int variable,
-			int varType) throws UnexpectedData {
-		readResponseLength(response);
-		checkResponseByte(response, "variable id", variable);
-		checkResponseByte(response, "variable type", varType);
-	}
-
-	protected Storage queryAndGetResponse(Storage cmd)
-			throws IOException {
-		return queryAndGetResponse(cmd, COMMAND_GET_VEHICLE_VARIABLE);
+	protected void verifyGetVarResponse(Command resp, int variable, int varType) throws UnexpectedData, IllegalStateException, IllegalArgumentException {
+		verifyGetVarResponse(resp, variable);
+		verify("variable type", varType, (int)resp.content().readUnsignedByte());
 	}
 }

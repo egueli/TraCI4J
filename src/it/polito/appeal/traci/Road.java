@@ -19,57 +19,33 @@
 
 package it.polito.appeal.traci;
 
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * Represents a road (i.e. a lane) in the SUMO simulation. A road has two
- * identifiers (an "external" string identifier, used by SUMO itself, and an
- * "internal" integer identifier, used by the TraCI protocol) and a shape,
+ * Represents a road (i.e. a lane) in the SUMO simulation. A road has a string
+ * identifier and a shape,
  * i.e. a set of connected segments.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
  */
 public class Road implements Serializable {
-	public final int internalID;
-	public final String externalID;
-	public final List<Point2D> shape;
+	private static final long serialVersionUID = 2584580269405598020L;
 	
-	private transient Rectangle2D boundingBoxCache;
-
-	public Road(int internalID, String externalID, List<Point2D> shape) {
-		this.internalID = internalID;
-		this.externalID = externalID;
-		this.shape = Collections.unmodifiableList(shape);
+	public final String externalID;
+	public final Path2D shape;
+	
+	public Road(String id, Path2D shape) {
+		this.externalID = id;
+		this.shape = shape;
 	}
 
 	public Rectangle2D getBoundingBox() {
-		if(boundingBoxCache == null) {
-
-			double left = Double.POSITIVE_INFINITY;
-			double right = Double.NEGATIVE_INFINITY;
-			double top = Double.POSITIVE_INFINITY;
-			double bottom = Double.NEGATIVE_INFINITY;
-			
-			for(Point2D p : shape) {
-				left =   Math.min(left,   p.getX());
-				right =  Math.max(right,  p.getX());
-				top =    Math.min(top,    p.getY());
-				bottom = Math.max(bottom, p.getY());
-			}
-			
-			boundingBoxCache = new Rectangle2D.Double(left, top, right - left, bottom - top);
-		}
-		
-		return boundingBoxCache;
-	}
-
-	public String getEdgeID() {
-		return externalID.substring(0, externalID.lastIndexOf('_'));
+		return shape.getBounds2D();
 	}
 
 	public int hashCode() {
@@ -77,19 +53,34 @@ public class Road implements Serializable {
 	}
 
 	public String toString() {
-		return externalID + " (internal " + internalID + ") " + shape;
+		return externalID + shape;
 	}
 
 	public double getLength() {
+		PathIterator iterator = shape.getPathIterator(null);
+		
 		/* TODO cache length */
 		double sum = 0;
 		Point2D prevPoint = null;
-		for (Point2D point : shape) {
-			if (prevPoint != null) {
-				sum += prevPoint.distance(point);
+		while (!iterator.isDone()) {
+			float[] coords = new float[6];
+			int type = iterator.currentSegment(coords);
+			switch(type) {
+			case PathIterator.SEG_MOVETO:
+			case PathIterator.SEG_LINETO:
+				Point2D point = new Point2D.Float(coords[0], coords[1]);
+				if (prevPoint != null) {
+					sum += prevPoint.distance(point);
+				}
+				prevPoint = point;
+				break;
+			default:
+				throw new IllegalStateException("can't handle curves in path");
 			}
-			prevPoint = point;
+				
+			iterator.next();
 		}
+		
 		return sum;
 	}
 }

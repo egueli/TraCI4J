@@ -6,30 +6,25 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 /*
  * Modifications by Enrico Gueli:
  * - replaced LinkedList to ArrayList
+ * - used the basic List interface
  * - toString() implementation
+ * - standard comments converted to Javadoc
+ * - getStorageList() made public (but read-only)
  */
 
 
 public class Storage {
-//	private LinkedList<Byte> storageList;
-	private ArrayList<Byte> storageList;
+	private List<Byte> storageList;
 	private int position;
 	private ListIterator<Byte> listIt;
-	
-	private static final boolean USE_STRING_POOL = false;
-	
-	private static Map<Integer, WeakReference<String>> stringPool = 
-		new HashMap<Integer, WeakReference<String>>();
-
 	
 	public Storage()
 	{
@@ -39,31 +34,42 @@ public class Storage {
 
 	public Storage(byte[] packet)
 	{
+		this(packet, 0, packet.length);
+	}
+	
+	public Storage(byte[] packet, int offset, int length) {
+		if (packet == null)
+			throw new NullPointerException("packet can't be null");
+		if (length > packet.length)
+			throw new IndexOutOfBoundsException("length exceeds packet length");
+		if (offset + length > packet.length)
+			throw new IndexOutOfBoundsException("content is outside the array");
+
 		storageList = new ArrayList<Byte>();
-		
-		for (int i=0; i < packet.length; i++)
+
+		for (int i=offset; i < length; i++)
 		{
-			storageList.add(new Byte(packet[i]));
+			writeByte(packet[i]);
 		}
-		
+
 		init();
 	}
 	
 	public Storage(short[] packet)
 	{
-		storageList = new ArrayList<Byte>();
-		
-		for (int i=0; i < packet.length; i++)
-		{
-			writeByte(packet[i]);
-		}
-		
-		init();
+		this(packet, 0, packet.length);
 	}
 
 
 	public Storage(short[] packet, int offset, int length)
 	{
+		if (packet == null)
+			throw new NullPointerException("packet can't be null");
+		if (length > packet.length)
+			throw new IndexOutOfBoundsException("length exceeds packet length");
+		if (offset + length > packet.length)
+			throw new IndexOutOfBoundsException("content is outside the array");
+
 		storageList = new ArrayList<Byte>();
 		
 		for (int i=offset; i < length; i++)
@@ -86,7 +92,7 @@ public class Storage {
 		return position;
 	}
 	
-	/*
+	/**
 	 * Write a byte value to the List
 	 * a signed value will be converted to its unsigned equivalent first
 	 * @param value: the byte to be written
@@ -104,7 +110,7 @@ public class Storage {
 		storageList.add(new Byte( (byte)(value) ));
 	}
 	
-	/*
+	/**
 	 * Read a byte value from the List
 	 * @return the read byte as an Integer value (unsigned)
 	 */
@@ -153,7 +159,7 @@ public class Storage {
 	}
 
 	
-	/*
+	/**
 	 * Write a signed short value to the list
 	 * @param value: the short value to be written
 	 */
@@ -177,7 +183,7 @@ public class Storage {
 			writeByte(bytes[i]);
 	}
 
-	/*
+	/**
 	 * Read a short value from the list
 	 * @return: the read short value as an Integer
 	 */
@@ -204,7 +210,7 @@ public class Storage {
 		return result;
 	}
 	
-	/*
+	/**
 	 * Write an signed Integer to the list
 	 * the int value is being split up into 4 bytes in msb first order
 	 * @param value: the int value to be written
@@ -227,7 +233,7 @@ public class Storage {
 		
 	}
 
-	/*
+	/**
 	 * Read a signed integer value, that was split up into 4 bytes
 	 * @return the read int value
 	 */
@@ -254,7 +260,7 @@ public class Storage {
 		return result;
 	}
 	
-	/*
+	/**
 	 * Write a Float to the list
 	 * the float value is beeing split up into 4 bytes in msb first order
 	 * @param value: the float value to be written
@@ -277,7 +283,7 @@ public class Storage {
 		
 	}
 	
-	/*
+	/**
 	 * Read a Float value, that was split up into 4 bytes
 	 * @return the read float value
 	 */
@@ -304,7 +310,7 @@ public class Storage {
 		return result;
 	}
 	
-	/*
+	/**
 	 * Write a Double to the list
 	 * the value is beeing split up into 8 bytes in msb first order
 	 * @param value: the double value to be written
@@ -327,7 +333,7 @@ public class Storage {
 		
 	}
 	
-	/*
+	/**
 	 * Read a Double value, that was split up into 8 bytes
 	 * @return the read double value
 	 */
@@ -354,7 +360,7 @@ public class Storage {
 		return result;
 	}
 	
-	/*
+	/**
 	 * Write a string to the list by encoding the characters in UTF-8
 	 * @param value the String to be written
 	 */
@@ -363,7 +369,7 @@ public class Storage {
 		writeString(value,"UTF-8");
 	}
 	
-	/*
+	/**
 	 * Write a string to the list by encoding the characters in ASCII
 	 * @param value the String to be written
 	 */
@@ -372,7 +378,7 @@ public class Storage {
 		writeString(value,"US-ASCII");
 	}
 	
-	/*
+	/**
 	 * Write a string to the list by encoding the characters in ISO-LATIN1
 	 * @param value the String to be written
 	 */
@@ -381,7 +387,7 @@ public class Storage {
 		writeString(value,"ISO-8859-1");
 	}
 	
-	/*
+	/**
 	 * Write a string to the list by encoding the characters in UTF-16 Big Endian
 	 * @param value the String to be written
 	 */
@@ -390,7 +396,7 @@ public class Storage {
 		writeString(value,"UTF-16BE");
 	}
 	
-	/*
+	/**
 	 * Write a string to the list by encoding the characters in UTF-16 Little Endian
 	 * @param value the String to be written
 	 */
@@ -416,7 +422,7 @@ public class Storage {
 			writeByte(bytes[i]);	
 	}
 	
-	/*
+	/**
 	 * Read a String from the list, that was encoded using UTF-8
 	 * @return the read String
 	 */
@@ -425,7 +431,7 @@ public class Storage {
 		return readString("UTF-8");
 	}
 	
-	/*
+	/**
 	 * Read a String from the list, that was encoded using ASCII
 	 * @return the read String
 	 */
@@ -434,7 +440,7 @@ public class Storage {
 		return readString("US-ASCII");
 	}
 	
-	/*
+	/**
 	 * Read a String from the list, that was encoded using ISO-LATIN1
 	 * @return the read String
 	 */
@@ -443,7 +449,7 @@ public class Storage {
 		return readString("ISO-8859-1");
 	}
 	
-	/*
+	/**
 	 * Read a String from the list, that was encoded using UTF-16 Big Endian
 	 * @return the read String
 	 */
@@ -452,7 +458,7 @@ public class Storage {
 		return readString("UTF-16BE");
 	}
 	
-	/*
+	/**
 	 * Read a String from the list, that was encoded using UTF-16 Little Endian
 	 * @return the read String
 	 */
@@ -476,20 +482,6 @@ public class Storage {
 	
 		try {
 			result = new String(content, charset);
-			if (USE_STRING_POOL) {
-				int hash = result.hashCode();
-				if (stringPool.containsKey(hash)) {
-					WeakReference<String> ref = stringPool.get(hash);
-					String s = ref.get();
-					if (s != null)
-						return s;
-					else {
-						stringPool.remove(hash);
-					}
-				}
-				else
-					stringPool.put(hash, new WeakReference<String>(result));
-			}
 			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -505,7 +497,7 @@ public class Storage {
 		init();
 	}
 	
-	/*
+	/**
 	 * Retrieve the Size of the internal storage list
 	 * @return size  of the storage list
 	 */
@@ -514,13 +506,13 @@ public class Storage {
 		return storageList.size();
 	}
 	
-	/*
+	/**
 	 * Retrieve the internal list that is used to store the data
 	 * @return the internal storage list
 	 */
-	protected ArrayList<Byte> getStorageList()
+	public List<Byte> getStorageList()
 	{
-		return storageList;
+		return Collections.unmodifiableList(storageList);
 	}
 	
 	private void init()
