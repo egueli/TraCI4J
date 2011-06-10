@@ -26,6 +26,7 @@ import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.RequestMessage;
 import it.polito.appeal.traci.protocol.ResponseMessage;
 import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.query.SimStepQuery;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -40,7 +41,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Here we verify some assumptions about the TraCI protocol.
+ * Here we verify some assumptions about the TraCI protocol and the behaviour of
+ * SUMO.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
@@ -56,7 +58,7 @@ public class TraCIServerTest {
 	
 	private DataInputStream inStream;
 	private DataOutputStream outStream;
-
+	private Socket socket;
 
 	private Process sumoProcess;
 	
@@ -67,12 +69,12 @@ public class TraCIServerTest {
 		
 		Thread.sleep(1000);
 		
-		Socket sock = new Socket();
-		sock.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+		socket = new Socket();
+		socket.connect(new InetSocketAddress(InetAddress.getLocalHost(),
 				TRACI_PORT));
 		
-		inStream = new DataInputStream(sock.getInputStream());
-		outStream = new DataOutputStream(sock.getOutputStream());
+		inStream = new DataInputStream(socket.getInputStream());
+		outStream = new DataOutputStream(socket.getOutputStream());
 	}
 
 	private void runSUMO() throws IOException {
@@ -219,5 +221,15 @@ public class TraCIServerTest {
 		assertEquals("Goodbye", pair.getStatus().description()); // undocumented!
 		
 		assertNull(pair.getResponse());
+	}
+	
+	/**
+	 * What happens when the simulation ends?
+	 * @throws IOException 
+	 */
+	public void testSimulationEnd() throws IOException {
+		SimStepQuery ssq = new SimStepQuery(socket, 1000);
+		while(true)
+			ssq.doCommand();
 	}
 }

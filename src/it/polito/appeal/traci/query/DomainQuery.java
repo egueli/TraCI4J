@@ -94,12 +94,11 @@ public abstract class DomainQuery extends Query {
 			int domainID, int variable, int varType) throws TraCIException {
 		
 		Storage content = response.content();
-		verify("response ID", Constants.CMD_SCENARIO, content.readUnsignedByte());
-		verify("flag", FLAG_GET, content.readUnsignedByte());
-		verify("domain", domain, content.readUnsignedByte());
+		verify("flag", FLAG_GET, (int)content.readUnsignedByte());
+		verify("domain", domain, (int)content.readUnsignedByte());
 		verify("domain-specific ID", domainID, content.readInt());
-		verify("variable ID", variable, content.readUnsignedByte());
-		verify("variable type", varType, content.readUnsignedByte());
+		verify("variable ID", variable, (int)content.readUnsignedByte());
+		verify("variable type", varType, (int)content.readUnsignedByte());
 	}
 	
 	protected Command queryAndVerifyScenarioCommand(int domain, int domainID,
