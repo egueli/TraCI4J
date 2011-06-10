@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="TraCI4J">
+    <property environment="env"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="../../../../../usr/lib/eclipse/plugins/org.junit4_4.5.0.v20090824/junit.jar"/>
+        <pathelement location="../../../../../usr/lib/eclipse/plugins/org.hamcrest.core_1.1.0.jar"/>
+    </path>
+    <path id="TraCI4J.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/log4j.jar"/>
+        <pathelement location="lib/resolver.jar"/>
+        <pathelement location="lib/serializer.jar"/>
+        <pathelement location="lib/xercesImpl.jar"/>
+        <pathelement location="lib/xml-apis.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="sumo/traci/"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="test/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <exclude name="sumo/traci/"/>
+            <classpath refid="TraCI4J.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="test/java"/>
+            <classpath refid="TraCI4J.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="TraCITest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="it.polito.appeal.traci.FastStorageTest" todir="${junit.output.dir}"/>
+            <test name="it.polito.appeal.traci.TraCIServerTest" todir="${junit.output.dir}"/>
+            <test name="it.polito.appeal.traci.TraCITest" todir="${junit.output.dir}"/>
+            <test name="it.polito.appeal.traci.protocol.CommandTest" todir="${junit.output.dir}"/>
+            <test name="it.polito.appeal.traci.protocol.MessageTest" todir="${junit.output.dir}"/>
+            <jvmarg line="-Dit.polito.appeal.traci.sumo_exe=sumo"/>
+            <classpath refid="TraCI4J.classpath"/>
+        </junit>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+</project>

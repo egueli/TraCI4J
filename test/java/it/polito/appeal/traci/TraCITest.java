@@ -21,6 +21,7 @@ package it.polito.appeal.traci;
 
 import static org.junit.Assert.*;
 import it.polito.appeal.traci.Vehicle.NotActiveException;
+import it.polito.appeal.traci.protocol.BoundingBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.List;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -50,6 +52,7 @@ public class TraCITest {
 	private SumoTraciConnection conn;
 	
 	static {
+		// this need to be done only once
 		BasicConfigurator.configure();
 	}
 
@@ -173,10 +176,39 @@ public class TraCITest {
 
 		v0.reroute();
 
-		String edge = v0.queryCurrentEdge();
 		List<String> routeAfter = v0.getCurrentRoute();
 		System.out.println("Route after:          " + routeAfter);
 
 		assertFalse(routeBefore.equals(routeAfter));
+	}
+	
+	@Test
+	public void testQueryBounds() throws IOException {
+		BoundingBox bounds = conn.queryBounds();
+		assertEquals(0.0, bounds.getMinX(), 1e-6);
+		assertEquals(-1.65, bounds.getMinY(), 1e-6);
+		assertEquals(2500.0, bounds.getMaxX(), 1e-6);
+		assertEquals(498.35, bounds.getMaxY(), 1e-6);
+	}
+	
+	@Test
+	@Ignore // to complete!
+	public void testDepartureObserver() throws IOException {
+		
+		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
+			
+			@Override
+			public void vehicleDestroyed(String id) { }
+			
+			@Override
+			public void vehicleCreated(String id) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		while(true)
+			conn.nextSimStep();
+			
 	}
 }
