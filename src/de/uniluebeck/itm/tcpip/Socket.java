@@ -79,12 +79,7 @@ public class Socket {
 		
 		Storage storageLength = new Storage();
 		
-		if (storageToSend == null)
-		{
-			length = 4;
-		} else {
-			length = storageToSend.size() + 4;
-		}
+		length = storageToSend.size() + 4;
 		storageLength.writeInt(length);
 		
 		for (int i=0; i < 4; i++)
