@@ -27,9 +27,18 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a message sent from the server. A response message is made of an
+ * ordered collection of status responses, response commands and/or sub-responses.
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ResponseMessage {
 
-	private static final int[] STATUS_ONLY_RESPONSES = new int[] {
+	/**
+	 * The list of IDs of responses that have no response commands. 
+	 */
+	public static final int[] STATUS_ONLY_RESPONSES = new int[] {
 		Constants.CMD_CLOSE,
 		Constants.CMD_SET_LANE_VARIABLE,
 		Constants.CMD_SET_TL_VARIABLE,
@@ -41,7 +50,28 @@ public class ResponseMessage {
 	};
 	
 	private List<ResponseContainer> pairs = new ArrayList<ResponseContainer>();
-	
+
+	/**
+	 * Constructor that unpacks all the data from a {@link DataInputStream},
+	 * populating the list of {@link ResponseContainer}s.
+	 * <p>
+	 * A response message is made of individual packets. It is assumed that the
+	 * first packet is always a status response. According to the command ID of
+	 * the status response, different data are expected next:
+	 * <ul>
+	 * <li>if the ID is equal to {@link Constants#CMD_SIMSTEP2}, it is expected
+	 * an integer representing N and N following sub-responses;</li>
+	 * <li>if the ID matches one of the commands in
+	 * {@link #STATUS_ONLY_RESPONSES} , it is expected another status response;
+	 * <li>if the ID doesn't match any of the above, it is expected a response
+	 * command.
+	 * </ul>
+	 * A new {@link ResponseMessage}, collecting all the data that belong to the
+	 * same request, is built and appended to an internal list.
+	 * 
+	 * @param dis
+	 * @throws IOException
+	 */
 	public ResponseMessage(DataInputStream dis) throws IOException {
 		int totalLen = dis.readInt() - Integer.SIZE/8;
 		

@@ -22,12 +22,17 @@ package it.polito.appeal.traci.protocol;
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
- * Represents a single TraCI command, with its identifier and content. The
- * content itself is represented as a byte array and an offset/length relative
- * to that array.
+ * Represents a single TraCI command, with its identifier and content. It can
+ * be used either as a request (i.e. from client to server) and as a response
+ * (i.e. from server to client). The "command" term reflects the description
+ * in the <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Messages">wiki</a>.
+ * Each command is characterized by a type identifier and a variable-sized
+ * content. The command can be constructed either from a data block (a
+ * {@link Storage}) or from scratch; its content can be read or written to a
+ * {@link Storage}.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- *
+ * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Messages">Messages</a>
  */
 public class Command {
 	private static final int HEADER_SIZE = 
@@ -39,6 +44,13 @@ public class Command {
 	private final Storage content;
 	
 	
+	/**
+	 * Builds a command from a {@link Storage} received from the other endpoint.
+	 * <p>
+	 * Note that this will advance the storage's internal pointer to the next
+	 * data.
+	 * @param rawStorage
+	 */
 	public Command(Storage rawStorage) {
 		int contentLen = rawStorage.readUnsignedByte();
 		if (contentLen == 0)
@@ -56,6 +68,10 @@ public class Command {
 		content = new Storage(buf);
 	}
 	
+	/**
+	 * Creates a command with a given identifier and an empty content.
+	 * @param id
+	 */
 	public Command(int id) {
 		if (id > 255)
 			throw new IllegalArgumentException("id should fit in a byte");
@@ -64,6 +80,7 @@ public class Command {
 	}
 
 	/**
+	 * Returns the type identifier.
 	 * @return the id
 	 */
 	public int id() {
@@ -71,12 +88,20 @@ public class Command {
 	}
 
 	/**
+	 * Returns the content.
 	 * @return the content
 	 */
 	public Storage content() {
 		return content;
 	}
 
+	/**
+	 * Writes the serialized form of this command to the given {@link Storage}
+	 * object.
+	 * <p>
+	 * Note: this will advance the internal pointer of the given storage. 
+	 * @param out
+	 */
 	public void writeRawTo(Storage out) {
 		/*
 		 * use only the long form (length 0 + length as integer)
@@ -91,6 +116,10 @@ public class Command {
 		}
 	}
 
+	/**
+	 * Returns the expected size of the serialized form of this command.
+	 * @return
+	 */
 	public int rawSize() {
 		return HEADER_SIZE + content.size();
 	}
