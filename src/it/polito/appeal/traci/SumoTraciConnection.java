@@ -324,7 +324,11 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Closes the connection and quits the simulator.
+	 * Closes the connection and quits the simulator and frees any stale
+	 * resource.
+	 * <p>
+	 * NOTE: this method must be called when any of the methods throw an
+	 * exception, to allow to free all resources.
 	 * 
 	 * @throws IOException
 	 *             if the close command wasn't sent successfully
@@ -359,6 +363,18 @@ public class SumoTraciConnection {
 		vehicleLifecycleObservers.clear();
 		cachedRoads = null;
 	}
+	
+	/**
+	 * Returns <code>true</code> if the connection was closed by the user.
+	 * <p>
+	 * NOTE: it may not return <code>true</code> if an error occurred and the
+	 * connection with SUMO is broken.
+	 * @return
+	 * @see #close()
+	 */
+	public boolean isClosed() {
+		return sumoProcess == null;
+	}
 
 	/**
 	 * Returns the boundaries of the network.
@@ -369,6 +385,9 @@ public class SumoTraciConnection {
 	 *             if something wrong happened while sending the TraCI command.
 	 */
 	public BoundingBox queryBounds() throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		return (new RoadmapQuery(socket)).queryBoundaries();
 	}
 
@@ -394,8 +413,13 @@ public class SumoTraciConnection {
 	 * 
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
+	 * @throws IllegalStateException
+	 *             if the method is called when the connection is closed
 	 */
-	public void nextSimStep() throws IOException {
+	public void nextSimStep() throws IOException, IllegalStateException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		currentSimStep++;
 		SimStepQuery ssQuery = new SimStepQuery(socket, currentSimStep);
 		ssQuery.doCommand();
@@ -403,12 +427,34 @@ public class SumoTraciConnection {
 		Set<String> created = ssQuery.getCreatedVehicles();
 		Set<String> destroyed = ssQuery.getDestroyedVehicles();
 
+
+		for (String id : created) {
+			vehicles.put(id, new Vehicle(id, socket, this));
+
+			if (log.isDebugEnabled())
+				log.debug("Vehicle " + id + " created");
+		}
+		for (String id : destroyed) {
+			if (log.isDebugEnabled())
+				log.debug("Vehicle " + id + " destroyed");
+			vehicles.get(id).alive = false;
+			vehicles.remove(id);
+		}
+
 		activeVehicles.addAll(created);
 		activeVehicles.removeAll(destroyed);
 
+		updateVehiclesPosition();
+		
+		if (getVehiclesEdgeAtSimStep) {
+			updateVehiclesEdge();
+		}
+
 		notifyDestroyed(destroyed);
 		notifyCreated(created);
+	}
 
+	private void updateVehiclesPosition() throws IOException {
 		MultiVehiclePositionQuery mvpQuery = 
 			new MultiVehiclePositionQuery(socket, activeVehicles);
 		
@@ -424,26 +470,20 @@ public class SumoTraciConnection {
 			
 			vehicles.get(id).setPosition(pos);
 		}
-		
-		if (getVehiclesEdgeAtSimStep) {
-			Map<String, RoadmapPosition> vehiclesPos = getAllVehiclesRoadmapPos();
-			for ( Vehicle v : vehicles.values() ) {
-				String name = v.getID();
-				if (vehiclesPos.containsKey(name)) {
-					v.setCurrentRoadmapPos(vehiclesPos.get(name));
-				}
+	}
+
+	private void updateVehiclesEdge() throws IOException {
+		Map<String, RoadmapPosition> vehiclesPos = getAllVehiclesRoadmapPos();
+		for ( Vehicle v : vehicles.values() ) {
+			String name = v.getID();
+			if (vehiclesPos.containsKey(name)) {
+				v.setCurrentRoadmapPos(vehiclesPos.get(name));
 			}
 		}
-		
 	}
 
 	protected void notifyCreated(Set<String> created) {
 		for (String id : created) {
-			vehicles.put(id, new Vehicle(id, socket, this));
-
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " created");
-
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
 				observer.vehicleCreated(id);
 		}
@@ -453,12 +493,6 @@ public class SumoTraciConnection {
 		for (String id : destroyed) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
 				observer.vehicleDestroyed(id);
-
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " destroyed");
-
-			vehicles.get(id).alive = false;
-			vehicles.remove(id);
 		}
 	}
 
@@ -513,6 +547,9 @@ public class SumoTraciConnection {
 	 *             if the given ID doesn't match any active vehicle
 	 */
 	public Vehicle getVehicle(String id) {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		if (vehicles.containsKey(id))
 			return vehicles.get(id);
 		else
@@ -530,6 +567,9 @@ public class SumoTraciConnection {
 	 *             if something wrong happened while sending the TraCI command.
 	 */
 	public Collection<Road> queryRoads() throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		if (cachedRoads == null) {
 			log.info("Retrieving roads...");
 			Set<Road> roads = (new RoadmapQuery(socket)).queryRoads(readInternalLinks);
@@ -547,6 +587,9 @@ public class SumoTraciConnection {
 	}
 	
 	public Map<String, Road> getRoadsMap() throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		queryRoads();
 		return cachedRoads;
 	}
@@ -562,6 +605,9 @@ public class SumoTraciConnection {
 	 *             if the ID doesn't match any road
 	 */
 	public double getRoadLength(String roadID) throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		Road r = getRoad(roadID);
 		return r.getLength();
 	}
@@ -575,6 +621,9 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 */
 	public Road getRoad(String roadID) throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		if (cachedRoads == null)
 			queryRoads();
 
@@ -716,6 +765,9 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 */
 	public void changeLaneMaxVelocity(String laneID, float vmax) throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		ChangeLaneStateQuery clsq = new ChangeLaneStateQuery(socket, laneID);
 		clsq.changeMaxVelocity(vmax);
 	}
@@ -733,6 +785,9 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 */
 	public void changeEdgeTravelTime(int begin, int end, String edgeID, float travelTime) throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		ChangeEdgeStateQuery cesq = new ChangeEdgeStateQuery(socket, edgeID);
 		cesq.changeGlobalTravelTime(begin, end, travelTime);
 	}
@@ -745,6 +800,9 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 */
 	public float getEdgeTravelTime(String edgeID) throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
+		
 		return getEdgeTravelTime(edgeID, currentSimStep);
 	}
 
@@ -762,6 +820,8 @@ public class SumoTraciConnection {
 	}
 
 	public Map<String, RoadmapPosition> getAllVehiclesRoadmapPos() throws IOException {
+		if (isClosed())
+			throw new IllegalStateException("connection is closed");
 		
 		Set<String> vehicleIDs = new HashSet<String>();
 		for (Vehicle v : vehicles.values()) {

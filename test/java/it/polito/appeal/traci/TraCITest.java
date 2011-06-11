@@ -25,12 +25,13 @@ import it.polito.appeal.traci.protocol.BoundingBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -192,23 +193,51 @@ public class TraCITest {
 	}
 	
 	@Test
-	@Ignore // to complete!
-	public void testDepartureObserver() throws IOException {
+	public void testCloseInObserverBody() throws IOException {
+		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
+			@Override public void vehicleDestroyed(String id) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+			@Override public void vehicleCreated(String id) { }
+		});
+		getFirstVehicleID();
+	}
+	
+	@Test
+	public void testWhoDepartsArrives() throws IOException {
+		
+		final Set<String> traveling = new HashSet<String>();
 		
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			
 			@Override
-			public void vehicleDestroyed(String id) { }
+			public void vehicleDestroyed(String id) {
+				assertTrue(traveling.contains(id));
+				traveling.remove(id);
+				if (traveling.isEmpty()) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
 			
 			@Override
 			public void vehicleCreated(String id) {
-				// TODO Auto-generated method stub
-				
+				assertFalse(traveling.contains(id));
+				traveling.add(id);
 			}
 		});
 		
-		while(true)
+		while(!conn.isClosed()) {
 			conn.nextSimStep();
+			System.out.println(conn.getCurrentSimStep());
+		}
 			
 	}
 }
