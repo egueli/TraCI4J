@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
+import org.apache.log4j.Logger;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -39,6 +43,8 @@ import de.uniluebeck.itm.tcpip.Storage;
  *      href="https://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Messages">https://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Messages</a>
  */
 public class RequestMessage {
+
+	private static final Logger log = Logger.getLogger(RequestMessage.class);
 
 	private final List<Command> commands = new ArrayList<Command>();
 
@@ -66,19 +72,35 @@ public class RequestMessage {
 			totalLen += cmd.rawSize();
 		}
 
+		Checksum checksum = null;
+		if (log.isDebugEnabled()) {
+			checksum = new CRC32();
+			log.debug("sending a message " + totalLen + " bytes long");
+			
+		}
+		
 		dos.writeInt(totalLen);
+
 
 		for (Command cmd : commands) {
 			Storage s = new Storage();
 			cmd.writeRawTo(s);
-			storageToDOS(s, dos);
+			storageToDOS(s, dos, checksum);
 		}
+
+		if (log.isDebugEnabled())
+			log.debug("message checksum (without len) = " + checksum.getValue());
 	}
 
-	private void storageToDOS(Storage storage, DataOutputStream dos)
+	private void storageToDOS(Storage storage, DataOutputStream dos, Checksum checksum)
 			throws IOException {
-		for (Byte b : storage.getStorageList())
+		
+		for (Byte b : storage.getStorageList()) {
+			if (checksum != null)
+				checksum.update(b);
+			
 			dos.writeByte(b);
+		}
 	}
 
 	public List<Command> commands() {

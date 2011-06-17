@@ -41,6 +41,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -160,11 +161,11 @@ public class SumoTraciConnection {
 
 	private int currentSimStep;
 	private Process sumoProcess;
-	private final Set<String> activeVehicles;
+	private final Set<String> activeVehicles = new HashSet<String>();
 	@Deprecated
 	private int maxVehicleID;
-	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers;
-	private final Map<String, Vehicle> vehicles;
+	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
+	private final Map<String, Vehicle> vehicles = new HashMap<String, Vehicle>();
 
 	private static final int CONNECT_RETRIES = 9;
 
@@ -198,12 +199,33 @@ public class SumoTraciConnection {
 			boolean useGeoOffset) {
 		this.randomSeed = randomSeed;
 		this.configFile = configFile;
-		activeVehicles = new HashSet<String>();
-		vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
-		vehicles = new HashMap<String, Vehicle>();
 
 		if (useGeoOffset)
 			geoOffset = lookForGeoOffset(configFile);
+	}
+	
+	public SumoTraciConnection(SocketAddress sockAddr) throws IOException,
+			InterruptedException {
+		
+		socket = new Socket();
+		if (log.isDebugEnabled())
+			log.debug("Connecting to remote TraCI server at " + socket.toString());
+
+		int waitTime = 500; // milliseconds
+		for (int i = 0; i < CONNECT_RETRIES; i++) {
+
+			try {
+				socket.connect(sockAddr);
+				log.info("Connection to SUMO established.");
+				break;
+			} catch (ConnectException ce) {
+				log.debug("Server not ready, retrying in " + waitTime
+						+ "ms");
+				Thread.sleep(waitTime);
+				waitTime *= 2;
+			}
+		}
+
 	}
 
 	/**
@@ -347,8 +369,10 @@ public class SumoTraciConnection {
 		 * impossible at this point.
 		 */
 		if (socket != null) {
-			closeQuery.doCommand();
-			closeQuery = null;
+			if (closeQuery != null) {
+				closeQuery.doCommand();
+				closeQuery = null;
+			}
 			socket = null;
 		}
 		
@@ -374,7 +398,7 @@ public class SumoTraciConnection {
 	 * @see #close()
 	 */
 	public boolean isClosed() {
-		return sumoProcess == null;
+		return socket == null || socket.isClosed();
 	}
 
 	/**
