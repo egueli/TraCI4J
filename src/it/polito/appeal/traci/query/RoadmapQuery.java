@@ -81,7 +81,7 @@ public class RoadmapQuery extends DomainQuery {
 		
 		for (ResponseContainer laneRespC : respm.responses()) {
 			Command laneResp = laneRespC.getResponse();
-			verify("lane response id", Constants.RESPONSE_GET_EDGE_VARIABLE,
+			verify("lane response id", Constants.RESPONSE_GET_LANE_VARIABLE,
 					laneResp.id());
 			verify("lane variable", Constants.VAR_SHAPE, laneResp.content()
 					.readUnsignedByte());

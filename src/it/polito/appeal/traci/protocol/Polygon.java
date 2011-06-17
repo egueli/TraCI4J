@@ -38,7 +38,7 @@ public class Polygon {
 		
 		shape = new Path2D.Float();
 		
-		int count = packet.readInt();
+		int count = packet.readUnsignedByte();
 		for (int i=0; i<count; i++) {
 			if (i==0)
 				shape.moveTo(packet.readFloat(), packet.readFloat());

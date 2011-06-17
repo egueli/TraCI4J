@@ -147,4 +147,13 @@ public abstract class Query {
 		if(!actual.equals(expected))
 			throw new UnexpectedData(description, expected, actual);
 	}
+
+	protected static void verify(String description, int expected, short actual) throws UnexpectedData {
+		verify(description, expected, (int)actual);
+	}
+
+	protected static void verify(String description, int expected, byte actual) throws UnexpectedData {
+		verify(description, expected, (int)actual);
+	}
+
 }

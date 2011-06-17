@@ -25,6 +25,7 @@ import it.polito.appeal.traci.protocol.BoundingBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -240,4 +241,29 @@ public class TraCITest {
 		}
 			
 	}
+
+	@Test
+	public void testQueryRoads() throws IOException {
+		Set<String> expectedLaneIDs = new HashSet<String>();
+		expectedLaneIDs.add("beg_0");
+		expectedLaneIDs.add("beg2left_0");
+		expectedLaneIDs.add("end_0");
+		expectedLaneIDs.add("left_0");
+		expectedLaneIDs.add("left2end_0");
+		expectedLaneIDs.add("middle_0");
+		expectedLaneIDs.add("rend_0");
+		
+		
+		Collection<Road> lanes = conn.queryRoads();
+		for (Road lane : lanes) {
+			String id = lane.externalID;
+			if (expectedLaneIDs.contains(id))
+				expectedLaneIDs.remove(id);
+			else
+				fail("unexpected lane " + id);
+		}
+		
+		assertTrue(expectedLaneIDs.isEmpty());
+	}
+	
 }

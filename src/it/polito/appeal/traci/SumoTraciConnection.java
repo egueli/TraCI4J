@@ -161,6 +161,7 @@ public class SumoTraciConnection {
 	private int currentSimStep;
 	private Process sumoProcess;
 	private final Set<String> activeVehicles;
+	@Deprecated
 	private int maxVehicleID;
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers;
 	private final Map<String, Vehicle> vehicles;
@@ -508,6 +509,7 @@ public class SumoTraciConnection {
 	 * Returns the maximum number of vehicles that participate into the
 	 * simulation.
 	 */
+	@Deprecated
 	public int getMaxVehicleCount() {
 		return maxVehicleID;
 	}
