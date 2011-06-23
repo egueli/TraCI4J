@@ -21,6 +21,7 @@ package it.polito.appeal.traci.protocol;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -85,22 +86,26 @@ public class RequestMessage {
 		for (Command cmd : commands) {
 			Storage s = new Storage();
 			cmd.writeRawTo(s);
-			storageToDOS(s, dos, checksum);
+			writeStorage(s, dos, checksum);
 		}
 
 		if (log.isDebugEnabled())
 			log.debug("message checksum (without len) = " + checksum.getValue());
 	}
 
-	private void storageToDOS(Storage storage, DataOutputStream dos, Checksum checksum)
+	private void writeStorage(Storage storage, OutputStream os, Checksum checksum)
 			throws IOException {
 		
+		byte[] buf = new byte[storage.getStorageList().size()];
+		int n = 0;
 		for (Byte b : storage.getStorageList()) {
 			if (checksum != null)
 				checksum.update(b);
 			
-			dos.writeByte(b);
+			buf[n] = b;
+			n++;
 		}
+		os.write(buf);
 	}
 
 	public List<Command> commands() {
