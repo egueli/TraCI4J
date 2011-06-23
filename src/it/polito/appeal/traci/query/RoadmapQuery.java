@@ -34,8 +34,13 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 public class RoadmapQuery extends DomainQuery {
 
+	private static final Logger log = Logger.getLogger(RoadmapQuery.class);
+
+	
 	public RoadmapQuery(Socket sock) throws IOException {
 		super(sock);
 	}
@@ -63,6 +68,15 @@ public class RoadmapQuery extends DomainQuery {
 		resp.content().readStringASCII(); // ignored
 		
 		StringList laneIDs = new StringList(respc.getResponse().content(), true);
+		
+		if (log.isDebugEnabled()) {
+			log.debug("laneIDs: ");
+			int i=0;
+			for (String laneID : laneIDs) {
+				log.debug("#" + i + ": " + laneID);
+				i++;
+			}
+		}
 		
 		RequestMessage reqm = new RequestMessage();
 		
