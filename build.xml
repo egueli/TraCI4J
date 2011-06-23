@@ -92,4 +92,26 @@
             <report format="frames" todir="${junit.output.dir}"/>
         </junitreport>
     </target>
+	
+    <target name="javadoc">
+        <javadoc 
+        	access="package" 
+        	author="true" 
+        	classpathref="TraCI4J.classpath" 
+        	destdir="doc" 
+        	doctitle="TraCI4J Javadoc" 
+        	nodeprecated="false" 
+        	nodeprecatedlist="false" 
+        	noindex="false" 
+        	nonavbar="false" 
+        	notree="false" 
+        	packagenames="it.polito.appeal.traci.*,de.uniluebeck.itm.tcpip" 
+        	source="1.6" 
+	    	sourcepath="src" 
+	    	splitindex="true" 
+	    	use="true" 
+	    	version="true">
+            <link href="http://java.sun.com/javase/6/docs/api/"/>
+        </javadoc>
+    </target>
 </project>

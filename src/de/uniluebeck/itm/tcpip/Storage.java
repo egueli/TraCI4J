@@ -95,7 +95,7 @@ public class Storage {
 	/**
 	 * Write a byte value to the List
 	 * a signed value will be converted to its unsigned equivalent first
-	 * @param value: the byte to be written
+	 * @param value the byte to be written
 	 */
 	public void writeByte(short value) throws IllegalArgumentException
 	{
@@ -161,7 +161,7 @@ public class Storage {
 	
 	/**
 	 * Write a signed short value to the list
-	 * @param value: the short value to be written
+	 * @param value the short value to be written
 	 */
 	public void writeShort(int value) throws IllegalArgumentException
 	{
@@ -185,7 +185,7 @@ public class Storage {
 
 	/**
 	 * Read a short value from the list
-	 * @return: the read short value as an Integer
+	 * @return the read short value as an Integer
 	 */
 	public int readShort() throws IllegalStateException
 	{
@@ -213,7 +213,7 @@ public class Storage {
 	/**
 	 * Write an signed Integer to the list
 	 * the int value is being split up into 4 bytes in msb first order
-	 * @param value: the int value to be written
+	 * @param value the int value to be written
 	 */
 	public void writeInt(int value) throws IllegalArgumentException
 	{
@@ -263,7 +263,7 @@ public class Storage {
 	/**
 	 * Write a Float to the list
 	 * the float value is beeing split up into 4 bytes in msb first order
-	 * @param value: the float value to be written
+	 * @param value the float value to be written
 	 */
 	public void writeFloat(float value) throws IllegalArgumentException
 	{
@@ -313,7 +313,7 @@ public class Storage {
 	/**
 	 * Write a Double to the list
 	 * the value is beeing split up into 8 bytes in msb first order
-	 * @param value: the double value to be written
+	 * @param value the double value to be written
 	 */
 	public void writeDouble(double value) throws IllegalArgumentException
 	{

@@ -67,12 +67,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * simulation step, to retrieve vehicles' info, to set vehicles' routes and to
  * get roads' info.
  * <p>
- * To use it, create an instance and call {@link #runServer()}, creating the
- * subprocess. Then, call {@link #getActiveVehicles()} to obtain the set of
- * integer vehicle IDs alive at t=0. By calling {@link #getVehicle(int)} with
- * the proper ID, you'll obtain a {@link Vehicle} instance to interact with a
- * specific vehicle. With {@link #queryRoads(boolean)}, {@link #getRoad(String)}, {@link #getRoadLength(String)} and {@link #getGeoOffset()} you can obtain
- * info about the street map.
+ * To use it, create an instance and call {@link #runServer()}, that will start the
+ * subprocess. From there, you can use all the other methods to interact with
+ * the simulator.
  * <p>
  * The method {@link #nextSimStep()} will advance SUMO by a time step (one
  * second). The methods
@@ -86,9 +83,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * <p>
  * At simulation end, one should call {@link #close()} to gracefully close the
  * simulator and free any resources.
- * <p>
- * It implements the {@link DoNotRewrite} interface because the TCP/IP code
- * should work with the system API, not the SWANS one.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@gmail.com&gt;
  * 
@@ -394,7 +388,6 @@ public class SumoTraciConnection {
 	 * <p>
 	 * NOTE: it may not return <code>true</code> if an error occurred and the
 	 * connection with SUMO is broken.
-	 * @return
 	 * @see #close()
 	 */
 	public boolean isClosed() {
@@ -540,8 +533,6 @@ public class SumoTraciConnection {
 
 	/**
 	 * Returns the current simulation step number.
-	 * 
-	 * @return
 	 */
 	public int getCurrentSimStep() {
 		return currentSimStep;
@@ -624,7 +615,6 @@ public class SumoTraciConnection {
 	 * Returns the length of a single road given its string ID.
 	 * 
 	 * @param roadID
-	 * @return
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 * @throws NullPointerException
@@ -673,7 +663,6 @@ public class SumoTraciConnection {
 	 * NOTE: I marked this as "deprecated" since it may not work with the HTTP
 	 * retrieval feature. Testing needed.
 	 * @param configFile
-	 * @return
 	 */
 	@Deprecated
 	private static Point2D lookForGeoOffset(String configFile) {
@@ -762,7 +751,6 @@ public class SumoTraciConnection {
 
 	/**
 	 * Returns whether the inner-junction links will be read.
-	 * @return
 	 */
 	public boolean isReadInternalLinks() {
 		return readInternalLinks;
@@ -822,7 +810,6 @@ public class SumoTraciConnection {
 	 * Returns the globally-specified travel time of an edge in the current
 	 * time step.
 	 * @param edgeID
-	 * @return
 	 * @throws IOException
 	 */
 	public float getEdgeTravelTime(String edgeID) throws IOException {
@@ -837,7 +824,6 @@ public class SumoTraciConnection {
 	 * step.
 	 * @param edgeID
 	 * @param time
-	 * @return
 	 * @throws IOException
 	 */
 	private float getEdgeTravelTime(String edgeID, int time) throws IOException {

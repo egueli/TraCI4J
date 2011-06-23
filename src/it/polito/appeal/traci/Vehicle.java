@@ -98,8 +98,6 @@ public class Vehicle {
 
 	/**
 	 * Returns the ID of this vehicle.
-	 * 
-	 * @return
 	 */
 	public String getID() {
 		return id;
@@ -122,7 +120,6 @@ public class Vehicle {
 	/**
 	 * Returns the vehicle's route, represented as an ordered list of its roads.
 	 * 
-	 * @return
 	 * @throws IOException
 	 * @throws NotActiveException
 	 */
@@ -147,7 +144,6 @@ public class Vehicle {
 	 * Returns the current X/Y coordinates of the vehicle in the simulation
 	 * field.
 	 * 
-	 * @return
 	 * @throws IOException
 	 * @throws NotActiveException
 	 */
@@ -166,7 +162,6 @@ public class Vehicle {
 	/**
 	 * Returns the road the vehicle is currently running into.
 	 * 
-	 * @return
 	 * @throws IOException
 	 * @throws NotActiveException
 	 */
@@ -252,7 +247,6 @@ public class Vehicle {
 	 * Returns true if the vehicle is currently active in the simulation.
 	 * This method should be called before every invocation of other methods,
 	 * in order to avoid {@link NotActiveException}s.
-	 * @return
 	 */
 	public boolean isAlive() {
 		return alive;
@@ -262,7 +256,6 @@ public class Vehicle {
 	 * Returns the {@link Road} object matching the specified road ID.
 	 * @see SumoTraciConnection#getRoad(String)
 	 * @param roadID
-	 * @return
 	 * @throws IOException
 	 */
 	public Road getRoad(String roadID) throws IOException {
@@ -279,7 +272,6 @@ public class Vehicle {
 
 	/**
 	 * Returns the creation time, i.e. the SUMO departure time.
-	 * @return
 	 */
 	public int getCreationTime() {
 		return creationTime;

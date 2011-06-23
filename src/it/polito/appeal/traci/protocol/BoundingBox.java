@@ -84,7 +84,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#clone()
 	 */
 	public Object clone() {
@@ -96,7 +96,7 @@ public class BoundingBox extends Rectangle2D {
 	 * @param y
 	 * @param w
 	 * @param h
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#contains(double, double, double, double)
 	 */
 	public boolean contains(double x, double y, double w, double h) {
@@ -106,7 +106,7 @@ public class BoundingBox extends Rectangle2D {
 	/**
 	 * @param x
 	 * @param y
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#contains(double, double)
 	 */
 	public boolean contains(double x, double y) {
@@ -115,7 +115,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param arg0
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#contains(java.awt.geom.Point2D)
 	 */
 	public boolean contains(Point2D arg0) {
@@ -124,7 +124,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param arg0
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#contains(java.awt.geom.Rectangle2D)
 	 */
 	public boolean contains(Rectangle2D arg0) {
@@ -133,7 +133,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param r
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#createIntersection(java.awt.geom.Rectangle2D)
 	 */
 	public Rectangle2D createIntersection(Rectangle2D r) {
@@ -142,7 +142,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param r
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#createUnion(java.awt.geom.Rectangle2D)
 	 */
 	public Rectangle2D createUnion(Rectangle2D r) {
@@ -151,7 +151,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param obj
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
@@ -159,7 +159,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getBounds()
 	 */
 	public Rectangle getBounds() {
@@ -167,7 +167,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#getBounds2D()
 	 */
 	public Rectangle2D getBounds2D() {
@@ -175,7 +175,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getCenterX()
 	 */
 	public double getCenterX() {
@@ -183,7 +183,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getCenterY()
 	 */
 	public double getCenterY() {
@@ -191,7 +191,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getFrame()
 	 */
 	public Rectangle2D getFrame() {
@@ -199,7 +199,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getHeight()
 	 */
 	public double getHeight() {
@@ -207,7 +207,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getMaxX()
 	 */
 	public double getMaxX() {
@@ -215,7 +215,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getMaxY()
 	 */
 	public double getMaxY() {
@@ -223,7 +223,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getMinX()
 	 */
 	public double getMinX() {
@@ -231,7 +231,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getMinY()
 	 */
 	public double getMinY() {
@@ -241,7 +241,7 @@ public class BoundingBox extends Rectangle2D {
 	/**
 	 * @param at
 	 * @param flatness
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#getPathIterator(java.awt.geom.AffineTransform, double)
 	 */
 	public PathIterator getPathIterator(AffineTransform at, double flatness) {
@@ -250,7 +250,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param at
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#getPathIterator(java.awt.geom.AffineTransform)
 	 */
 	public PathIterator getPathIterator(AffineTransform at) {
@@ -258,7 +258,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getWidth()
 	 */
 	public double getWidth() {
@@ -266,7 +266,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getX()
 	 */
 	public double getX() {
@@ -274,7 +274,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#getY()
 	 */
 	public double getY() {
@@ -282,7 +282,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#hashCode()
 	 */
 	public int hashCode() {
@@ -294,7 +294,7 @@ public class BoundingBox extends Rectangle2D {
 	 * @param y
 	 * @param w
 	 * @param h
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#intersects(double, double, double, double)
 	 */
 	public boolean intersects(double x, double y, double w, double h) {
@@ -303,7 +303,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param arg0
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#intersects(java.awt.geom.Rectangle2D)
 	 */
 	public boolean intersects(Rectangle2D arg0) {
@@ -315,7 +315,7 @@ public class BoundingBox extends Rectangle2D {
 	 * @param y1
 	 * @param x2
 	 * @param y2
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#intersectsLine(double, double, double, double)
 	 */
 	public boolean intersectsLine(double x1, double y1, double x2, double y2) {
@@ -324,7 +324,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param l
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#intersectsLine(java.awt.geom.Line2D)
 	 */
 	public boolean intersectsLine(Line2D l) {
@@ -332,7 +332,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.awt.geom.RectangularShape#isEmpty()
 	 */
 	public boolean isEmpty() {
@@ -342,7 +342,7 @@ public class BoundingBox extends Rectangle2D {
 	/**
 	 * @param x
 	 * @param y
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#outcode(double, double)
 	 */
 	public int outcode(double x, double y) {
@@ -351,7 +351,7 @@ public class BoundingBox extends Rectangle2D {
 
 	/**
 	 * @param p
-	 * @return
+
 	 * @see java.awt.geom.Rectangle2D#outcode(java.awt.geom.Point2D)
 	 */
 	public int outcode(Point2D p) {
@@ -448,7 +448,7 @@ public class BoundingBox extends Rectangle2D {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

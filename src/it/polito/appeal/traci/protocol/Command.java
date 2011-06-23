@@ -118,7 +118,6 @@ public class Command {
 
 	/**
 	 * Returns the expected size of the serialized form of this command.
-	 * @return
 	 */
 	public int rawSize() {
 		return HEADER_SIZE + content.size();

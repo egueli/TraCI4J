@@ -56,8 +56,8 @@ public abstract class VehicleQuery extends Query {
 	 * type too.
 	 * @param variable
 	 * @param varType
-	 * @return
 	 * @throws IOException
+	 * @see #queryAndVerifyGetVarCommand(int)
 	 */
 	protected Command queryAndVerifyGetVarCommand(int variable, int varType) throws IOException {
 		Command req = makeReadVarCommand(variable);
@@ -71,10 +71,8 @@ public abstract class VehicleQuery extends Query {
 	/**
 	 * Sends a "get vehicle variable" command and checks that the received
 	 * response matches the response code, variable ID and vehicle ID.
-	 * Returns the command whose content pointer is already set to the data to
-	 * read.
 	 * @param variable the variable ID
-	 * @return
+	 * @return the response, already pointing to the data to read
 	 * @throws IOException 
 	 */
 	protected Command queryAndVerifyGetVarCommand(int variable) throws IOException {

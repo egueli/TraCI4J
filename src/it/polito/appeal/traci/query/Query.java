@@ -46,7 +46,6 @@ public abstract class Query {
 	/**
 	 * Sends a request message to SUMO and returns a response message. 
 	 * @param msg
-	 * @return
 	 * @throws IOException
 	 */
 	protected ResponseMessage doQuery(RequestMessage msg) throws IOException {
@@ -56,11 +55,12 @@ public abstract class Query {
 
 
 	/**
-	 * Like {@link #doQuery(Command)}; in addition, verifies that all
+	 * Like {@link #doQuery(RequestMessage)}; in addition, verifies that all
 	 * responses are successful and and the statuses match the requests.
-	 * @param request
-	 * @return
+	 * @param reqMsg
+	 * @return the verified response message
 	 * @throws IOException
+	 * @see #doQuery(RequestMessage)
 	 */
 	protected ResponseMessage queryAndVerify(RequestMessage reqMsg) throws IOException {
 		reqMsg.writeTo(outStream);
@@ -88,7 +88,6 @@ public abstract class Query {
 	 * one-response queries.
 	 * 
 	 * @param request
-	 * @return
 	 * @throws IOException
 	 */
 	protected ResponseContainer doQuerySingle(Command request) throws IOException {
@@ -103,7 +102,7 @@ public abstract class Query {
 	 * one-response queries.
 	 * 
 	 * @param request
-	 * @return
+	 * @return the response container for the specified request
 	 * @throws IOException
 	 */
 	protected ResponseContainer queryAndVerifySingle(Command request) throws IOException {

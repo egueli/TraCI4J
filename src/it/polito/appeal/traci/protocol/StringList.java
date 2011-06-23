@@ -76,7 +76,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param e
-	 * @return
+
 	 * @see java.util.List#add(java.lang.Object)
 	 */
 	public boolean add(String e) {
@@ -85,7 +85,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param c
-	 * @return
+
 	 * @see java.util.List#addAll(java.util.Collection)
 	 */
 	public boolean addAll(Collection<? extends String> c) {
@@ -95,7 +95,7 @@ public class StringList implements List<String> {
 	/**
 	 * @param index
 	 * @param c
-	 * @return
+
 	 * @see java.util.List#addAll(int, java.util.Collection)
 	 */
 	public boolean addAll(int index, Collection<? extends String> c) {
@@ -112,7 +112,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param o
-	 * @return
+
 	 * @see java.util.List#contains(java.lang.Object)
 	 */
 	public boolean contains(Object o) {
@@ -121,7 +121,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param c
-	 * @return
+
 	 * @see java.util.List#containsAll(java.util.Collection)
 	 */
 	public boolean containsAll(Collection<?> c) {
@@ -130,7 +130,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param o
-	 * @return
+
 	 * @see java.util.List#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
@@ -139,7 +139,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param index
-	 * @return
+
 	 * @see java.util.List#get(int)
 	 */
 	public String get(int index) {
@@ -147,7 +147,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#hashCode()
 	 */
 	public int hashCode() {
@@ -156,7 +156,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param o
-	 * @return
+
 	 * @see java.util.List#indexOf(java.lang.Object)
 	 */
 	public int indexOf(Object o) {
@@ -164,7 +164,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#isEmpty()
 	 */
 	public boolean isEmpty() {
@@ -172,7 +172,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#iterator()
 	 */
 	public Iterator<String> iterator() {
@@ -181,7 +181,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param o
-	 * @return
+
 	 * @see java.util.List#lastIndexOf(java.lang.Object)
 	 */
 	public int lastIndexOf(Object o) {
@@ -189,7 +189,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#listIterator()
 	 */
 	public ListIterator<String> listIterator() {
@@ -198,7 +198,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param index
-	 * @return
+
 	 * @see java.util.List#listIterator(int)
 	 */
 	public ListIterator<String> listIterator(int index) {
@@ -207,7 +207,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param index
-	 * @return
+
 	 * @see java.util.List#remove(int)
 	 */
 	public String remove(int index) {
@@ -216,7 +216,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param o
-	 * @return
+
 	 * @see java.util.List#remove(java.lang.Object)
 	 */
 	public boolean remove(Object o) {
@@ -225,7 +225,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param c
-	 * @return
+
 	 * @see java.util.List#removeAll(java.util.Collection)
 	 */
 	public boolean removeAll(Collection<?> c) {
@@ -234,7 +234,7 @@ public class StringList implements List<String> {
 
 	/**
 	 * @param c
-	 * @return
+
 	 * @see java.util.List#retainAll(java.util.Collection)
 	 */
 	public boolean retainAll(Collection<?> c) {
@@ -244,7 +244,7 @@ public class StringList implements List<String> {
 	/**
 	 * @param index
 	 * @param element
-	 * @return
+
 	 * @see java.util.List#set(int, java.lang.Object)
 	 */
 	public String set(int index, String element) {
@@ -252,7 +252,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#size()
 	 */
 	public int size() {
@@ -262,7 +262,7 @@ public class StringList implements List<String> {
 	/**
 	 * @param fromIndex
 	 * @param toIndex
-	 * @return
+
 	 * @see java.util.List#subList(int, int)
 	 */
 	public List<String> subList(int fromIndex, int toIndex) {
@@ -270,7 +270,7 @@ public class StringList implements List<String> {
 	}
 
 	/**
-	 * @return
+
 	 * @see java.util.List#toArray()
 	 */
 	public Object[] toArray() {
@@ -280,8 +280,7 @@ public class StringList implements List<String> {
 	/**
 	 * @param <T>
 	 * @param a
-	 * @return
-	 * @see java.util.List#toArray(T[])
+	 * @see java.util.List#toArray(Object[])
 	 */
 	public <T> T[] toArray(T[] a) {
 		return list.toArray(a);
