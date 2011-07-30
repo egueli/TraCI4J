@@ -66,4 +66,12 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 
 		queryAndVerifySingle(cmd);
 	}
+	
+	public void changeTarget(String edgeID) throws IOException {
+		Command cmd = makeChangeStateCommand(Constants.CMD_CHANGETARGET, 
+				Constants.TYPE_STRING);
+		cmd.content().writeStringASCII(edgeID);
+
+		queryAndVerifySingle(cmd);
+	}
 }

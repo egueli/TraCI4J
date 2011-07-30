@@ -241,5 +241,32 @@ public class TraCITest {
 			
 	}
 
+	@Test
+	public void testChangeTarget() throws IOException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		try {
+			v.changeTarget("end");
+			
+			String lastEdge = null;
+			while (v.isAlive()) {
+				lastEdge = v.queryCurrentEdge();
+				assertFalse(lastEdge.equals("end"));
 
+				conn.nextSimStep();
+			}
+			
+		} catch (NotActiveException e) {
+			throw new RuntimeException("should never happen");
+		}
+	}
+	
+	@Test
+	public void testChangeTargetAlsoAffectsRouteList() throws IOException, NotActiveException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		v.changeTarget("end");
+		List<String> route = v.getCurrentRoute();
+		assertEquals("end", route.get(route.size()-1));
+	}
 }

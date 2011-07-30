@@ -305,4 +305,12 @@ public class Vehicle {
 		currentEdgeCache = pos;
 		currentEdgeCacheTimestep = conn.getCurrentSimStep();
 	}
+	
+	public void changeTarget(String edgeID) throws NotActiveException, IOException {
+		if (!alive)
+			throw new NotActiveException();
+		
+		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket, id);
+		rq.changeTarget(edgeID);
+	}
 }
