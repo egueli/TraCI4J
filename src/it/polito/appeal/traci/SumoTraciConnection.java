@@ -449,12 +449,12 @@ public class SumoTraciConnection {
 		for (String id : created) {
 			vehicles.put(id, new Vehicle(id, socket, this));
 
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " created");
+//			if (log.isDebugEnabled())
+//				log.debug("Vehicle " + id + " created");
 		}
 		for (String id : destroyed) {
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " destroyed");
+//			if (log.isDebugEnabled())
+//				log.debug("Vehicle " + id + " destroyed");
 			vehicles.get(id).alive = false;
 			vehicles.remove(id);
 		}
