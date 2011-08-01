@@ -21,10 +21,10 @@ package it.polito.appeal.traci.protocol;
 
 public class RoadmapPosition {
 	public final String edgeID;
-	public final float pos;
+	public final double pos;
 	public final int laneID;
 	
-	public RoadmapPosition(String edgeID, float pos, int laneID) {
+	public RoadmapPosition(String edgeID, double pos, int laneID) {
 		this.edgeID = edgeID;
 		this.pos = pos;
 		this.laneID = laneID;

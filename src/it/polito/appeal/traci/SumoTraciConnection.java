@@ -19,7 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.protocol.BoundingBox;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
 import it.polito.appeal.traci.query.ChangeEdgeStateQuery;
 import it.polito.appeal.traci.query.ChangeLaneStateQuery;
@@ -31,6 +30,7 @@ import it.polito.appeal.traci.query.SimStepQuery;
 import it.polito.appeal.traci.query.SubscribeVehiclesLifecycle;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -156,8 +156,6 @@ public class SumoTraciConnection {
 	private int currentSimStep;
 	private Process sumoProcess;
 	private final Set<String> activeVehicles = new HashSet<String>();
-	@Deprecated
-	private int maxVehicleID;
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
 	private final Map<String, Vehicle> vehicles = new HashMap<String, Vehicle>();
 
@@ -312,7 +310,7 @@ public class SumoTraciConnection {
 
 		String[] args;
 		if (randomSeed != -1)
-			args = new String[] { sumoEXE, "-c", configFile, "--srand",
+			args = new String[] { sumoEXE, "-c", configFile, "--seed",
 					Integer.toString(randomSeed), "--remote-port",
 					Integer.toString(remotePort) };
 		else
@@ -402,11 +400,21 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 */
-	public BoundingBox queryBounds() throws IOException {
+	public Rectangle2D queryBounds() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		return (new RoadmapQuery(socket)).queryBoundaries();
+		Map<String, Road> roads = getRoadsMap();
+		Rectangle2D boundsAll = null;
+		for (Road r : roads.values()) {
+			Rectangle2D bounds = (Rectangle2D)r.getBoundingBox().clone();
+			if (boundsAll == null)
+				boundsAll = bounds;
+			else
+				boundsAll = boundsAll.createUnion(bounds);
+		}
+		
+		return boundsAll;
 	}
 
 	/**
@@ -520,15 +528,6 @@ public class SumoTraciConnection {
 	 */
 	public Set<String> getActiveVehicles() {
 		return activeVehicles;
-	}
-
-	/**
-	 * Returns the maximum number of vehicles that participate into the
-	 * simulation.
-	 */
-	@Deprecated
-	public int getMaxVehicleCount() {
-		return maxVehicleID;
 	}
 
 	/**
@@ -789,7 +788,7 @@ public class SumoTraciConnection {
 	/**
 	 * Sets the travel time of a given edge in the specified time frame.
 	 * Subsequent rerouting of vehicles (either with {@link Vehicle#reroute()}
-	 * or {@link Vehicle#changeRoute(String, Number)}) will be affected by this
+	 * or {@link Vehicle#setEdgeTravelTime(String, Number)}) will be affected by this
 	 * setting, if they don't have another specified travel time for this edge.
 	 * 
 	 * @param begin
@@ -798,7 +797,7 @@ public class SumoTraciConnection {
 	 * @param travelTime
 	 * @throws IOException
 	 */
-	public void changeEdgeTravelTime(int begin, int end, String edgeID, float travelTime) throws IOException {
+	public void changeEdgeTravelTime(int begin, int end, String edgeID, double travelTime) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
@@ -812,7 +811,7 @@ public class SumoTraciConnection {
 	 * @param edgeID
 	 * @throws IOException
 	 */
-	public float getEdgeTravelTime(String edgeID) throws IOException {
+	public double getEdgeTravelTime(String edgeID) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
@@ -826,7 +825,7 @@ public class SumoTraciConnection {
 	 * @param time
 	 * @throws IOException
 	 */
-	private float getEdgeTravelTime(String edgeID, int time) throws IOException {
+	private double getEdgeTravelTime(String edgeID, int time) throws IOException {
 		RetrieveEdgeStateQuery resq = new RetrieveEdgeStateQuery(socket, edgeID);
 		return resq.getGlobalTravelTime(time);
 	}

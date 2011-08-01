@@ -32,7 +32,7 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		super(sock, vehicleID);
 	}
 
-	public void changeEdgeTravelTime(int beginTime, int endTime, String edgeID, float travelTime) throws IOException {
+	public void changeEdgeTravelTime(int beginTime, int endTime, String edgeID, double travelTime) throws IOException {
 		Command cmd = 
 			makeChangeStateCommand(Constants.VAR_EDGE_TRAVELTIME, Constants.TYPE_COMPOUND);
 		cmd.content().writeInt(4);
@@ -42,8 +42,8 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		cmd.content().writeInt(endTime);
 		cmd.content().writeUnsignedByte(Constants.TYPE_STRING);
 		cmd.content().writeStringASCII(edgeID);
-		cmd.content().writeUnsignedByte(Constants.TYPE_FLOAT);
-		cmd.content().writeFloat(travelTime);
+		cmd.content().writeUnsignedByte(Constants.TYPE_DOUBLE);
+		cmd.content().writeDouble(travelTime);
 		
 		queryAndVerifySingle(cmd);
 	}

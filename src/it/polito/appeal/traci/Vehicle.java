@@ -193,22 +193,22 @@ public class Vehicle {
 	 * @throws IOException
 	 * @throws NotActiveException
 	 */
-	public void changeRoute(String edgeID, Number travelTime)
+	public void setEdgeTravelTime(String edgeID, Number travelTime)
 			throws IOException, NotActiveException {
 		
-		changeRouteMany(Collections.singletonMap(edgeID, travelTime));
+		setEdgeTravelTimeMany(Collections.singletonMap(edgeID, travelTime));
 	}
 
 	/**
 	 * Try to change the vehicle's route by changing the estimated time to
 	 * travel the roads specified in the map.
 	 * See also <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Mobility-related_commands#Command_0x30:_Change_Route">the documentation in the Wiki</a>.
-	 * @see #changeRoute(String, Number)
+	 * @see #setEdgeTravelTime(String, Number)
 	 * @param travelTimes
 	 * @throws NotActiveException
 	 * @throws IOException
 	 */
-	public void changeRouteMany(Map<String, ? extends Number> travelTimes)
+	public void setEdgeTravelTimeMany(Map<String, ? extends Number> travelTimes)
 			throws NotActiveException, IOException {
 		if (!alive)
 			throw new NotActiveException();
@@ -217,7 +217,7 @@ public class Vehicle {
 		
 		for (Entry<String, ? extends Number> entry : travelTimes.entrySet()) {
 			cvsq.changeEdgeTravelTime(0, Integer.MAX_VALUE, entry.getKey(),
-					entry.getValue().floatValue());			
+					entry.getValue().doubleValue());			
 		}
 		
 		cvsq.reroute();

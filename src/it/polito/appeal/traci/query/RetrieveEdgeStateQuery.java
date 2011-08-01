@@ -35,7 +35,7 @@ public class RetrieveEdgeStateQuery extends Query {
 		this.edgeID = edgeID;
 	}
 
-	public float getGlobalTravelTime(int time) throws IOException {
+	public double getGlobalTravelTime(int time) throws IOException {
 		Command cmd = makeReadVarCommand(Constants.CMD_GET_EDGE_VARIABLE, 
 				Constants.VAR_EDGE_TRAVELTIME, edgeID);
 		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
@@ -47,9 +47,9 @@ public class RetrieveEdgeStateQuery extends Query {
 		verifyGetVarResponse(resp, Constants.RESPONSE_GET_EDGE_VARIABLE,
 				Constants.VAR_EDGE_TRAVELTIME, edgeID);
 		
-		verify("edge travel time data type", Constants.TYPE_FLOAT, (int)resp
+		verify("edge travel time data type", Constants.TYPE_DOUBLE, (int)resp
 				.content().readUnsignedByte());
 		
-		return resp.content().readFloat();
+		return resp.content().readDouble();
 	}
 }

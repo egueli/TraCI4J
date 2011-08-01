@@ -56,15 +56,17 @@ public class ResponseMessage {
 	 * populating the list of {@link ResponseContainer}s.
 	 * <p>
 	 * A response message is made of individual packets. It is assumed that the
-	 * first packet is always a status response. According to the command ID of
-	 * the status response, different data are expected next:
+	 * first packet is always a status response. According to the status
+	 * response, different data are expected next:
 	 * <ul>
-	 * <li>if the ID is equal to {@link Constants#CMD_SIMSTEP2}, it is expected
-	 * an integer representing N and N following sub-responses;</li>
-	 * <li>if the ID matches one of the commands in
+	 * <li>if the status response is not {@link Constants#RTYPE_OK}, another
+	 * status response or the end of the stream are expected.</li>
+	 * <li>if the status ID is equal to {@link Constants#CMD_SIMSTEP2}, it is
+	 * expected an integer representing N and N following sub-responses;</li>
+	 * <li>if the status ID matches one of the commands in
 	 * {@link #STATUS_ONLY_RESPONSES} , it is expected another status response;
-	 * <li>if the ID doesn't match any of the above, it is expected a response
-	 * command.
+	 * <li>if the status ID doesn't match any of the above, it is expected a
+	 * response command.
 	 * </ul>
 	 * A new {@link ResponseMessage}, collecting all the data that belong to the
 	 * same request, is built and appended to an internal list.
@@ -84,7 +86,10 @@ public class ResponseMessage {
 			StatusResponse sr = new StatusResponse(s);
 			ResponseContainer responseContainer;
 			
-			if (sr.id() == Constants.CMD_SIMSTEP2) {
+			if (sr.result() != Constants.RTYPE_OK) {
+				responseContainer = new ResponseContainer(sr, null);
+			}
+			else if (sr.id() == Constants.CMD_SIMSTEP2) {
 				int nSubResponses = s.readInt();
 				List<Command> subResponses = new ArrayList<Command>(
 						nSubResponses);

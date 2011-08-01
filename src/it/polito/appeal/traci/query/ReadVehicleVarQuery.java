@@ -99,12 +99,12 @@ public class ReadVehicleVarQuery extends VehicleQuery {
 		verifyGetVarResponse(respGetLanePos,
 				Constants.RESPONSE_GET_VEHICLE_VARIABLE,
 				Constants.VAR_LANEPOSITION, vehicleID);		
-		verify("variable type", Constants.TYPE_FLOAT, (int) respGetLanePos
+		verify("variable type", Constants.TYPE_DOUBLE, (int) respGetLanePos
 				.content().readUnsignedByte());
 
 		return new RoadmapPosition(
 				respGetEdge.content().readStringASCII(),
-				respGetLanePos.content().readFloat(),
+				respGetLanePos.content().readDouble(),
 				respGetLaneIndex.content().readInt()
 				);
 	}

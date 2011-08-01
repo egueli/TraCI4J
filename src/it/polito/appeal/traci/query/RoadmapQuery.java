@@ -44,16 +44,6 @@ public class RoadmapQuery extends DomainQuery {
 	public RoadmapQuery(Socket sock) throws IOException {
 		super(sock);
 	}
-
-	public BoundingBox queryBoundaries() throws IOException {
-		Command resp = queryAndVerifyScenarioCommand(
-				Constants.DOM_ROADMAP,
-				0,
-				Constants.DOMVAR_BOUNDINGBOX,
-				Constants.TYPE_BOUNDINGBOX);
-		
-		return new BoundingBox(resp.content(), false);
-	}
 	
 	public Set<Road> queryRoads(boolean alsoInternal) throws IOException {
 		Set<Road> out = new HashSet<Road>();

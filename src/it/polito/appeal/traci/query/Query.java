@@ -77,7 +77,9 @@ public abstract class Query {
 			ResponseContainer responsePair = responses.get(i);
 			StatusResponse statusResp = responsePair.getStatus();
 			verify("command and status IDs match", cmd.id(), statusResp.id());
-			verify("status response OK, ", Constants.RTYPE_OK, statusResp.result());
+			if (statusResp.result() != Constants.RTYPE_OK)
+				throw new TraCIException("SUMO error for command "
+						+ statusResp.id() + ": " + statusResp.description());
 		}
 		
 		return respMsg;
