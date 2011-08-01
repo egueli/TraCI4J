@@ -58,11 +58,11 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		queryAndVerifySingle(cmd);
 	}
 	
-	public void setMaxSpeed(float speed) throws IOException
+	public void setMaxSpeed(double speed) throws IOException
 	{
 		Command cmd = makeChangeStateCommand(Constants.VAR_MAXSPEED, 
-				Constants.TYPE_FLOAT);
-		cmd.content().writeFloat(speed);
+				Constants.TYPE_DOUBLE);
+		cmd.content().writeDouble(speed);
 
 		queryAndVerifySingle(cmd);
 	}

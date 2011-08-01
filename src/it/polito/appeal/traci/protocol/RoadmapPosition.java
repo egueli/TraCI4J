@@ -29,5 +29,39 @@ public class RoadmapPosition {
 		this.pos = pos;
 		this.laneID = laneID;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) 
+			return false;
+		if (obj == this) 
+			return true;
+		if (!(obj instanceof RoadmapPosition)) 
+			return false;
+		
+		RoadmapPosition that = (RoadmapPosition)obj;
+		if (laneID != that.laneID)
+			return false;
+		
+		if (Math.abs(pos - that.pos) > 1e-6)
+			return false;
+		
+		if (!edgeID.equals(that.edgeID))
+			return false;
+		
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return edgeID.hashCode() ^ laneID ^ (new Double(pos)).hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return edgeID + " lane " + laneID + " pos " + Math.round(pos*100)/100; 
+	}
+	
+	
 }
 

@@ -224,7 +224,7 @@ public class Vehicle {
 		clearRouteCache();
 	}
 	
-	public void setMaxSpeed(float maxSpeed) throws NotActiveException, IOException {
+	public void setMaxSpeed(double maxSpeed) throws NotActiveException, IOException {
 		if (!alive)
 			throw new NotActiveException();
 
