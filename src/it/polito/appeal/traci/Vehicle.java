@@ -86,6 +86,8 @@ public class Vehicle {
 	/** set to false by SumoTraciConnection when a vehicle is no longer active */
 	boolean alive;
 	
+	boolean teleport;
+	
 	private Point2D position;
 
 	Vehicle(String id, Socket socket, SumoTraciConnection conn) {
@@ -250,6 +252,10 @@ public class Vehicle {
 	 */
 	public boolean isAlive() {
 		return alive;
+	}
+	
+	public boolean isTeleporting() {
+		return teleport;
 	}
 
 	/**

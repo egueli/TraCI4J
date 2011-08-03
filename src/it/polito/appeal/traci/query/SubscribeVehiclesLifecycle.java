@@ -31,7 +31,10 @@ public class SubscribeVehiclesLifecycle extends Query {
 
 	private static final byte[] VARIABLES = new byte[] {
 			Constants.VAR_DEPARTED_VEHICLES_IDS, 
-			Constants.VAR_ARRIVED_VEHICLES_IDS };
+			Constants.VAR_ARRIVED_VEHICLES_IDS,
+			Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS,
+			Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS,
+			};
 
 	public SubscribeVehiclesLifecycle(Socket sock) throws IOException {
 		super(sock);

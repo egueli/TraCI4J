@@ -33,7 +33,6 @@ import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -84,8 +83,6 @@ public class TraCITest {
 			conn.close();
 	}
 	
-	// TODO either add assertXXX() to most of these tests, or delete them. 
-
 	/**
 	 * The sim step at startup must be zero.
 	 */
@@ -111,13 +108,18 @@ public class TraCITest {
 		
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			@Override
-			public void vehicleDestroyed(String id) {
-			}
+			public void vehicleArrived(String id) { }
 			
 			@Override
-			public void vehicleCreated(String id) {
+			public void vehicleDeparted(String id) {
 				departed.add(id);
 			}
+
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		conn.nextSimStep();
 		conn.nextSimStep();
@@ -152,11 +154,15 @@ public class TraCITest {
 	public void getFirstVehicleID()
 			throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleCreated(String id) {
+			@Override public void vehicleDeparted(String id) {
 				firstVehicleID = id;
 			}
-			@Override public void vehicleDestroyed(String id) {
-			}
+			@Override public void vehicleArrived(String id) { }
+			
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		
 		while(firstVehicleID == null)
@@ -215,14 +221,18 @@ public class TraCITest {
 	@Test
 	public void testCloseInObserverBody() throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleDestroyed(String id) {
+			@Override public void vehicleArrived(String id) {
 				try {
 					conn.close();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
-			@Override public void vehicleCreated(String id) { }
+			@Override public void vehicleDeparted(String id) { }
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		getFirstVehicleID();
 	}
@@ -235,7 +245,7 @@ public class TraCITest {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			
 			@Override
-			public void vehicleDestroyed(String id) {
+			public void vehicleArrived(String id) {
 				assertTrue(traveling.contains(id));
 				traveling.remove(id);
 				if (traveling.isEmpty()) {
@@ -248,10 +258,16 @@ public class TraCITest {
 			}
 			
 			@Override
-			public void vehicleCreated(String id) {
+			public void vehicleDeparted(String id) {
 				assertFalse(traveling.contains(id));
 				traveling.add(id);
 			}
+
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		
 		while(!conn.isClosed()) {

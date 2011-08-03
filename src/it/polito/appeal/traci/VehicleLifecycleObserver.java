@@ -31,19 +31,23 @@ public interface VehicleLifecycleObserver {
 	 * Method called when a vehicle has entered the simulation. This method will
 	 * be called during an invocation of
 	 * {@link SumoTraciConnection#nextSimStep()} and after any other
-	 * {@link #vehicleDestroyed(String)} in the same simulation step.
+	 * {@link #vehicleArrived(String)} in the same simulation step.
 	 * 
 	 * @param id
 	 */
-	void vehicleCreated(String id);
+	void vehicleDeparted(String id);
 
 	/**
 	 * Method called when a vehicle has exited the simulation. This method will
 	 * be called during an invocation of
 	 * {@link SumoTraciConnection#nextSimStep()} and before any other
-	 * {@link #vehicleCreated(String)} in the same simulation step.
+	 * {@link #vehicleDeparted(String)} in the same simulation step.
 	 * 
 	 * @param id
 	 */
-	void vehicleDestroyed(String id);
+	void vehicleArrived(String id);
+	
+	void vehicleTeleportStarting(String id);
+	
+	void vehicleTeleportEnding(String id);
 }

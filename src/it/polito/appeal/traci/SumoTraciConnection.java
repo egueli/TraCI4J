@@ -159,6 +159,7 @@ public class SumoTraciConnection {
 	private final Set<String> activeVehicles = new HashSet<String>();
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
 	private final Map<String, Vehicle> vehicles = new HashMap<String, Vehicle>();
+	private final Set<String> teleporting = new HashSet<String>();
 
 	private static final int CONNECT_RETRIES = 9;
 
@@ -475,25 +476,36 @@ public class SumoTraciConnection {
 		SimStepQuery ssQuery = new SimStepQuery(socket, currentSimStep);
 		ssQuery.doCommand();
 
-		Set<String> created = ssQuery.getCreatedVehicles();
-		Set<String> destroyed = ssQuery.getDestroyedVehicles();
+		Set<String> departed = ssQuery.getDepartedVehicles();
+		Set<String> arrived = ssQuery.getArrivedVehicles();
+		Set<String> teleportStarting = ssQuery.getTeleportStartingVehicles();
+		Set<String> teleportEnding = ssQuery.getTeleportEndingVehicles();
 
 
-		for (String id : created) {
+		for (String id : departed) {
 			vehicles.put(id, new Vehicle(id, socket, this));
 
 //			if (log.isDebugEnabled())
 //				log.debug("Vehicle " + id + " created");
 		}
-		for (String id : destroyed) {
+		for (String id : arrived) {
 //			if (log.isDebugEnabled())
 //				log.debug("Vehicle " + id + " destroyed");
 			vehicles.get(id).alive = false;
 			vehicles.remove(id);
 		}
+		
+		for (String id : teleportStarting) {
+			teleporting.add(id);
+			vehicles.get(id).teleport = true;
+		}
+		for (String id : teleportEnding) {
+			vehicles.get(id).teleport = false;
+			teleporting.remove(id);
+		}
 
-		activeVehicles.addAll(created);
-		activeVehicles.removeAll(destroyed);
+		activeVehicles.addAll(departed);
+		activeVehicles.removeAll(arrived);
 
 		updateVehiclesPosition();
 		
@@ -501,8 +513,10 @@ public class SumoTraciConnection {
 			updateVehiclesEdge();
 		}
 
-		notifyDestroyed(destroyed);
-		notifyCreated(created);
+		notifyArrived(arrived);
+		notifyDeparted(departed);
+		notifyTeleportStarting(teleportStarting);
+		notifyTeleportEnding(teleportEnding);
 	}
 
 	private void updateVehiclesPosition() throws IOException {
@@ -533,17 +547,31 @@ public class SumoTraciConnection {
 		}
 	}
 
-	protected void notifyCreated(Set<String> created) {
+	protected void notifyDeparted(Set<String> created) {
 		for (String id : created) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleCreated(id);
+				observer.vehicleDeparted(id);
 		}
 	}
 
-	protected void notifyDestroyed(Set<String> destroyed) {
+	protected void notifyArrived(Set<String> destroyed) {
 		for (String id : destroyed) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleDestroyed(id);
+				observer.vehicleArrived(id);
+		}
+	}
+
+	protected void notifyTeleportStarting(Set<String> starting) {
+		for (String id : starting) {
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
+				observer.vehicleTeleportStarting(id);
+		}
+	}
+
+	protected void notifyTeleportEnding(Set<String> ending) {
+		for (String id : ending) {
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
+				observer.vehicleTeleportEnding(id);
 		}
 	}
 
