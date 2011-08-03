@@ -42,11 +42,12 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -173,8 +174,10 @@ public class SumoTraciConnection {
 
 	private boolean getVehiclesEdgeAtSimStep;
 	
+	private List<String> args = new ArrayList<String>();
+	
 	/**
-	 * Constuctor for the object.
+	 * Constructor for the object.
 	 * 
 	 * @param configFile
 	 *            the file name of the SUMO XML configuration file
@@ -194,6 +197,7 @@ public class SumoTraciConnection {
 
 		if (useGeoOffset)
 			geoOffset = lookForGeoOffset(configFile);
+		
 	}
 	
 	public SumoTraciConnection(SocketAddress sockAddr) throws IOException,
@@ -220,6 +224,22 @@ public class SumoTraciConnection {
 
 	}
 
+	/**
+	 * Adds a custom option to the SUMO command line before executing it.
+	 * 
+	 * @param option
+	 *            the option name, in long form (e.g. &quot;no-warnings&quot;
+	 *            instead of &quot;W&quot;) and without initial dashes
+	 * @param value
+	 *            the option value, or <code>null</code> if the option has no
+	 *            value
+	 */
+	public void addOption(String option, String value) {
+		args.add("--" + option);
+		if (value != null)
+			args.add(value);
+	}
+	
 	/**
 	 * Runs a SUMO instance and tries to connect at it.
 	 * 
@@ -308,19 +328,24 @@ public class SumoTraciConnection {
 			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
 					+ " must be set");
 
-		String[] args;
-		if (randomSeed != -1)
-			args = new String[] { sumoEXE, "-c", configFile, "--seed",
-					Integer.toString(randomSeed), "--remote-port",
-					Integer.toString(remotePort) };
-		else
-			args = new String[] { sumoEXE, "-c", configFile, "--remote-port",
-					Integer.toString(remotePort) };
+		args.add(0, sumoEXE);
+		
+		args.add("-c");
+		args.add(configFile);
+		args.add("--remote-port");
+		args.add(Integer.toString(remotePort));
+		
+		if (randomSeed != -1) {
+			args.add("--seed");
+			args.add(Integer.toString(randomSeed));
+		}
 
 		if (log.isDebugEnabled())
-			log.debug("Executing SUMO with cmdline " + Arrays.toString(args));
+			log.debug("Executing SUMO with cmdline " + args);
 
-		sumoProcess = Runtime.getRuntime().exec(args);
+		String[] argsArray = new String[args.size()];
+		args.toArray(argsArray);
+		sumoProcess = Runtime.getRuntime().exec(argsArray);
 
 		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
 		// + 1);
