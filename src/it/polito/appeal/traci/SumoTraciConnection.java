@@ -165,7 +165,7 @@ public class SumoTraciConnection {
 
 	private Point2D geoOffset;
 
-	private Map<String, Road> cachedRoads;
+	private Map<String, Lane> cachedLanes;
 
 	private CloseQuery closeQuery;
 
@@ -404,7 +404,7 @@ public class SumoTraciConnection {
 		
 		vehicles.clear();
 		vehicleLifecycleObservers.clear();
-		cachedRoads = null;
+		cachedLanes = null;
 	}
 	
 	/**
@@ -430,9 +430,9 @@ public class SumoTraciConnection {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		Map<String, Road> roads = getRoadsMap();
+		Map<String, Lane> lanes = getLanesMap();
 		Rectangle2D boundsAll = null;
-		for (Road r : roads.values()) {
+		for (Lane r : lanes.values()) {
 			Rectangle2D bounds = (Rectangle2D)r.getBoundingBox().clone();
 			if (boundsAll == null)
 				boundsAll = bounds;
@@ -627,40 +627,40 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Returns a collection of {@link Road} objects, representing the entire
+	 * Returns a collection of {@link Lane} objects, representing the entire
 	 * traffic network.
 	 * <p>
 	 * NOTE: this command can require some time to complete.
-	 * @return a collection of {@link Road}s
+	 * @return a collection of {@link Lane}s
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 */
-	public Collection<Road> queryRoads() throws IOException {
+	public Collection<Lane> queryLanes() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		if (cachedRoads == null) {
+		if (cachedLanes == null) {
 			log.info("Retrieving roads...");
-			Set<Road> roads = (new RoadmapQuery(socket)).queryRoads(readInternalLinks);
-			log.info("... done, " + roads.size() + " roads read");
+			Set<Lane> lanes = (new RoadmapQuery(socket)).queryLanes(readInternalLinks);
+			log.info("... done, " + lanes.size() + " roads read");
 			
-			cachedRoads = new HashMap<String, Road>();
-			for (Road r : roads) {
-				cachedRoads.put(r.externalID, r);
+			cachedLanes = new HashMap<String, Lane>();
+			for (Lane r : lanes) {
+				cachedLanes.put(r.externalID, r);
 			}
-			cachedRoads = Collections.unmodifiableMap(cachedRoads);
+			cachedLanes = Collections.unmodifiableMap(cachedLanes);
 		}
 			
 
-		return cachedRoads.values();
+		return cachedLanes.values();
 	}
 	
-	public Map<String, Road> getRoadsMap() throws IOException {
+	public Map<String, Lane> getLanesMap() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		queryRoads();
-		return cachedRoads;
+		queryLanes();
+		return cachedLanes;
 	}
 
 	/**
@@ -676,26 +676,26 @@ public class SumoTraciConnection {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		Road r = getRoad(roadID);
+		Lane r = getLane(roadID);
 		return r.getLength();
 	}
 
 	/**
-	 * Returns a {@link Road} object matching the given ID
+	 * Returns a {@link Lane} object matching the given ID
 	 * 
 	 * @param roadID
-	 * @return the requested {@link Road} object, or null if such road doesn't
+	 * @return the requested {@link Lane} object, or null if such road doesn't
 	 *         exist.
 	 * @throws IOException
 	 */
-	public Road getRoad(String roadID) throws IOException {
+	public Lane getLane(String roadID) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		if (cachedRoads == null)
-			queryRoads();
+		if (cachedLanes == null)
+			queryLanes();
 
-		return cachedRoads.get(roadID);
+		return cachedLanes.get(roadID);
 	}
 
 	@SuppressWarnings("serial")
@@ -815,7 +815,7 @@ public class SumoTraciConnection {
 	 */
 	public void setReadInternalLinks(boolean readInternalLinks) {
 		if (this.readInternalLinks != readInternalLinks) {
-			cachedRoads = null;
+			cachedLanes = null;
 		}
 		
 		this.readInternalLinks = readInternalLinks;

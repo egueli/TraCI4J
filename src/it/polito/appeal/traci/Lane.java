@@ -26,20 +26,19 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 /**
- * Represents a road (i.e. a lane) in the SUMO simulation. A road has a string
- * identifier and a shape,
- * i.e. a set of connected segments.
+ * Represents a lane in the SUMO simulation. It has a string
+ * identifier and a shape, i.e. a set of connected segments.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
  */
-public class Road implements Serializable {
+public class Lane implements Serializable {
 	private static final long serialVersionUID = 2584580269405598020L;
 	
 	public final String externalID;
 	public final Path2D shape;
 	
-	public Road(String id, Path2D shape) {
+	public Lane(String id, Path2D shape) {
 		this.externalID = id;
 		this.shape = shape;
 	}

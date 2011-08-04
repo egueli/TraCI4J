@@ -194,7 +194,7 @@ public class TraCITest {
 	
 	@Test
 	public void testGetShape() throws IOException {
-		Road r = conn.getRoad("beg_0");
+		Lane r = conn.getLane("beg_0");
 		PathIterator it = r.shape.getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];

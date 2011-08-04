@@ -260,17 +260,17 @@ public class Vehicle {
 	}
 
 	/**
-	 * Returns the {@link Road} object matching the specified road ID.
-	 * @see SumoTraciConnection#getRoad(String)
+	 * Returns the {@link Lane} object matching the specified road ID.
+	 * @see SumoTraciConnection#getLane(String)
 	 * @param roadID
 	 * @throws IOException
 	 */
-	public Road getRoad(String roadID) throws IOException {
-		return conn.getRoad(roadID);
+	public Lane getLane(String roadID) throws IOException {
+		return conn.getLane(roadID);
 	}
 	
-	public Map<String, Road> getRoadsMap() throws IOException {
-		return conn.getRoadsMap();
+	public Map<String, Lane> getLanesMap() throws IOException {
+		return conn.getLanesMap();
 	}
 
 	void setPosition(Point2D pos) {
