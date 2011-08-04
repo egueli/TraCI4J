@@ -53,8 +53,9 @@ public class StringList implements List<String> {
 		}
 	}
 	
-	public void writeTo(Storage out) {
-		out.writeByte(Constants.TYPE_STRINGLIST);
+	public void writeTo(Storage out, boolean writeTypeID) {
+		if (writeTypeID)
+			out.writeByte(Constants.TYPE_STRINGLIST);
 		out.writeInt(list.size());
 		for (String str : list)
 			out.writeStringASCII(str);

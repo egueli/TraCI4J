@@ -21,10 +21,12 @@ package it.polito.appeal.traci.query;
 
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.StringList;
 
 import java.io.IOException;
 
 import java.net.Socket;
+import java.util.List;
 
 public class ChangeVehicleStateQuery extends VehicleQuery {
 
@@ -71,6 +73,15 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		Command cmd = makeChangeStateCommand(Constants.CMD_CHANGETARGET, 
 				Constants.TYPE_STRING);
 		cmd.content().writeStringASCII(edgeID);
+
+		queryAndVerifySingle(cmd);
+	}
+	
+	public void changeRoute(List<String> newRoute) throws IOException {
+		Command cmd = makeChangeStateCommand(Constants.VAR_ROUTE, 
+				Constants.TYPE_STRINGLIST);
+		StringList sl = new StringList(newRoute);
+		sl.writeTo(cmd.content(), false);
 
 		queryAndVerifySingle(cmd);
 	}

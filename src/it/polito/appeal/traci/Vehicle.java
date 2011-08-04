@@ -55,8 +55,9 @@ public class Vehicle {
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public static class NotActiveException extends Exception {
+		private static final long serialVersionUID = -553158628106975541L;
+
 		public NotActiveException() {
 		}
 
@@ -297,7 +298,7 @@ public class Vehicle {
 			throw new NotActiveException();
 		
 		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket,
-				getName());
+				id);
 		rq.reroute();
 		
 		clearRouteCache();
@@ -312,11 +313,25 @@ public class Vehicle {
 		currentEdgeCacheTimestep = conn.getCurrentSimStep();
 	}
 	
+	/**
+	 * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Change_Vehicle_State">Change Vehicle State</a>
+	 * @param edgeID
+	 * @throws NotActiveException
+	 * @throws IOException
+	 */
 	public void changeTarget(String edgeID) throws NotActiveException, IOException {
 		if (!alive)
 			throw new NotActiveException();
 		
 		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket, id);
 		rq.changeTarget(edgeID);
+	}
+	
+	public void changeRoute(List<String> newRoute) throws NotActiveException, IOException {
+		if (!alive)
+			throw new NotActiveException();
+		
+		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket, id);
+		rq.changeRoute(newRoute);
 	}
 }

@@ -305,4 +305,17 @@ public class TraCITest {
 		List<String> route = v.getCurrentRoute();
 		assertEquals("end", route.get(route.size()-1));
 	}
+	
+	@Test
+	public void testChangeRoute() throws IOException, NotActiveException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		List<String> newRoute = new ArrayList<String>();
+		newRoute.add("beg");
+		newRoute.add("beg2left");
+		newRoute.add("left");
+		newRoute.add("left2end");
+		v.changeRoute(newRoute);
+		assertEquals(newRoute, v.getCurrentRoute());
+	}
 }
