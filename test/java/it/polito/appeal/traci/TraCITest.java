@@ -21,8 +21,9 @@ package it.polito.appeal.traci;
 
 import static org.junit.Assert.*;
 import it.polito.appeal.traci.Vehicle.NotActiveException;
-import it.polito.appeal.traci.protocol.BoundingBox;
 
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import org.junit.Test;
  */
 public class TraCITest {
 
+	private static final double DELTA = 1e-6;
 	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
 	private SumoTraciConnection conn;
 	
@@ -81,8 +83,6 @@ public class TraCITest {
 			conn.close();
 	}
 	
-	// TODO either add assertXXX() to most of these tests, or delete them. 
-
 	/**
 	 * The sim step at startup must be zero.
 	 */
@@ -108,13 +108,18 @@ public class TraCITest {
 		
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			@Override
-			public void vehicleDestroyed(String id) {
-			}
+			public void vehicleArrived(String id) { }
 			
 			@Override
-			public void vehicleCreated(String id) {
+			public void vehicleDeparted(String id) {
 				departed.add(id);
 			}
+
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		conn.nextSimStep();
 		conn.nextSimStep();
@@ -138,7 +143,7 @@ public class TraCITest {
 		System.out.println("Route before:         " + routeBefore);
 
 		String edgeToSlowDown = "middle";
-		v0.changeRoute(edgeToSlowDown, 10000);
+		v0.setEdgeTravelTime(edgeToSlowDown, 10000);
 		
 		List<String> routeAfter = v0.getCurrentRoute();
 		System.out.println("Route after:          " + routeAfter);
@@ -149,11 +154,15 @@ public class TraCITest {
 	public void getFirstVehicleID()
 			throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleCreated(String id) {
+			@Override public void vehicleDeparted(String id) {
 				firstVehicleID = id;
 			}
-			@Override public void vehicleDestroyed(String id) {
-			}
+			@Override public void vehicleArrived(String id) { }
+			
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		
 		while(firstVehicleID == null)
@@ -172,8 +181,8 @@ public class TraCITest {
 
 		String edgeToSlowDown = "middle";
 		conn.changeEdgeTravelTime(0, 1000, edgeToSlowDown, 10000);
-		float newTravelTime = conn.getEdgeTravelTime(edgeToSlowDown);
-		assertEquals(10000, newTravelTime, 1e-6);
+		double newTravelTime = conn.getEdgeTravelTime(edgeToSlowDown);
+		assertEquals(10000, newTravelTime, DELTA);
 
 		v0.reroute();
 
@@ -184,25 +193,46 @@ public class TraCITest {
 	}
 	
 	@Test
+	public void testGetShape() throws IOException {
+		Lane r = conn.getLane("beg_0");
+		PathIterator it = r.shape.getPathIterator(null);
+		assertFalse(it.isDone());
+		double[] coords = new double[2];
+		assertEquals(PathIterator.SEG_MOVETO, it.currentSegment(coords));
+		assertEquals(  0   , coords[0], DELTA);
+		assertEquals( -1.65, coords[1], DELTA);
+		it.next();
+		assertEquals(PathIterator.SEG_LINETO, it.currentSegment(coords));
+		assertEquals(498.55, coords[0], DELTA);
+		assertEquals( -1.65, coords[1], DELTA);
+		it.next();
+		assertTrue(it.isDone());
+	}
+	
+	@Test
 	public void testQueryBounds() throws IOException {
-		BoundingBox bounds = conn.queryBounds();
-		assertEquals(0.0, bounds.getMinX(), 1e-6);
-		assertEquals(-1.65, bounds.getMinY(), 1e-6);
-		assertEquals(2500.0, bounds.getMaxX(), 1e-6);
-		assertEquals(498.35, bounds.getMaxY(), 1e-6);
+		Rectangle2D bounds = conn.queryBounds();
+		assertEquals(0.0, bounds.getMinX(), DELTA);
+		assertEquals(-1.65, bounds.getMinY(), DELTA);
+		assertEquals(2500.0, bounds.getMaxX(), DELTA);
+		assertEquals(498.35, bounds.getMaxY(), DELTA);
 	}
 	
 	@Test
 	public void testCloseInObserverBody() throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleDestroyed(String id) {
+			@Override public void vehicleArrived(String id) {
 				try {
 					conn.close();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
-			@Override public void vehicleCreated(String id) { }
+			@Override public void vehicleDeparted(String id) { }
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		getFirstVehicleID();
 	}
@@ -215,7 +245,7 @@ public class TraCITest {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			
 			@Override
-			public void vehicleDestroyed(String id) {
+			public void vehicleArrived(String id) {
 				assertTrue(traveling.contains(id));
 				traveling.remove(id);
 				if (traveling.isEmpty()) {
@@ -228,10 +258,16 @@ public class TraCITest {
 			}
 			
 			@Override
-			public void vehicleCreated(String id) {
+			public void vehicleDeparted(String id) {
 				assertFalse(traveling.contains(id));
 				traveling.add(id);
 			}
+
+			@Override
+			public void vehicleTeleportEnding(String id) { }
+
+			@Override
+			public void vehicleTeleportStarting(String id) { }
 		});
 		
 		while(!conn.isClosed()) {
@@ -241,5 +277,45 @@ public class TraCITest {
 			
 	}
 
+	@Test
+	public void testChangeTarget() throws IOException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		try {
+			v.changeTarget("end");
+			
+			String lastEdge = null;
+			while (v.isAlive()) {
+				lastEdge = v.queryCurrentEdge();
+				assertFalse(lastEdge.equals("end"));
 
+				conn.nextSimStep();
+			}
+			
+		} catch (NotActiveException e) {
+			throw new RuntimeException("should never happen");
+		}
+	}
+	
+	@Test
+	public void testChangeTargetAlsoAffectsRouteList() throws IOException, NotActiveException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		v.changeTarget("end");
+		List<String> route = v.getCurrentRoute();
+		assertEquals("end", route.get(route.size()-1));
+	}
+	
+	@Test
+	public void testChangeRoute() throws IOException, NotActiveException {
+		getFirstVehicleID();
+		Vehicle v = conn.getVehicle(firstVehicleID);
+		List<String> newRoute = new ArrayList<String>();
+		newRoute.add("beg");
+		newRoute.add("beg2left");
+		newRoute.add("left");
+		newRoute.add("left2end");
+		v.changeRoute(newRoute);
+		assertEquals(newRoute, v.getCurrentRoute());
+	}
 }

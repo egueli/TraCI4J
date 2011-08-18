@@ -34,7 +34,7 @@ public class ChangeEdgeStateQuery extends Query {
 		this.edgeID = edgeID;
 	}
 
-	public void changeGlobalTravelTime (int begin, int end, float travelTime) throws IOException {
+	public void changeGlobalTravelTime (int begin, int end, double travelTime) throws IOException {
 		Command cmd = makeChangeStateCommand(
 				Constants.CMD_SET_EDGE_VARIABLE, 
 				Constants.VAR_EDGE_TRAVELTIME, 
@@ -45,8 +45,8 @@ public class ChangeEdgeStateQuery extends Query {
 		cmd.content().writeInt(begin);
 		cmd.content().writeUnsignedByte(Constants.TYPE_INTEGER);
 		cmd.content().writeInt(end);
-		cmd.content().writeUnsignedByte(Constants.TYPE_FLOAT);
-		cmd.content().writeFloat(travelTime);
+		cmd.content().writeUnsignedByte(Constants.TYPE_DOUBLE);
+		cmd.content().writeDouble(travelTime);
 		
 		queryAndVerifySingle(cmd);
 	}

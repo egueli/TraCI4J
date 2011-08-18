@@ -21,10 +21,12 @@ package it.polito.appeal.traci.query;
 
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.StringList;
 
 import java.io.IOException;
 
 import java.net.Socket;
+import java.util.List;
 
 public class ChangeVehicleStateQuery extends VehicleQuery {
 
@@ -32,7 +34,7 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		super(sock, vehicleID);
 	}
 
-	public void changeEdgeTravelTime(int beginTime, int endTime, String edgeID, float travelTime) throws IOException {
+	public void changeEdgeTravelTime(int beginTime, int endTime, String edgeID, double travelTime) throws IOException {
 		Command cmd = 
 			makeChangeStateCommand(Constants.VAR_EDGE_TRAVELTIME, Constants.TYPE_COMPOUND);
 		cmd.content().writeInt(4);
@@ -42,8 +44,8 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		cmd.content().writeInt(endTime);
 		cmd.content().writeUnsignedByte(Constants.TYPE_STRING);
 		cmd.content().writeStringASCII(edgeID);
-		cmd.content().writeUnsignedByte(Constants.TYPE_FLOAT);
-		cmd.content().writeFloat(travelTime);
+		cmd.content().writeUnsignedByte(Constants.TYPE_DOUBLE);
+		cmd.content().writeDouble(travelTime);
 		
 		queryAndVerifySingle(cmd);
 	}
@@ -58,11 +60,28 @@ public class ChangeVehicleStateQuery extends VehicleQuery {
 		queryAndVerifySingle(cmd);
 	}
 	
-	public void setMaxSpeed(float speed) throws IOException
+	public void setMaxSpeed(double speed) throws IOException
 	{
 		Command cmd = makeChangeStateCommand(Constants.VAR_MAXSPEED, 
-				Constants.TYPE_FLOAT);
-		cmd.content().writeFloat(speed);
+				Constants.TYPE_DOUBLE);
+		cmd.content().writeDouble(speed);
+
+		queryAndVerifySingle(cmd);
+	}
+	
+	public void changeTarget(String edgeID) throws IOException {
+		Command cmd = makeChangeStateCommand(Constants.CMD_CHANGETARGET, 
+				Constants.TYPE_STRING);
+		cmd.content().writeStringASCII(edgeID);
+
+		queryAndVerifySingle(cmd);
+	}
+	
+	public void changeRoute(List<String> newRoute) throws IOException {
+		Command cmd = makeChangeStateCommand(Constants.VAR_ROUTE, 
+				Constants.TYPE_STRINGLIST);
+		StringList sl = new StringList(newRoute);
+		sl.writeTo(cmd.content(), false);
 
 		queryAndVerifySingle(cmd);
 	}

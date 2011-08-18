@@ -19,7 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.protocol.BoundingBox;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
 import it.polito.appeal.traci.query.ChangeEdgeStateQuery;
 import it.polito.appeal.traci.query.ChangeLaneStateQuery;
@@ -31,6 +30,7 @@ import it.polito.appeal.traci.query.SimStepQuery;
 import it.polito.appeal.traci.query.SubscribeVehiclesLifecycle;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,11 +42,12 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,16 +61,17 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Models a TCP/IP connection to a local SUMO server via the TraCI protocol.
+ * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
+ * protocol.
  * <p>
  * It runs a SUMO instance as a subprocess with a given configuration file and a
  * random seed, and provides methods and objects to advance to the next
  * simulation step, to retrieve vehicles' info, to set vehicles' routes and to
  * get roads' info.
  * <p>
- * To use it, create an instance and call {@link #runServer()}, that will start the
- * subprocess. From there, you can use all the other methods to interact with
- * the simulator.
+ * To use it, create an instance and call {@link #runServer()}, that will start
+ * the subprocess. From there, you can use all the other methods to interact
+ * with the simulator.
  * <p>
  * The method {@link #nextSimStep()} will advance SUMO by a time step (one
  * second). The methods
@@ -111,21 +113,6 @@ public class SumoTraciConnection {
 		}
 
 		public void run() {
-//			BufferedReader br = new BufferedReader(
-//					new InputStreamReader(stream));
-//
-//			String line;
-//			try {
-//			try {
-//				while ((line = br.readLine()) != null) {
-//					if (log.isInfoEnabled())
-//						log.info(prefix + line);
-//				}
-//
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			
 			StringBuilder buf = new StringBuilder();
 			InputStreamReader isr = new InputStreamReader(stream);
 			try {
@@ -152,20 +139,19 @@ public class SumoTraciConnection {
 	private int randomSeed;
 	private int remotePort;
 	private Socket socket;
-
+	
 	private int currentSimStep;
 	private Process sumoProcess;
 	private final Set<String> activeVehicles = new HashSet<String>();
-	@Deprecated
-	private int maxVehicleID;
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
 	private final Map<String, Vehicle> vehicles = new HashMap<String, Vehicle>();
+	private final Set<String> teleporting = new HashSet<String>();
 
 	private static final int CONNECT_RETRIES = 9;
 
 	private Point2D geoOffset;
 
-	private Map<String, Road> cachedRoads;
+	private Map<String, Lane> cachedLanes;
 
 	private CloseQuery closeQuery;
 
@@ -175,8 +161,10 @@ public class SumoTraciConnection {
 
 	private boolean getVehiclesEdgeAtSimStep;
 	
+	private List<String> args = new ArrayList<String>();
+	
 	/**
-	 * Constuctor for the object.
+	 * Constructor for the object.
 	 * 
 	 * @param configFile
 	 *            the file name of the SUMO XML configuration file
@@ -196,6 +184,7 @@ public class SumoTraciConnection {
 
 		if (useGeoOffset)
 			geoOffset = lookForGeoOffset(configFile);
+		
 	}
 	
 	public SumoTraciConnection(SocketAddress sockAddr) throws IOException,
@@ -220,8 +209,28 @@ public class SumoTraciConnection {
 			}
 		}
 
+		if (!socket.isConnected()) {
+			log.error("Couldn't connect to server");
+			throw new IOException("can't connect to SUMO server");
+		}
 	}
 
+	/**
+	 * Adds a custom option to the SUMO command line before executing it.
+	 * 
+	 * @param option
+	 *            the option name, in long form (e.g. &quot;no-warnings&quot;
+	 *            instead of &quot;W&quot;) and without initial dashes
+	 * @param value
+	 *            the option value, or <code>null</code> if the option has no
+	 *            value
+	 */
+	public void addOption(String option, String value) {
+		args.add("--" + option);
+		if (value != null)
+			args.add(value);
+	}
+	
 	/**
 	 * Runs a SUMO instance and tries to connect at it.
 	 * 
@@ -310,19 +319,24 @@ public class SumoTraciConnection {
 			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
 					+ " must be set");
 
-		String[] args;
-		if (randomSeed != -1)
-			args = new String[] { sumoEXE, "-c", configFile, "--srand",
-					Integer.toString(randomSeed), "--remote-port",
-					Integer.toString(remotePort) };
-		else
-			args = new String[] { sumoEXE, "-c", configFile, "--remote-port",
-					Integer.toString(remotePort) };
+		args.add(0, sumoEXE);
+		
+		args.add("-c");
+		args.add(configFile);
+		args.add("--remote-port");
+		args.add(Integer.toString(remotePort));
+		
+		if (randomSeed != -1) {
+			args.add("--seed");
+			args.add(Integer.toString(randomSeed));
+		}
 
 		if (log.isDebugEnabled())
-			log.debug("Executing SUMO with cmdline " + Arrays.toString(args));
+			log.debug("Executing SUMO with cmdline " + args);
 
-		sumoProcess = Runtime.getRuntime().exec(args);
+		String[] argsArray = new String[args.size()];
+		args.toArray(argsArray);
+		sumoProcess = Runtime.getRuntime().exec(argsArray);
 
 		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
 		// + 1);
@@ -380,7 +394,7 @@ public class SumoTraciConnection {
 		
 		vehicles.clear();
 		vehicleLifecycleObservers.clear();
-		cachedRoads = null;
+		cachedLanes = null;
 	}
 	
 	/**
@@ -402,11 +416,21 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 */
-	public BoundingBox queryBounds() throws IOException {
+	public Rectangle2D queryBounds() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		return (new RoadmapQuery(socket)).queryBoundaries();
+		Map<String, Lane> lanes = getLanesMap();
+		Rectangle2D boundsAll = null;
+		for (Lane r : lanes.values()) {
+			Rectangle2D bounds = (Rectangle2D)r.getBoundingBox().clone();
+			if (boundsAll == null)
+				boundsAll = bounds;
+			else
+				boundsAll = boundsAll.createUnion(bounds);
+		}
+		
+		return boundsAll;
 	}
 
 	/**
@@ -442,25 +466,36 @@ public class SumoTraciConnection {
 		SimStepQuery ssQuery = new SimStepQuery(socket, currentSimStep);
 		ssQuery.doCommand();
 
-		Set<String> created = ssQuery.getCreatedVehicles();
-		Set<String> destroyed = ssQuery.getDestroyedVehicles();
+		Set<String> departed = ssQuery.getDepartedVehicles();
+		Set<String> arrived = ssQuery.getArrivedVehicles();
+		Set<String> teleportStarting = ssQuery.getTeleportStartingVehicles();
+		Set<String> teleportEnding = ssQuery.getTeleportEndingVehicles();
 
 
-		for (String id : created) {
+		for (String id : departed) {
 			vehicles.put(id, new Vehicle(id, socket, this));
 
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " created");
+//			if (log.isDebugEnabled())
+//				log.debug("Vehicle " + id + " created");
 		}
-		for (String id : destroyed) {
-			if (log.isDebugEnabled())
-				log.debug("Vehicle " + id + " destroyed");
+		for (String id : arrived) {
+//			if (log.isDebugEnabled())
+//				log.debug("Vehicle " + id + " destroyed");
 			vehicles.get(id).alive = false;
 			vehicles.remove(id);
 		}
+		
+		for (String id : teleportStarting) {
+			teleporting.add(id);
+			vehicles.get(id).teleport = true;
+		}
+		for (String id : teleportEnding) {
+			vehicles.get(id).teleport = false;
+			teleporting.remove(id);
+		}
 
-		activeVehicles.addAll(created);
-		activeVehicles.removeAll(destroyed);
+		activeVehicles.addAll(departed);
+		activeVehicles.removeAll(arrived);
 
 		updateVehiclesPosition();
 		
@@ -468,8 +503,11 @@ public class SumoTraciConnection {
 			updateVehiclesEdge();
 		}
 
-		notifyDestroyed(destroyed);
-		notifyCreated(created);
+		notifyArrived(arrived);
+		notifyDeparted(departed);
+		notifyTeleportStarting(teleportStarting);
+		notifyTeleportEnding(teleportEnding);
+		
 	}
 
 	private void updateVehiclesPosition() throws IOException {
@@ -500,17 +538,31 @@ public class SumoTraciConnection {
 		}
 	}
 
-	protected void notifyCreated(Set<String> created) {
+	protected void notifyDeparted(Set<String> created) {
 		for (String id : created) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleCreated(id);
+				observer.vehicleDeparted(id);
 		}
 	}
 
-	protected void notifyDestroyed(Set<String> destroyed) {
+	protected void notifyArrived(Set<String> destroyed) {
 		for (String id : destroyed) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleDestroyed(id);
+				observer.vehicleArrived(id);
+		}
+	}
+
+	protected void notifyTeleportStarting(Set<String> starting) {
+		for (String id : starting) {
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
+				observer.vehicleTeleportStarting(id);
+		}
+	}
+
+	protected void notifyTeleportEnding(Set<String> ending) {
+		for (String id : ending) {
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
+				observer.vehicleTeleportEnding(id);
 		}
 	}
 
@@ -520,15 +572,6 @@ public class SumoTraciConnection {
 	 */
 	public Set<String> getActiveVehicles() {
 		return activeVehicles;
-	}
-
-	/**
-	 * Returns the maximum number of vehicles that participate into the
-	 * simulation.
-	 */
-	@Deprecated
-	public int getMaxVehicleCount() {
-		return maxVehicleID;
 	}
 
 	/**
@@ -575,40 +618,40 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Returns a collection of {@link Road} objects, representing the entire
+	 * Returns a collection of {@link Lane} objects, representing the entire
 	 * traffic network.
 	 * <p>
 	 * NOTE: this command can require some time to complete.
-	 * @return a collection of {@link Road}s
+	 * @return a collection of {@link Lane}s
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
 	 */
-	public Collection<Road> queryRoads() throws IOException {
+	public Collection<Lane> queryLanes() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		if (cachedRoads == null) {
-			log.info("Retrieving roads...");
-			Set<Road> roads = (new RoadmapQuery(socket)).queryRoads(readInternalLinks);
-			log.info("... done, " + roads.size() + " roads read");
+		if (cachedLanes == null) {
+			log.info("Retrieving lanes...");
+			Set<Lane> lanes = (new RoadmapQuery(socket)).queryLanes(readInternalLinks);
+			log.info("... done, " + lanes.size() + " roads read");
 			
-			cachedRoads = new HashMap<String, Road>();
-			for (Road r : roads) {
-				cachedRoads.put(r.externalID, r);
+			cachedLanes = new HashMap<String, Lane>();
+			for (Lane r : lanes) {
+				cachedLanes.put(r.externalID, r);
 			}
-			cachedRoads = Collections.unmodifiableMap(cachedRoads);
+			cachedLanes = Collections.unmodifiableMap(cachedLanes);
 		}
 			
 
-		return cachedRoads.values();
+		return cachedLanes.values();
 	}
 	
-	public Map<String, Road> getRoadsMap() throws IOException {
+	public Map<String, Lane> getLanesMap() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		queryRoads();
-		return cachedRoads;
+		queryLanes();
+		return cachedLanes;
 	}
 
 	/**
@@ -624,26 +667,26 @@ public class SumoTraciConnection {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		Road r = getRoad(roadID);
+		Lane r = getLane(roadID);
 		return r.getLength();
 	}
 
 	/**
-	 * Returns a {@link Road} object matching the given ID
+	 * Returns a {@link Lane} object matching the given ID
 	 * 
 	 * @param roadID
-	 * @return the requested {@link Road} object, or null if such road doesn't
+	 * @return the requested {@link Lane} object, or null if such road doesn't
 	 *         exist.
 	 * @throws IOException
 	 */
-	public Road getRoad(String roadID) throws IOException {
+	public Lane getLane(String roadID) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
-		if (cachedRoads == null)
-			queryRoads();
+		if (cachedLanes == null)
+			queryLanes();
 
-		return cachedRoads.get(roadID);
+		return cachedLanes.get(roadID);
 	}
 
 	@SuppressWarnings("serial")
@@ -763,7 +806,7 @@ public class SumoTraciConnection {
 	 */
 	public void setReadInternalLinks(boolean readInternalLinks) {
 		if (this.readInternalLinks != readInternalLinks) {
-			cachedRoads = null;
+			cachedLanes = null;
 		}
 		
 		this.readInternalLinks = readInternalLinks;
@@ -789,7 +832,7 @@ public class SumoTraciConnection {
 	/**
 	 * Sets the travel time of a given edge in the specified time frame.
 	 * Subsequent rerouting of vehicles (either with {@link Vehicle#reroute()}
-	 * or {@link Vehicle#changeRoute(String, Number)}) will be affected by this
+	 * or {@link Vehicle#setEdgeTravelTime(String, Number)}) will be affected by this
 	 * setting, if they don't have another specified travel time for this edge.
 	 * 
 	 * @param begin
@@ -798,7 +841,7 @@ public class SumoTraciConnection {
 	 * @param travelTime
 	 * @throws IOException
 	 */
-	public void changeEdgeTravelTime(int begin, int end, String edgeID, float travelTime) throws IOException {
+	public void changeEdgeTravelTime(int begin, int end, String edgeID, double travelTime) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
@@ -812,7 +855,7 @@ public class SumoTraciConnection {
 	 * @param edgeID
 	 * @throws IOException
 	 */
-	public float getEdgeTravelTime(String edgeID) throws IOException {
+	public double getEdgeTravelTime(String edgeID) throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 		
@@ -826,7 +869,7 @@ public class SumoTraciConnection {
 	 * @param time
 	 * @throws IOException
 	 */
-	private float getEdgeTravelTime(String edgeID, int time) throws IOException {
+	private double getEdgeTravelTime(String edgeID, int time) throws IOException {
 		RetrieveEdgeStateQuery resq = new RetrieveEdgeStateQuery(socket, edgeID);
 		return resq.getGlobalTravelTime(time);
 	}
@@ -848,6 +891,5 @@ public class SumoTraciConnection {
 	public void setGetVehiclesEdgeAtSimStep(boolean state) {
 		getVehiclesEdgeAtSimStep = state;
 	}
-	
 }
 

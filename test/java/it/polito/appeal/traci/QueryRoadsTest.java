@@ -68,8 +68,8 @@ public class QueryRoadsTest {
 		expectedLaneIDs.add("rend_0");
 		
 		
-		Collection<Road> lanes = conn.queryRoads();
-		for (Road lane : lanes) {
+		Collection<Lane> lanes = conn.queryLanes();
+		for (Lane lane : lanes) {
 			String id = lane.externalID;
 			if (expectedLaneIDs.contains(id))
 				expectedLaneIDs.remove(id);
@@ -106,7 +106,7 @@ public class QueryRoadsTest {
 					conn.runServer();
 				}
 				
-				conn.queryRoads();
+				conn.queryLanes();
 				conn.close();
 			}
 			catch(Exception e) {

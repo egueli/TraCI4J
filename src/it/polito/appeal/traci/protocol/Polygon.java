@@ -36,14 +36,16 @@ public class Polygon {
 				throw new TraCIException("polygon expected");
 		}
 		
-		shape = new Path2D.Float();
+		shape = new Path2D.Double();
 		
 		int count = packet.readUnsignedByte();
 		for (int i=0; i<count; i++) {
+			double x = packet.readDouble();
+			double y = packet.readDouble();
 			if (i==0)
-				shape.moveTo(packet.readFloat(), packet.readFloat());
+				shape.moveTo(x, y);
 			else
-				shape.lineTo(packet.readFloat(), packet.readFloat());
+				shape.lineTo(x, y);
 				
 		}
 	}

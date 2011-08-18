@@ -74,11 +74,11 @@ public class RequestMessage {
 		}
 
 		Checksum checksum = null;
-		if (log.isDebugEnabled()) {
-			checksum = new CRC32();
-			log.debug("sending a message " + totalLen + " bytes long");
-			
-		}
+//		if (log.isDebugEnabled()) {
+//			checksum = new CRC32();
+//			log.debug("sending a message " + totalLen + " bytes long");
+//			
+//		}
 		
 		dos.writeInt(totalLen);
 
@@ -89,8 +89,8 @@ public class RequestMessage {
 			writeStorage(s, dos, checksum);
 		}
 
-		if (log.isDebugEnabled())
-			log.debug("message checksum (without len) = " + checksum.getValue());
+//		if (log.isDebugEnabled())
+//			log.debug("message checksum (without len) = " + checksum.getValue());
 	}
 
 	private void writeStorage(Storage storage, OutputStream os, Checksum checksum)

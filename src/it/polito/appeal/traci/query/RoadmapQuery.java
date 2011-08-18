@@ -19,7 +19,7 @@
 
 package it.polito.appeal.traci.query;
 
-import it.polito.appeal.traci.Road;
+import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.protocol.BoundingBox;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
@@ -44,19 +44,9 @@ public class RoadmapQuery extends DomainQuery {
 	public RoadmapQuery(Socket sock) throws IOException {
 		super(sock);
 	}
-
-	public BoundingBox queryBoundaries() throws IOException {
-		Command resp = queryAndVerifyScenarioCommand(
-				Constants.DOM_ROADMAP,
-				0,
-				Constants.DOMVAR_BOUNDINGBOX,
-				Constants.TYPE_BOUNDINGBOX);
-		
-		return new BoundingBox(resp.content(), false);
-	}
 	
-	public Set<Road> queryRoads(boolean alsoInternal) throws IOException {
-		Set<Road> out = new HashSet<Road>();
+	public Set<Lane> queryLanes(boolean alsoInternal) throws IOException {
+		Set<Lane> out = new HashSet<Lane>();
 
 		Command req = new Command(Constants.CMD_GET_LANE_VARIABLE);
 		req.content().writeUnsignedByte(Constants.ID_LIST);
@@ -103,7 +93,7 @@ public class RoadmapQuery extends DomainQuery {
 			String laneID = laneResp.content().readStringASCII();
 			Polygon shape = new Polygon(laneResp.content(), true);
 			
-			out.add(new Road(laneID, shape.getShape()));
+			out.add(new Lane(laneID, shape.getShape()));
 		}
 		
 		return out;

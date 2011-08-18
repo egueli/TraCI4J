@@ -55,8 +55,9 @@ public class Vehicle {
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 * 
 	 */
-	@SuppressWarnings("serial")
 	public static class NotActiveException extends Exception {
+		private static final long serialVersionUID = -553158628106975541L;
+
 		public NotActiveException() {
 		}
 
@@ -85,6 +86,8 @@ public class Vehicle {
 	
 	/** set to false by SumoTraciConnection when a vehicle is no longer active */
 	boolean alive;
+	
+	boolean teleport;
 	
 	private Point2D position;
 
@@ -193,22 +196,22 @@ public class Vehicle {
 	 * @throws IOException
 	 * @throws NotActiveException
 	 */
-	public void changeRoute(String edgeID, Number travelTime)
+	public void setEdgeTravelTime(String edgeID, Number travelTime)
 			throws IOException, NotActiveException {
 		
-		changeRouteMany(Collections.singletonMap(edgeID, travelTime));
+		setEdgeTravelTimeMany(Collections.singletonMap(edgeID, travelTime));
 	}
 
 	/**
 	 * Try to change the vehicle's route by changing the estimated time to
 	 * travel the roads specified in the map.
 	 * See also <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Mobility-related_commands#Command_0x30:_Change_Route">the documentation in the Wiki</a>.
-	 * @see #changeRoute(String, Number)
+	 * @see #setEdgeTravelTime(String, Number)
 	 * @param travelTimes
 	 * @throws NotActiveException
 	 * @throws IOException
 	 */
-	public void changeRouteMany(Map<String, ? extends Number> travelTimes)
+	public void setEdgeTravelTimeMany(Map<String, ? extends Number> travelTimes)
 			throws NotActiveException, IOException {
 		if (!alive)
 			throw new NotActiveException();
@@ -217,14 +220,14 @@ public class Vehicle {
 		
 		for (Entry<String, ? extends Number> entry : travelTimes.entrySet()) {
 			cvsq.changeEdgeTravelTime(0, Integer.MAX_VALUE, entry.getKey(),
-					entry.getValue().floatValue());			
+					entry.getValue().doubleValue());			
 		}
 		
 		cvsq.reroute();
 		clearRouteCache();
 	}
 	
-	public void setMaxSpeed(float maxSpeed) throws NotActiveException, IOException {
+	public void setMaxSpeed(double maxSpeed) throws NotActiveException, IOException {
 		if (!alive)
 			throw new NotActiveException();
 
@@ -251,19 +254,23 @@ public class Vehicle {
 	public boolean isAlive() {
 		return alive;
 	}
+	
+	public boolean isTeleporting() {
+		return teleport;
+	}
 
 	/**
-	 * Returns the {@link Road} object matching the specified road ID.
-	 * @see SumoTraciConnection#getRoad(String)
+	 * Returns the {@link Lane} object matching the specified road ID.
+	 * @see SumoTraciConnection#getLane(String)
 	 * @param roadID
 	 * @throws IOException
 	 */
-	public Road getRoad(String roadID) throws IOException {
-		return conn.getRoad(roadID);
+	public Lane getLane(String roadID) throws IOException {
+		return conn.getLane(roadID);
 	}
 	
-	public Map<String, Road> getRoadsMap() throws IOException {
-		return conn.getRoadsMap();
+	public Map<String, Lane> getLanesMap() throws IOException {
+		return conn.getLanesMap();
 	}
 
 	void setPosition(Point2D pos) {
@@ -291,7 +298,7 @@ public class Vehicle {
 			throw new NotActiveException();
 		
 		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket,
-				getName());
+				id);
 		rq.reroute();
 		
 		clearRouteCache();
@@ -304,5 +311,27 @@ public class Vehicle {
 	void setCurrentRoadmapPos(RoadmapPosition pos) {
 		currentEdgeCache = pos;
 		currentEdgeCacheTimestep = conn.getCurrentSimStep();
+	}
+	
+	/**
+	 * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Change_Vehicle_State">Change Vehicle State</a>
+	 * @param edgeID
+	 * @throws NotActiveException
+	 * @throws IOException
+	 */
+	public void changeTarget(String edgeID) throws NotActiveException, IOException {
+		if (!alive)
+			throw new NotActiveException();
+		
+		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket, id);
+		rq.changeTarget(edgeID);
+	}
+	
+	public void changeRoute(List<String> newRoute) throws NotActiveException, IOException {
+		if (!alive)
+			throw new NotActiveException();
+		
+		ChangeVehicleStateQuery rq = new ChangeVehicleStateQuery(socket, id);
+		rq.changeRoute(newRoute);
 	}
 }

@@ -33,7 +33,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class BoundingBox extends Rectangle2D {
 
-	private final Rectangle2D.Float rect;
+	private final Rectangle2D.Double rect;
 	
 	public BoundingBox(Storage storage, boolean verifyType) throws TraCIException {
 		if (verifyType) {
@@ -41,20 +41,20 @@ public class BoundingBox extends Rectangle2D {
 				throw new TraCIException("bounding box expected");
 		}
 
-		float llX = storage.readFloat();
-		float llY = storage.readFloat();
-		float urX = storage.readFloat();
-		float urY = storage.readFloat();
+		double llX = storage.readDouble();
+		double llY = storage.readDouble();
+		double urX = storage.readDouble();
+		double urY = storage.readDouble();
 		
-		rect = new Rectangle2D.Float(llX, llY, urX - llX, urY - llY);
+		rect = new Rectangle2D.Double(llX, llY, urX - llX, urY - llY);
 	}
 	
 	public void writeTo(Storage out) {
 		out.writeByte(Constants.TYPE_BOUNDINGBOX);
-		out.writeFloat(rect.x);
-		out.writeFloat(rect.y);
-		out.writeFloat(rect.x + rect.width);
-		out.writeFloat(rect.y + rect.height);
+		out.writeDouble(rect.x);
+		out.writeDouble(rect.y);
+		out.writeDouble(rect.x + rect.width);
+		out.writeDouble(rect.y + rect.height);
 	}
 
 	

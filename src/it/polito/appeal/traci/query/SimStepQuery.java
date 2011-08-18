@@ -37,8 +37,10 @@ public class SimStepQuery extends Query {
 
 	private final int step;
 	
-	private Set<String> createdVehicles;
-	private Set<String> destroyedVehicles;
+	private Set<String> departedVehicles;
+	private Set<String> arrivedVehicles;
+	private Set<String> teleportStartingVehicles;
+	private Set<String> teleportEndingVehicles;
 
 	public SimStepQuery(Socket sock, int step) throws IOException
 	{
@@ -54,6 +56,8 @@ public class SimStepQuery extends Query {
 		
 		List<String> departed = null;
 		List<String> arrived = null;
+		List<String> teleportStart = null;
+		List<String> teleportEnd = null;
 		
 		for (Command subResp : respc.getSubResponses()) {
 			if (subResp.id() == Constants.RESPONSE_SUBSCRIBE_SIM_VARIABLE) {
@@ -73,29 +77,54 @@ public class SimStepQuery extends Query {
 								+ content.readStringASCII());
 					}
 					
-					if (var == Constants.VAR_DEPARTED_VEHICLES_IDS)
-						departed = new StringList(content, true);
-					else if (var == Constants.VAR_ARRIVED_VEHICLES_IDS)
-						arrived = new StringList(content, true);
+					switch(var) {
+					case Constants.VAR_DEPARTED_VEHICLES_IDS:
+						departed = new StringList(content, true); break;
+					case Constants.VAR_ARRIVED_VEHICLES_IDS:
+						arrived = new StringList(content, true); break;
+					case Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS:
+						teleportStart = new StringList(content, true); break;
+					case Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS:
+						teleportEnd = new StringList(content, true);
+					}
+						
 				}
 			}
 		}
 		
-		createdVehicles = new HashSet<String>(departed);
-		destroyedVehicles = new HashSet<String>(arrived);
+		departedVehicles = new HashSet<String>(departed);
+		arrivedVehicles = new HashSet<String>(arrived);
+		teleportStartingVehicles = new HashSet<String>(teleportStart);
+		teleportEndingVehicles = new HashSet<String>(teleportEnd);
 	}
 
 	/**
 	 * @return the createdVehicles
 	 */
-	public Set<String> getCreatedVehicles() {
-		return createdVehicles;
+	public Set<String> getDepartedVehicles() {
+		return departedVehicles;
 	}
 
 	/**
 	 * @return the destroyedVehicles
 	 */
-	public Set<String> getDestroyedVehicles() {
-		return destroyedVehicles;
+	public Set<String> getArrivedVehicles() {
+		return arrivedVehicles;
 	}
+
+	/**
+	 * @return the teleportStartingVehicles
+	 */
+	public Set<String> getTeleportStartingVehicles() {
+		return teleportStartingVehicles;
+	}
+
+	/**
+	 * @return the teleportEndingVehicles
+	 */
+	public Set<String> getTeleportEndingVehicles() {
+		return teleportEndingVehicles;
+	}
+	
+	
 }
