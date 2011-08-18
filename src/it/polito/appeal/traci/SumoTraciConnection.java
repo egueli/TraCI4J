@@ -61,16 +61,17 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Models a TCP/IP connection to a local SUMO server via the TraCI protocol.
+ * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
+ * protocol.
  * <p>
  * It runs a SUMO instance as a subprocess with a given configuration file and a
  * random seed, and provides methods and objects to advance to the next
  * simulation step, to retrieve vehicles' info, to set vehicles' routes and to
  * get roads' info.
  * <p>
- * To use it, create an instance and call {@link #runServer()}, that will start the
- * subprocess. From there, you can use all the other methods to interact with
- * the simulator.
+ * To use it, create an instance and call {@link #runServer()}, that will start
+ * the subprocess. From there, you can use all the other methods to interact
+ * with the simulator.
  * <p>
  * The method {@link #nextSimStep()} will advance SUMO by a time step (one
  * second). The methods
@@ -112,21 +113,6 @@ public class SumoTraciConnection {
 		}
 
 		public void run() {
-//			BufferedReader br = new BufferedReader(
-//					new InputStreamReader(stream));
-//
-//			String line;
-//			try {
-//			try {
-//				while ((line = br.readLine()) != null) {
-//					if (log.isInfoEnabled())
-//						log.info(prefix + line);
-//				}
-//
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			
 			StringBuilder buf = new StringBuilder();
 			InputStreamReader isr = new InputStreamReader(stream);
 			try {
@@ -153,7 +139,7 @@ public class SumoTraciConnection {
 	private int randomSeed;
 	private int remotePort;
 	private Socket socket;
-
+	
 	private int currentSimStep;
 	private Process sumoProcess;
 	private final Set<String> activeVehicles = new HashSet<String>();
@@ -223,6 +209,10 @@ public class SumoTraciConnection {
 			}
 		}
 
+		if (!socket.isConnected()) {
+			log.error("Couldn't connect to server");
+			throw new IOException("can't connect to SUMO server");
+		}
 	}
 
 	/**
@@ -517,6 +507,7 @@ public class SumoTraciConnection {
 		notifyDeparted(departed);
 		notifyTeleportStarting(teleportStarting);
 		notifyTeleportEnding(teleportEnding);
+		
 	}
 
 	private void updateVehiclesPosition() throws IOException {
@@ -640,7 +631,7 @@ public class SumoTraciConnection {
 			throw new IllegalStateException("connection is closed");
 		
 		if (cachedLanes == null) {
-			log.info("Retrieving roads...");
+			log.info("Retrieving lanes...");
 			Set<Lane> lanes = (new RoadmapQuery(socket)).queryLanes(readInternalLinks);
 			log.info("... done, " + lanes.size() + " roads read");
 			
@@ -900,6 +891,5 @@ public class SumoTraciConnection {
 	public void setGetVehiclesEdgeAtSimStep(boolean state) {
 		getVehiclesEdgeAtSimStep = state;
 	}
-	
 }
 
