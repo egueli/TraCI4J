@@ -20,14 +20,13 @@
 package it.polito.appeal.traci.newquery;
 
 import it.polito.appeal.traci.TraCIException;
-import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.protocol.StringList;
 
 import java.awt.geom.Point2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,19 +48,9 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		@Override
 		protected void writeParamsTo(Storage content) {
 			content.writeByte(Constants.TYPE_COMPOUND);
-			
 			content.writeInt(2);
-//			content.writeInt(4);
-			
-//			content.writeByte(Constants.TYPE_INTEGER);
-//			content.writeInt(0);
-//			
-//			content.writeByte(Constants.TYPE_INTEGER);
-//			content.writeInt(Integer.MAX_VALUE);
-			
 			content.writeByte(Constants.TYPE_STRING);
 			content.writeStringASCII(edge.getID());
-			
 			content.writeByte(Constants.TYPE_DOUBLE);
 			content.writeDouble(travelTime);
 		}
@@ -75,6 +64,50 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		}
 
 	}
+	
+	public static class ChangeTargetQuery extends ChangeObjectStateQuery {
+
+		private Edge newTarget;
+		
+		public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
+				String objectID) {
+			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
+		}
+		
+		public void setNewTarget(Edge newTarget) {
+			this.newTarget = newTarget;
+		}
+
+		@Override
+		protected void writeParamsTo(Storage content) {
+			content.writeByte(Constants.TYPE_STRING);
+			content.writeStringASCII(newTarget.getID());
+		}
+	}
+
+	public static class ChangeRouteQuery extends ChangeObjectStateQuery {
+
+		private List<Edge> newRoute;
+		
+		public ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
+				String objectID) {
+			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
+		}
+		
+		public void setNewRoute(List<Edge> newRoute) {
+			this.newRoute = newRoute;
+		}
+
+		@Override
+		protected void writeParamsTo(Storage content) {
+			StringList edgeIDs = new StringList();
+			for (Edge e : newRoute)
+				edgeIDs.add(e.getID());
+			
+			edgeIDs.writeTo(content, true);
+		}
+	}
+
 	
 	public static class RerouteQuery extends ChangeObjectStateQuery {
 
@@ -108,6 +141,8 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 	
 	private final ChangeEdgeTravelTimeQuery edgeTravelTimeQuery;
 	private final RerouteQuery rerouteQuery;
+	private final ChangeTargetQuery changeTargetQuery;
+	private final ChangeRouteQuery changeRouteQuery;
 	
 	Vehicle(DataInputStream dis, DataOutputStream dos, String id, Repository<Edge> edges, Repository<Lane> lanes) {
 		super(id, Variable.class);
@@ -119,13 +154,15 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		addReadQuery(Variable.ANGLE, 
 				new ReadObjectVarQuery.DoubleQ  (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.ANGLE.id));
 		addReadQuery(Variable.CURRENT_EDGE, 
-				new ReadObjectVarQuery.TraciObjectQ<Edge> (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_EDGE.id, edges));
+				new ReadObjectVarQuery.EdgeQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_EDGE.id, edges));
 		addReadQuery(Variable.CURRENT_LANE, 
-				new ReadObjectVarQuery.TraciObjectQ<Lane> (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_LANE.id, lanes));
+				new ReadObjectVarQuery.LaneQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_LANE.id, lanes));
 		addReadQuery(Variable.ROUTE, 
 				new RouteQuery(dis, dos, id));
 		
 		edgeTravelTimeQuery = new ChangeEdgeTravelTimeQuery(dis, dos, id);
+		changeTargetQuery = new ChangeTargetQuery(dis, dos, id);
+		changeRouteQuery = new ChangeRouteQuery(dis, dos, id);
 		
 		/*
 		 * when a reroute is issued, the read route query must forget its
@@ -175,6 +212,14 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 	
 	public RerouteQuery queryReroute() {
 		return rerouteQuery;
+	}
+	
+	public ChangeTargetQuery queryChangeTarget() {
+		return changeTargetQuery;
+	}
+	
+	public ChangeRouteQuery queryChangeRoute() {
+		return changeRouteQuery;
 	}
 }
 

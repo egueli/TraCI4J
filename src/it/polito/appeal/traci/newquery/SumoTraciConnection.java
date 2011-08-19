@@ -506,7 +506,7 @@ public class SumoTraciConnection {
 		return Collections.unmodifiableCollection(vehicles.values());
 	}
 	
-	public Vehicle getVehicleByName(String vehicleID) {
+	public Vehicle getVehicleByID(String vehicleID) {
 		return vehicles.get(vehicleID);
 	}
 	
@@ -514,7 +514,7 @@ public class SumoTraciConnection {
 		return edgeRepo.getAll().values();
 	}
 	
-	public Edge getEdgeByName(String edgeID) throws IOException {
+	public Edge getEdgeByID(String edgeID) throws IOException {
 		return edgeRepo.getByID(edgeID);
 	}
 	
@@ -526,7 +526,7 @@ public class SumoTraciConnection {
 		return laneRepo.getAll().values();
 	}
 	
-	public Lane getLaneByName(String laneID) throws IOException {
+	public Lane getLaneByID(String laneID) throws IOException {
 		return laneRepo.getByID(laneID);
 	}
 	

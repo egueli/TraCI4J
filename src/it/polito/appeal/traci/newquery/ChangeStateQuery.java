@@ -34,12 +34,25 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a query that changes the state of the simulation in some way.
+ * <p>
+ * It can be executed immediately using the {@link #run()} method, otherwise it
+ * can be added to a {@link MultiQuery} together with other queries to increse
+ * performance.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public abstract class ChangeStateQuery extends Query {
 
 	private final int commandID;
+	private final DataInputStream dis;
+	private final DataOutputStream dos;
 	
 	public ChangeStateQuery(DataInputStream dis, DataOutputStream dos, int commandID) {
-		super(dis, dos);
+		this.dis = dis;
+		this.dos = dos;
 		this.commandID = commandID;
 	}
 

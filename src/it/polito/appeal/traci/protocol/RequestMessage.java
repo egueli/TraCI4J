@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.CRC32;
+//import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 import org.apache.log4j.Logger;
@@ -45,6 +45,7 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class RequestMessage {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(RequestMessage.class);
 
 	private final List<Command> commands = new ArrayList<Command>();

@@ -23,26 +23,23 @@ import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.ResponseContainer;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This class represents a generic TraCI query, i.e. one or more requests and
+ * one or more responses.
+ * <p>
+ * This class does not contain code to send/receive the query itself to/from
+ * SUMO: either a subclass or an external class can do that.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public abstract class Query {
 
-	protected final DataInputStream dis;
-	protected final DataOutputStream dos;
-
-	Query(DataInputStream dis, DataOutputStream dos) {
-		this.dis = dis;
-		this.dos = dos;
-	}
-	
 	/**
 	 * Returns a list of Command needed to make the request.
-	 * <p>
-	 * This method must call the {@link #setPending()} method in order to update
-	 * the query's state.
 	 * @return
 	 */
 	abstract List<Command> getRequests();

@@ -31,6 +31,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Represents a set of {@link Query}s to run as a whole, i.e. within a single
+ * SUMO request and response message. This may significantly reduce the
+ * execution time, because the TCP overhead is distributed along all the queries 
+ * (JUnit tests show a performance increase of ~20x in an Intel T7300 dual
+ * core CPU with Linux 2.6.38).
+ * <p>
+ * When the queries are added to this class with {@link #add(Query)}, they can
+ * be executed with {@link #sendRequestsAndDispatchResponses()}.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class MultiQuery {
 	private final DataOutputStream dos;
 	private final DataInputStream dis;

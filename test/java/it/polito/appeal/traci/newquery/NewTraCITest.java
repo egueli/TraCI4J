@@ -20,10 +20,13 @@
 package it.polito.appeal.traci.newquery;
 
 import static org.junit.Assert.*;
+import it.polito.appeal.traci.TraCITest;
 import it.polito.appeal.traci.Vehicle.NotActiveException;
 import it.polito.appeal.traci.newquery.Edge.ChangeGlobalTravelTimeQuery;
 import it.polito.appeal.traci.newquery.Edge.ReadGlobalTravelTimeQuery;
 import it.polito.appeal.traci.newquery.Vehicle.ChangeEdgeTravelTimeQuery;
+import it.polito.appeal.traci.newquery.Vehicle.ChangeRouteQuery;
+import it.polito.appeal.traci.newquery.Vehicle.ChangeTargetQuery;
 
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -33,7 +36,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
@@ -43,7 +45,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test case for TraCI4J.
+ * Test case for TraCI4J. This is similar to {@link TraCITest}, but uses new
+ * API instead. Many tests have the same name and do the same things, therefore
+ * they can be used as a usage comparison between old and new APIs.
  * <p>
  * To run tests, please set the following system variable:
  * <dl>
@@ -88,6 +92,11 @@ public class NewTraCITest {
 	public void tearDown() throws IOException, InterruptedException {
 		if (conn != null)
 			conn.close();
+	}
+	
+	@Ignore
+	public void ignore() {
+		// do nothing, it's here just to avoid an unused import warning
 	}
 	
 	/**
@@ -192,7 +201,7 @@ public class NewTraCITest {
 		System.out.println("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
-		Edge edge = conn.getEdgeByName(edgeID);
+		Edge edge = conn.getEdgeByID(edgeID);
 		ChangeEdgeTravelTimeQuery settq = firstVehicle.querySetEdgeTravelTime();
 		settq.setEdge(edge);
 		settq.setTravelTime(10000);
@@ -235,7 +244,7 @@ public class NewTraCITest {
 		System.out.println("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
-		Edge edge = conn.getEdgeByName(edgeID);
+		Edge edge = conn.getEdgeByID(edgeID);
 		ChangeGlobalTravelTimeQuery cttq = edge.queryChangeTravelTime();
 		cttq.setBeginTime(0);
 		cttq.setEndTime(1000);
@@ -257,7 +266,7 @@ public class NewTraCITest {
 	
 	@Test
 	public void testGetShape() throws IOException {
-		Lane lane = conn.getLaneByName("beg_0");
+		Lane lane = conn.getLaneByID("beg_0");
 		PathIterator it = lane.queryShape().get().getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];
@@ -274,12 +283,13 @@ public class NewTraCITest {
 	
 	@Test
 	public void testGetBelongingEdge() throws IOException {
-		Lane lane = conn.getLaneByName("beg_0");
+		Lane lane = conn.getLaneByID("beg_0");
 		Edge edge = lane.queryParentEdge().get();
 		assertEquals("beg", edge.getID());
 	}
 	
 	@Test
+//	@Ignore // its duration may be annoying; feel free to comment this
 	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
 		final int RETRIES = 5;
 		
@@ -348,7 +358,7 @@ public class NewTraCITest {
 	}
 	
 	@Test
-//	@Ignore // simply because it lasts too long during my compulsive debuggings; feel free to comment this
+//	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
 		
 		final Set<Vehicle> traveling = new HashSet<Vehicle>();
@@ -388,45 +398,47 @@ public class NewTraCITest {
 			
 	}
 
-//	@Test
-//	public void testChangeTarget() throws IOException {
-//		getFirstVehicleID();
-//		Vehicle v = conn.getVehicle(firstVehicleID);
-//		try {
-//			v.changeTarget("end");
-//			
-//			String lastEdge = null;
-//			while (v.isAlive()) {
-//				lastEdge = v.queryCurrentEdge();
-//				assertFalse(lastEdge.equals("end"));
-//
-//				conn.nextSimStep();
-//			}
-//			
-//		} catch (NotActiveException e) {
-//			throw new RuntimeException("should never happen");
-//		}
-//	}
-//	
-//	@Test
-//	public void testChangeTargetAlsoAffectsRouteList() throws IOException, NotActiveException {
-//		getFirstVehicleID();
-//		Vehicle v = conn.getVehicle(firstVehicleID);
-//		v.changeTarget("end");
-//		List<String> route = v.getCurrentRoute();
-//		assertEquals("end", route.get(route.size()-1));
-//	}
-//	
-//	@Test
-//	public void testChangeRoute() throws IOException, NotActiveException {
-//		getFirstVehicleID();
-//		Vehicle v = conn.getVehicle(firstVehicleID);
-//		List<String> newRoute = new ArrayList<String>();
-//		newRoute.add("beg");
-//		newRoute.add("beg2left");
-//		newRoute.add("left");
-//		newRoute.add("left2end");
-//		v.changeRoute(newRoute);
-//		assertEquals(newRoute, v.getCurrentRoute());
-//	}
+	@Test
+	public void testChangeTarget() throws IOException {
+		getFirstVehicleID();
+		Vehicle v = firstVehicle;
+
+		ChangeTargetQuery ctq = v.queryChangeTarget();
+		ctq.setNewTarget(conn.getEdgeByID("end"));
+		ctq.run();
+		
+		Edge lastEdge = null;
+		while (conn.getVehicles().contains(v)) {
+			lastEdge = v.queryReadCurrentEdge().get();
+			assertFalse(lastEdge.getID().equals("end"));
+
+			conn.nextSimStep();
+		}
+	}
+	
+	@Test
+	public void testChangeTargetAlsoAffectsRouteList() throws IOException {
+		getFirstVehicleID();
+		Vehicle v = firstVehicle;
+		ChangeTargetQuery ctq = v.queryChangeTarget();
+		ctq.setNewTarget(conn.getEdgeByID("end"));
+		ctq.run();
+		List<Edge> route = v.queryReadRoute().get();
+		assertEquals("end", route.get(route.size()-1).getID());
+	}
+	
+	@Test
+	public void testChangeRoute() throws IOException, NotActiveException {
+		getFirstVehicleID();
+		Vehicle v = firstVehicle;
+		List<Edge> newRoute = new ArrayList<Edge>();
+		newRoute.add(conn.getEdgeByID("beg"));
+		newRoute.add(conn.getEdgeByID("beg2left"));
+		newRoute.add(conn.getEdgeByID("left"));
+		newRoute.add(conn.getEdgeByID("left2end"));
+		ChangeRouteQuery crq = v.queryChangeRoute();
+		crq.setNewRoute(newRoute);
+		crq.run();
+		assertEquals(newRoute, v.queryReadRoute().get());
+	}
 }

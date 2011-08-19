@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci.newquery;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;

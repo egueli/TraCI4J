@@ -24,12 +24,33 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-
+/**
+ * Represents a query to retrieve a value. This class is able to
+ * communicate directly with SUMO to run the query.
+ * <p>
+ * Calling the {@link #get()} method runs the query immediately: the query's
+ * requests are sent to SUMO; responses from SUMO are received and processed.
+ * The returned value is cached internally and any subsequent calls to
+ * {@link #get()} will return that value and avoid another dialog with SUMO,
+ * unless the subclass calls {@link #setObsolete()};
+ * <p>
+ * Please note that using the immediate execution can be slow; to increase
+ * performance, it is recommended to use a {@link MultiQuery}.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ * @param <V>
+ *            the type of the value to read
+ */
 public abstract class ValueReadQuery<V> extends Query {
 	private V value = null;
 
+	protected final DataInputStream dis;
+	protected final DataOutputStream dos;
+
 	ValueReadQuery(DataInputStream dis, DataOutputStream dos) {
-		super(dis, dos);
+		this.dis = dis;
+		this.dos = dos;
 	}
 	
 	protected void setObsolete() {
