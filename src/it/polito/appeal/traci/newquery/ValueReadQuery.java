@@ -74,7 +74,7 @@ public abstract class ValueReadQuery<V> extends Query {
 		else {
 			MultiQuery mq = new MultiQuery(dos, dis);
 			mq.add(this);
-			mq.sendRequestsAndDispatchResponses();
+			mq.run();
 			if (!hasValue())
 				throw new IllegalStateException("incorrect state after pickResponses()");
 			return value;

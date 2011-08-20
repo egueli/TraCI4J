@@ -39,7 +39,7 @@ import java.util.List;
  * core CPU with Linux 2.6.38).
  * <p>
  * When the queries are added to this class with {@link #add(Query)}, they can
- * be executed with {@link #sendRequestsAndDispatchResponses()}.
+ * be executed with {@link #run()}.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
@@ -63,7 +63,7 @@ public class MultiQuery {
 		return queries.remove(query);
 	}
 	
-	public void sendRequestsAndDispatchResponses() throws IOException {
+	public void run() throws IOException {
 		RequestMessage reqMsg = new RequestMessage();
 		for (Query q : queries) {
 			for (Command req : q.getRequests()) {

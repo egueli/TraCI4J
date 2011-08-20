@@ -24,6 +24,7 @@ import it.polito.appeal.traci.TraCITest;
 import it.polito.appeal.traci.Vehicle.NotActiveException;
 import it.polito.appeal.traci.newquery.Edge.ChangeGlobalTravelTimeQuery;
 import it.polito.appeal.traci.newquery.Edge.ReadGlobalTravelTimeQuery;
+import it.polito.appeal.traci.newquery.Lane.Link;
 import it.polito.appeal.traci.newquery.Vehicle.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.newquery.Vehicle.ChangeRouteQuery;
 import it.polito.appeal.traci.newquery.Vehicle.ChangeTargetQuery;
@@ -267,7 +268,7 @@ public class NewTraCITest {
 	@Test
 	public void testGetShape() throws IOException {
 		Lane lane = conn.getLaneByID("beg_0");
-		PathIterator it = lane.queryShape().get().getPathIterator(null);
+		PathIterator it = lane.queryReadShape().get().getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];
 		assertEquals(PathIterator.SEG_MOVETO, it.currentSegment(coords));
@@ -284,12 +285,12 @@ public class NewTraCITest {
 	@Test
 	public void testGetBelongingEdge() throws IOException {
 		Lane lane = conn.getLaneByID("beg_0");
-		Edge edge = lane.queryParentEdge().get();
+		Edge edge = lane.queryReadParentEdge().get();
 		assertEquals("beg", edge.getID());
 	}
 	
 	@Test
-//	@Ignore // its duration may be annoying; feel free to comment this
+	@Ignore // its duration may be annoying; feel free to comment this
 	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
 		final int RETRIES = 5;
 		
@@ -316,7 +317,7 @@ public class NewTraCITest {
 			for (Vehicle vehicle : vehicles) {
 				multi.add(vehicle.queryReadPosition());
 			}
-			multi.sendRequestsAndDispatchResponses();
+			multi.run();
 			conn.nextSimStep();
 		}
 		long elapsedMulti = System.currentTimeMillis() - start;
@@ -358,7 +359,7 @@ public class NewTraCITest {
 	}
 	
 	@Test
-//	@Ignore // its duration may be annoying; feel free to comment this
+	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
 		
 		final Set<Vehicle> traveling = new HashSet<Vehicle>();
@@ -440,5 +441,23 @@ public class NewTraCITest {
 		crq.setNewRoute(newRoute);
 		crq.run();
 		assertEquals(newRoute, v.queryReadRoute().get());
+	}
+	
+	@Test
+	public void testLaneLinks() throws IOException {
+		Lane begLane = conn.getLaneByID("beg_0");
+		List<Link> links = begLane.queryReadLinks().get();
+		Set<String> linkIDs = new HashSet<String>();
+		Set<String> intLinkIDs = new HashSet<String>();
+		for (Link link : links) {
+			linkIDs.add(link.getNextNonInternalLane().getID());
+			intLinkIDs.add(link.getNextInternalLane().getID());
+		}
+		
+		assertEquals(2, linkIDs.size());
+		assertTrue(linkIDs.contains("middle_0"));
+		assertTrue(intLinkIDs.contains(":beg_0_0"));
+		assertTrue(linkIDs.contains("beg2left_0"));
+		assertTrue(intLinkIDs.contains(":beg_1_0"));
 	}
 }

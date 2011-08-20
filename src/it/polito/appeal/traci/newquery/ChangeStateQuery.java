@@ -86,7 +86,7 @@ public abstract class ChangeStateQuery extends Query {
 	public void run() throws IOException {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		multi.add(this);
-		multi.sendRequestsAndDispatchResponses();
+		multi.run();
 	}
 
 }

@@ -41,7 +41,12 @@ import java.util.Set;
  */
 class Repository<V extends TraciObject<?>> {
 	private final Map<String, V> objects = new HashMap<String, V>();
-	private final ObjectFactory<V> factory;
+	/*
+	 * the factory is not final: there's a setter for those cases when the
+	 * factory is the subclass or points to the subclass, that doesn't exist
+	 * yet.
+	 */
+	private ObjectFactory<V> factory;
 	private final StringListQ idListQuery;
 	private Set<String> idSet;
 	
@@ -56,6 +61,10 @@ class Repository<V extends TraciObject<?>> {
 	public Repository(ObjectFactory<V> factory, StringListQ idListQuery) {
 		this.factory = factory;
 		this.idListQuery = idListQuery;
+	}
+	
+	protected void setObjectFactory(ObjectFactory<V> factory) {
+		this.factory = factory;
 	}
 
 	/**
@@ -110,12 +119,14 @@ class Repository<V extends TraciObject<?>> {
 	
 	static class Lanes extends Repository<Lane> {
 		public Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges, StringListQ idListQuery) {
-			super(new ObjectFactory<Lane>() {
+			super(null, idListQuery);
+			
+			setObjectFactory(new ObjectFactory<Lane>() {
 				@Override
 				public Lane newObject(String objectID) {
-					return new Lane(dis, dos, objectID, edges);
+					return new Lane(dis, dos, objectID, edges, Lanes.this);
 				}
-			}, idListQuery);
+			});
 		}
 	}
 }

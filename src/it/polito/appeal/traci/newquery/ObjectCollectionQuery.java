@@ -21,6 +21,7 @@ package it.polito.appeal.traci.newquery;
 
 import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.protocol.Command;
+import it.polito.appeal.traci.protocol.StringList;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,16 +31,17 @@ import java.util.List;
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
- * Represents a query for a collection of values. The collection is read and provided
- * atomically, i.e. is not possible to read only a subset of values ({@link Repository} 
- * can be used for that).
+ * Represents a query for a collection of values, represented in a StringList
+ * that contains their IDs. The collection is read and provided atomically, i.e.
+ * is not possible to read only a subset of values ({@link Repository} can be
+ * used for that).
  * <p>
  * It provides an abstract method to create a specific {@link Collection} and
  * requires a reference to an {@link ObjectFactory} to make each element in the
- * collection.
- *   
+ * collection given its ID.
+ * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- *
+ * 
  * @param <V>
  * @param <C>
  */
@@ -58,7 +60,7 @@ public abstract class ObjectCollectionQuery<V, C extends Collection<V>> extends 
 	@Override
 	protected C readValue(Command resp) throws TraCIException {
 		Storage content = resp.content();
-		List<String> ids = new it.polito.appeal.traci.protocol.StringList(content, true);
+		List<String> ids = new StringList(content, true);
 		C out = makeCollection();
 		for (String id : ids) {
 			out.add(factory.newObject(id));

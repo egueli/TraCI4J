@@ -463,7 +463,7 @@ public class SumoTraciConnection {
 		multi.add(teleportEndQ);
 		
 		
-		multi.sendRequestsAndDispatchResponses();
+		multi.run();
 
 		for (String arrivedID : arrivedQ.get()) {
 			Vehicle arrived = vehicles.remove(arrivedID);
