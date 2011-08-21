@@ -31,14 +31,8 @@ import java.util.List;
 
 public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
 
-	RouteQuery(final DataInputStream dis, final DataOutputStream dos, String vehicleID) {
-		super(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, new ObjectFactory<Edge>() {
-
-			@Override
-			public Edge newObject(String objectID) {
-				return new Edge(dis, dos, objectID);
-			}
-		}, vehicleID, Constants.VAR_EDGES);
+	RouteQuery(final DataInputStream dis, final DataOutputStream dos, String vehicleID, Repository<Edge> repo) {
+		super(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, repo, vehicleID, Constants.VAR_EDGES);
 	}
 
 	@Override

@@ -36,6 +36,9 @@ import java.util.Set;
  * <p>
  * It requires a {@link StringListQ} query that will be used to retrieve the
  * complete list of IDs to be able to check for correctness of requested IDs.
+ * <p>
+ * In order for a repository to be efficient, it should be the only class that
+ * instantiates new items. 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */

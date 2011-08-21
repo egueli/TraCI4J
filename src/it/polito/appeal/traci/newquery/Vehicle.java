@@ -158,7 +158,7 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		addReadQuery(Variable.CURRENT_LANE, 
 				new ReadObjectVarQuery.LaneQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_LANE.id, lanes));
 		addReadQuery(Variable.ROUTE, 
-				new RouteQuery(dis, dos, id));
+				new RouteQuery(dis, dos, id, edges));
 		
 		edgeTravelTimeQuery = new ChangeEdgeTravelTimeQuery(dis, dos, id);
 		changeTargetQuery = new ChangeTargetQuery(dis, dos, id);

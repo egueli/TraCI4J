@@ -25,6 +25,7 @@ import it.polito.appeal.traci.protocol.StringList;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,12 +33,11 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 /**
  * Represents a query for a collection of values, represented in a StringList
- * that contains their IDs. The collection is read and provided atomically, i.e.
- * is not possible to read only a subset of values ({@link Repository} can be
- * used for that).
+ * that contains their IDs. Its output is a collection of TraCI objects,
+ * gathered from a {@link Repository}.
  * <p>
  * It provides an abstract method to create a specific {@link Collection} and
- * requires a reference to an {@link ObjectFactory} to make each element in the
+ * requires a reference to a {@link Repository} to retrieve each element in the
  * collection given its ID.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
@@ -45,14 +45,14 @@ import de.uniluebeck.itm.tcpip.Storage;
  * @param <V>
  * @param <C>
  */
-public abstract class ObjectCollectionQuery<V, C extends Collection<V>> extends ReadObjectVarQuery<C> {
+public abstract class ObjectCollectionQuery<V extends TraciObject<?>, C extends Collection<V>> extends ReadObjectVarQuery<C> {
 
-	private final ObjectFactory<V> factory;
+	private final Repository<V> repository;
 
 	ObjectCollectionQuery(DataInputStream dis, DataOutputStream dos,
-			int commandID, ObjectFactory<V> factory, String objectID, int varID) {
+			int commandID, Repository<V> repository, String objectID, int varID) {
 		super(dis, dos, commandID, objectID, varID);
-		this.factory = factory;
+		this.repository = repository;
 	}
 
 	protected abstract C makeCollection();
@@ -63,7 +63,11 @@ public abstract class ObjectCollectionQuery<V, C extends Collection<V>> extends 
 		List<String> ids = new StringList(content, true);
 		C out = makeCollection();
 		for (String id : ids) {
-			out.add(factory.newObject(id));
+			try {
+				out.add(repository.getByID(id));
+			} catch (IOException e) {
+				throw new TraCIException(e.toString());
+			}
 		}
 		return out;
 	}
