@@ -202,7 +202,7 @@ public class NewTraCITest {
 		System.out.println("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
-		Edge edge = conn.getEdgeByID(edgeID);
+		Edge edge = conn.getEdgeRepository().getByID(edgeID);
 		ChangeEdgeTravelTimeQuery settq = firstVehicle.querySetEdgeTravelTime();
 		settq.setEdge(edge);
 		settq.setTravelTime(10000);
@@ -245,7 +245,7 @@ public class NewTraCITest {
 		System.out.println("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
-		Edge edge = conn.getEdgeByID(edgeID);
+		Edge edge = conn.getEdgeRepository().getByID(edgeID);
 		ChangeGlobalTravelTimeQuery cttq = edge.queryChangeTravelTime();
 		cttq.setBeginTime(0);
 		cttq.setEndTime(1000);
@@ -267,7 +267,7 @@ public class NewTraCITest {
 	
 	@Test
 	public void testGetShape() throws IOException {
-		Lane lane = conn.getLaneByID("beg_0");
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
 		PathIterator it = lane.queryReadShape().get().getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];
@@ -284,13 +284,13 @@ public class NewTraCITest {
 	
 	@Test
 	public void testGetBelongingEdge() throws IOException {
-		Lane lane = conn.getLaneByID("beg_0");
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
 		Edge edge = lane.queryReadParentEdge().get();
 		assertEquals("beg", edge.getID());
 	}
 	
 	@Test
-	@Ignore // its duration may be annoying; feel free to comment this
+//	@Ignore // its duration may be annoying; feel free to comment this
 	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
 		final int RETRIES = 5;
 		
@@ -359,7 +359,7 @@ public class NewTraCITest {
 	}
 	
 	@Test
-	@Ignore // its duration may be annoying; feel free to comment this
+//	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
 		
 		final Set<Vehicle> traveling = new HashSet<Vehicle>();
@@ -405,7 +405,7 @@ public class NewTraCITest {
 		Vehicle v = firstVehicle;
 
 		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setNewTarget(conn.getEdgeByID("end"));
+		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
 		ctq.run();
 		
 		Edge lastEdge = null;
@@ -422,7 +422,7 @@ public class NewTraCITest {
 		getFirstVehicleID();
 		Vehicle v = firstVehicle;
 		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setNewTarget(conn.getEdgeByID("end"));
+		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
 		ctq.run();
 		List<Edge> route = v.queryReadRoute().get();
 		assertEquals("end", route.get(route.size()-1).getID());
@@ -433,10 +433,10 @@ public class NewTraCITest {
 		getFirstVehicleID();
 		Vehicle v = firstVehicle;
 		List<Edge> newRoute = new ArrayList<Edge>();
-		newRoute.add(conn.getEdgeByID("beg"));
-		newRoute.add(conn.getEdgeByID("beg2left"));
-		newRoute.add(conn.getEdgeByID("left"));
-		newRoute.add(conn.getEdgeByID("left2end"));
+		newRoute.add(conn.getEdgeRepository().getByID("beg"));
+		newRoute.add(conn.getEdgeRepository().getByID("beg2left"));
+		newRoute.add(conn.getEdgeRepository().getByID("left"));
+		newRoute.add(conn.getEdgeRepository().getByID("left2end"));
 		ChangeRouteQuery crq = v.queryChangeRoute();
 		crq.setNewRoute(newRoute);
 		crq.run();
@@ -445,7 +445,7 @@ public class NewTraCITest {
 	
 	@Test
 	public void testLaneLinks() throws IOException {
-		Lane begLane = conn.getLaneByID("beg_0");
+		Lane begLane = conn.getLaneRepository().getByID("beg_0");
 		List<Link> links = begLane.queryReadLinks().get();
 		Set<String> linkIDs = new HashSet<String>();
 		Set<String> intLinkIDs = new HashSet<String>();

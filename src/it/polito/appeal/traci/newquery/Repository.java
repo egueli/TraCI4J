@@ -42,7 +42,7 @@ import java.util.Set;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
-class Repository<V extends TraciObject<?>> {
+public class Repository<V extends TraciObject<?>> {
 	private final Map<String, V> objects = new HashMap<String, V>();
 	/*
 	 * the factory is not final: there's a setter for those cases when the
@@ -110,7 +110,7 @@ class Repository<V extends TraciObject<?>> {
 	}
 	
 	static class Edges extends Repository<Edge> {
-		public Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+		Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<Edge>() {
 				@Override
 				public Edge newObject(String objectID) {
@@ -121,7 +121,7 @@ class Repository<V extends TraciObject<?>> {
 	}
 	
 	static class Lanes extends Repository<Lane> {
-		public Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges, StringListQ idListQuery) {
+		Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges, StringListQ idListQuery) {
 			super(null, idListQuery);
 			
 			setObjectFactory(new ObjectFactory<Lane>() {

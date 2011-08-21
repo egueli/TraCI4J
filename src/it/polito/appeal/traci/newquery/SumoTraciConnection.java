@@ -510,24 +510,16 @@ public class SumoTraciConnection {
 		return vehicles.get(vehicleID);
 	}
 	
-	public Collection<Edge> getEdges() throws IOException {
-		return edgeRepo.getAll().values();
-	}
-	
-	public Edge getEdgeByID(String edgeID) throws IOException {
-		return edgeRepo.getByID(edgeID);
+	public Repository<Edge> getEdgeRepository() throws IOException {
+		return edgeRepo;
 	}
 	
 	public SimValues getSimValues() {
 		return simValues;
 	}
 	
-	public Collection<Lane> getLanes() throws IOException {
-		return laneRepo.getAll().values();
-	}
-	
-	public Lane getLaneByID(String laneID) throws IOException {
-		return laneRepo.getByID(laneID);
+	public Repository<Lane> getLaneRepository() throws IOException {
+		return laneRepo;
 	}
 	
 	/**
