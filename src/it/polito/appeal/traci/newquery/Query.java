@@ -39,14 +39,14 @@ import java.util.List;
 public abstract class Query {
 
 	/**
-	 * Returns a list of Command needed to make the request.
+	 * Returns a list of {@link Command} needed to make the request.
 	 * @return
 	 */
 	abstract List<Command> getRequests();
 
 	/**
 	 * Reads one or more responses from the given {@link Iterator}, in order to
-	 * get the requested data.
+	 * verify that the operation is successful and/or get the requested data.
 	 * <p>
 	 * @param responseIterator
 	 * @throws TraCIException 

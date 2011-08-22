@@ -63,17 +63,10 @@ abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	void pickResponses(Iterator<ResponseContainer> responseIterator) throws TraCIException {
 		ResponseContainer respc = responseIterator.next();
 		StatusResponse statusResp = respc.getStatus();
-		if (statusResp.id() != commandID)
-			throw new TraCIException("command and status IDs must match");
-		if (statusResp.result() != Constants.RTYPE_OK)
-			throw new TraCIException("SUMO error for command "
-					+ statusResp.id() + ": " + statusResp.description());
-
+		Utils.checkStatusResponse(statusResp, commandID);
 		Command resp = respc.getResponse();
-		if (resp.content().readUnsignedByte() != varID)
-			throw new TraCIException("variable ID mismatch");
-		if (!resp.content().readStringASCII().equals(objectID))
-			throw new TraCIException("object ID mismatch");
+		Utils.checkByte(resp.content(), varID);
+		Utils.checkObjectID(resp.content(), objectID);
 		
 		V value = readValue(resp);
 		setDone(value);
@@ -92,8 +85,7 @@ abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		protected Integer readValue(Command resp)
 				throws TraCIException {
 			Storage content = resp.content();
-			if ((int)content.readByte() != Constants.TYPE_INTEGER)
-				throw new TraCIException("integer type ID expected");
+			Utils.checkType(content, Constants.TYPE_INTEGER);
 			return content.readInt();
 		}
 		
@@ -108,8 +100,7 @@ abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		@Override
 		protected Double readValue(Command resp) throws TraCIException {
 			Storage content = resp.content();
-			if ((int)content.readByte() != Constants.TYPE_DOUBLE)
-				throw new TraCIException("double type ID expected");
+			Utils.checkType(content, Constants.TYPE_DOUBLE);
 			return content.readDouble();
 		}
 	}
@@ -138,8 +129,7 @@ abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		
 		protected String readValue(Command resp) throws TraCIException {
 			Storage content = resp.content();
-			if ((int)content.readByte() != Constants.TYPE_STRING)
-				throw new TraCIException("string type ID expected");
+			Utils.checkType(content, Constants.TYPE_STRING);
 			return content.readStringASCII();
 		}
 	}
@@ -184,8 +174,7 @@ abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		@Override
 		protected V readValue(Command resp) throws TraCIException {
 			Storage content = resp.content();
-			if ((int)content.readByte() != Constants.TYPE_STRING)
-				throw new TraCIException("string type ID expected");
+			Utils.checkType(content, Constants.TYPE_STRING);
 			String id = content.readStringASCII();
 			try {
 				return repo.getByID(id);

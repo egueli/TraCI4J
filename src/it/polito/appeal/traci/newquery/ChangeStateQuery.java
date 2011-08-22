@@ -21,7 +21,6 @@ package it.polito.appeal.traci.newquery;
 
 import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.protocol.Command;
-import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.ResponseContainer;
 import it.polito.appeal.traci.protocol.StatusResponse;
 
@@ -74,12 +73,7 @@ public abstract class ChangeStateQuery extends Query {
 		
 		ResponseContainer respc = responseIterator.next();
 		StatusResponse statusResp = respc.getStatus();
-		if (statusResp.id() != commandID)
-			throw new TraCIException("command and status IDs must match");
-		if (statusResp.result() != Constants.RTYPE_OK)
-			throw new TraCIException("SUMO error for command "
-					+ statusResp.id() + ": " + statusResp.description());
-		
+		Utils.checkStatusResponse(statusResp, commandID);
 		
 	}
 	

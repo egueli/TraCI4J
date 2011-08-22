@@ -47,7 +47,7 @@ public class Lane extends TraciObject<Lane.Variable> {
 		private final String direction;
 		private final double length;
 		
-		protected Link(Storage content, Repository<Lane> laneRepo) throws IllegalArgumentException, IOException {
+		protected Link(Storage content, Repository<Lane> laneRepo) throws IOException {
 			checkType(content, Constants.TYPE_STRING);
 			// let's hope they don't point to this lane recursively!
 			nextNonInternalLane = laneRepo.getByID(content.readStringASCII());
@@ -127,7 +127,7 @@ public class Lane extends TraciObject<Lane.Variable> {
 			for (int i=0; i<count; i++) {
 				try {
 					out.add(new Link(content, laneRepo));
-				} catch (Exception e) {
+				} catch (IOException e) {
 					throw new TraCIException(e.toString());
 				}
 			}
