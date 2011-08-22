@@ -50,7 +50,7 @@ public class MultiQuery {
 	
 	private final List<Query> queries = new ArrayList<Query>();
 	
-	public MultiQuery(DataOutputStream dos, DataInputStream dis) {
+	MultiQuery(DataOutputStream dos, DataInputStream dis) {
 		this.dos = dos;
 		this.dis = dis;
 	}

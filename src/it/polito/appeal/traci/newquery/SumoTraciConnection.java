@@ -25,6 +25,7 @@ import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.query.CloseQuery;
 import it.polito.appeal.traci.query.SubscribeVehiclesLifecycle;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -544,6 +545,32 @@ public class SumoTraciConnection {
 	 */
 	public MultiQuery makeMultiQuery() {
 		return new MultiQuery(dos, dis);
+	}
+
+	/**
+	 * If set to true, the roadmap position of all vehicle is read at every
+	 * simulation step. This will increase performance, since the query for all
+	 * vehicles is made in a single TraCI query at the next sim step.
+	 * 
+	 * @deprecated this method will do nothing now. All the vehicles' positions
+	 * can be read using a {@link MultiQuery}.
+	 * @param booleanProperty
+	 */
+	@Deprecated
+	public void setGetVehiclesEdgeAtSimStep(boolean booleanProperty) {
+		
+	}
+
+	/**
+	 * Returns the geo-coordinates (as longitude-latitude) of the network.
+	 * @deprecated since the mechanism to obtain this data must be rewritten
+	 * from scratch after changes in the XML network file format; it's better
+	 * to obtain this data directly from TraCI, that is currently not supported
+	 * @return
+	 */
+	@Deprecated
+	public Point2D getGeoOffset() {
+		return null;
 	}
 }
 

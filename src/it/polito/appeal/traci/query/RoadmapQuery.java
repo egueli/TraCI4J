@@ -20,7 +20,6 @@
 package it.polito.appeal.traci.query;
 
 import it.polito.appeal.traci.Lane;
-import it.polito.appeal.traci.protocol.BoundingBox;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.Polygon;

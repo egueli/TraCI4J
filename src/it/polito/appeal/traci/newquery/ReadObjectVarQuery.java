@@ -37,7 +37,7 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
+public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 
 	private final int commandID;
 	private final String objectID;
