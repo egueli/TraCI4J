@@ -17,31 +17,27 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci.newquery;
+/**
+ * 
+ */
+package it.polito.appeal.traci;
+
+import it.polito.appeal.traci.protocol.Constants;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import de.uniluebeck.itm.tcpip.Storage;
+public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
 
-public abstract class ChangeObjectStateQuery extends ChangeStateQuery {
-
-	private final String objectID;
-	private final int variableID;
-	
-	public ChangeObjectStateQuery(DataInputStream dis, DataOutputStream dos,
-			int commandID, String objectID, int variableID) {
-		super(dis, dos, commandID);
-		this.objectID = objectID;
-		this.variableID = variableID;
+	RouteQuery(final DataInputStream dis, final DataOutputStream dos, String vehicleID, Repository<Edge> repo) {
+		super(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, repo, vehicleID, Constants.VAR_EDGES);
 	}
-	
+
 	@Override
-	protected void writeRequestTo(Storage content) {
-		content.writeUnsignedByte(variableID);
-		content.writeStringASCII(objectID);
-		writeParamsTo(content);
+	protected List<Edge> makeCollection() {
+		return new ArrayList<Edge>();
 	}
-
-	protected abstract void writeParamsTo(Storage content);
+	
 }

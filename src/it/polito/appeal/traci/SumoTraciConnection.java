@@ -19,20 +19,13 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.protocol.RoadmapPosition;
-import it.polito.appeal.traci.query.ChangeEdgeStateQuery;
-import it.polito.appeal.traci.query.ChangeLaneStateQuery;
-import it.polito.appeal.traci.query.CloseQuery;
-import it.polito.appeal.traci.query.MultiVehiclePositionQuery;
-import it.polito.appeal.traci.query.RetrieveEdgeStateQuery;
-import it.polito.appeal.traci.query.RoadmapQuery;
-import it.polito.appeal.traci.query.SimStepQuery;
-import it.polito.appeal.traci.query.SubscribeVehiclesLifecycle;
+import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
+import it.polito.appeal.traci.protocol.Constants;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,13 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
@@ -142,26 +129,27 @@ public class SumoTraciConnection {
 	
 	private int currentSimStep;
 	private Process sumoProcess;
-	private final Set<String> activeVehicles = new HashSet<String>();
-	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
-	private final Map<String, Vehicle> vehicles = new HashMap<String, Vehicle>();
-	private final Set<String> teleporting = new HashSet<String>();
-
+	
 	private static final int CONNECT_RETRIES = 9;
-
-	private Point2D geoOffset;
-
-	private Map<String, Lane> cachedLanes;
 
 	private CloseQuery closeQuery;
 
-	private boolean readInternalLinks = false;
-
 	private SumoHttpRetriever httpRetriever;
 
-	private boolean getVehiclesEdgeAtSimStep;
-	
 	private List<String> args = new ArrayList<String>();
+	
+	private DataInputStream dis;
+	private DataOutputStream dos;
+	
+	private final Set<StepAdvanceListener> stepAdvanceListeners = new HashSet<StepAdvanceListener>();
+
+	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
+	
+	private Map<String, Vehicle> vehicles;
+	private Repository<Edge> edgeRepo;
+	private Repository<Lane> laneRepo;
+
+	private SimValues simValues;
 	
 	/**
 	 * Constructor for the object.
@@ -181,10 +169,6 @@ public class SumoTraciConnection {
 			boolean useGeoOffset) {
 		this.randomSeed = randomSeed;
 		this.configFile = configFile;
-
-		if (useGeoOffset)
-			geoOffset = lookForGeoOffset(configFile);
-		
 	}
 	
 	public SumoTraciConnection(SocketAddress sockAddr) throws IOException,
@@ -289,11 +273,23 @@ public class SumoTraciConnection {
 			e.printStackTrace();
 		}
 
+		postConnect();
+	}
+
+	private void postConnect() throws IOException {
 		currentSimStep = 0;
 
-		subscribeVehiclesLifecycle();
+		dis = new DataInputStream(socket.getInputStream());
+		dos = new DataOutputStream(socket.getOutputStream());
 
-		closeQuery = new CloseQuery(socket);
+		closeQuery = new CloseQuery(dis, dos);
+		
+		vehicles = new HashMap<String, Vehicle>();
+		edgeRepo = new Repository.Edges(dis, dos, new StringListQ(dis, dos,
+				Constants.CMD_GET_EDGE_VARIABLE, "", Constants.ID_LIST));
+		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, new StringListQ(dis, dos,
+				Constants.CMD_GET_LANE_VARIABLE, "", Constants.ID_LIST));
+		simValues = new SimValues(dis, dos);
 	}
 
 	private void retrieveFromURLs() throws IOException {
@@ -378,7 +374,7 @@ public class SumoTraciConnection {
 		 */
 		if (socket != null) {
 			if (closeQuery != null) {
-				closeQuery.doCommand();
+				closeQuery.run();
 				closeQuery = null;
 			}
 			socket = null;
@@ -391,10 +387,6 @@ public class SumoTraciConnection {
 		
 		if (httpRetriever != null)
 			httpRetriever.close();
-		
-		vehicles.clear();
-		vehicleLifecycleObservers.clear();
-		cachedLanes = null;
 	}
 	
 	/**
@@ -419,34 +411,8 @@ public class SumoTraciConnection {
 	public Rectangle2D queryBounds() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
-		
-		Map<String, Lane> lanes = getLanesMap();
-		Rectangle2D boundsAll = null;
-		for (Lane r : lanes.values()) {
-			Rectangle2D bounds = (Rectangle2D)r.getBoundingBox().clone();
-			if (boundsAll == null)
-				boundsAll = bounds;
-			else
-				boundsAll = boundsAll.createUnion(bounds);
-		}
-		
-		return boundsAll;
-	}
-
-	/**
-	 * the geographical coordinates (latitude/longitude) of the bottom-left
-	 * corner, if the network description file is derived from a GIS map.
-	 * 
-	 * @return the geo coordinates of the bottom-left corner, or null if the
-	 *         network description file didn't specify info about the geographic
-	 *         map
-	 */
-	public Point2D getGeoOffset() {
-		return geoOffset;
-	}
-
-	private void subscribeVehiclesLifecycle() throws IOException {
-		(new SubscribeVehiclesLifecycle(socket)).doCommand();
+	
+		throw new UnsupportedOperationException("to be done");
 	}
 
 	/**
@@ -463,115 +429,66 @@ public class SumoTraciConnection {
 			throw new IllegalStateException("connection is closed");
 		
 		currentSimStep++;
-		SimStepQuery ssQuery = new SimStepQuery(socket, currentSimStep);
-		ssQuery.doCommand();
 
-		Set<String> departed = ssQuery.getDepartedVehicles();
-		Set<String> arrived = ssQuery.getArrivedVehicles();
-		Set<String> teleportStarting = ssQuery.getTeleportStartingVehicles();
-		Set<String> teleportEnding = ssQuery.getTeleportEndingVehicles();
-
-
-		for (String id : departed) {
-			vehicles.put(id, new Vehicle(id, socket, this));
-
-//			if (log.isDebugEnabled())
-//				log.debug("Vehicle " + id + " created");
-		}
-		for (String id : arrived) {
-//			if (log.isDebugEnabled())
-//				log.debug("Vehicle " + id + " destroyed");
-			vehicles.get(id).alive = false;
-			vehicles.remove(id);
-		}
+		simValues.nextStep(currentSimStep);
 		
-		for (String id : teleportStarting) {
-			teleporting.add(id);
-			vehicles.get(id).teleport = true;
-		}
-		for (String id : teleportEnding) {
-			vehicles.get(id).teleport = false;
-			teleporting.remove(id);
-		}
-
-		activeVehicles.addAll(departed);
-		activeVehicles.removeAll(arrived);
-
-		updateVehiclesPosition();
+		MultiQuery multi = new MultiQuery(dos, dis);
 		
-		if (getVehiclesEdgeAtSimStep) {
-			updateVehiclesEdge();
-		}
-
-		notifyArrived(arrived);
-		notifyDeparted(departed);
-		notifyTeleportStarting(teleportStarting);
-		notifyTeleportEnding(teleportEnding);
+		SimStepQuery ssq = new SimStepQuery(dis, dos);
+		ssq.setTargetTime(currentSimStep * 1000);
+		multi.add(ssq);
 		
-	}
-
-	private void updateVehiclesPosition() throws IOException {
-		MultiVehiclePositionQuery mvpQuery = 
-			new MultiVehiclePositionQuery(socket, activeVehicles);
+		StringListQ departedQ = new StringListQ(dis, dos,
+				Constants.CMD_GET_SIM_VARIABLE, "",
+				Constants.VAR_DEPARTED_VEHICLES_IDS);
+		multi.add(departedQ);
 		
-		Map<String, Point2D> vehiclesPosition = mvpQuery
-				.getVehiclesPosition2D();
+		StringListQ arrivedQ = new StringListQ(dis, dos,
+				Constants.CMD_GET_SIM_VARIABLE, "",
+				Constants.VAR_ARRIVED_VEHICLES_IDS);
+		multi.add(arrivedQ);
+		
+		StringListQ teleportStartQ = new StringListQ(dis, dos,
+				Constants.CMD_GET_SIM_VARIABLE, "",
+				Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
+		multi.add(teleportStartQ);
+		
+		StringListQ teleportEndQ = new StringListQ(dis, dos,
+				Constants.CMD_GET_SIM_VARIABLE, "",
+				Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
+		multi.add(teleportEndQ);
+		
+		
+		multi.run();
 
-		for(Map.Entry<String, Point2D> entry : vehiclesPosition.entrySet()) {
-			String id = entry.getKey();
-			Point2D pos = entry.getValue();
-			
-			if(!activeVehicles.contains(id) || !vehicles.containsKey(id))
-				throw new IllegalStateException("should never happen");
-			
-			vehicles.get(id).setPosition(pos);
-		}
-	}
-
-	private void updateVehiclesEdge() throws IOException {
-		Map<String, RoadmapPosition> vehiclesPos = getAllVehiclesRoadmapPos();
-		for ( Vehicle v : vehicles.values() ) {
-			String name = v.getID();
-			if (vehiclesPos.containsKey(name)) {
-				v.setCurrentRoadmapPos(vehiclesPos.get(name));
+		for (String arrivedID : arrivedQ.get()) {
+			Vehicle arrived = vehicles.remove(arrivedID);
+			stepAdvanceListeners.remove(arrived);
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
+				observer.vehicleArrived(arrived);
 			}
 		}
-	}
-
-	protected void notifyDeparted(Set<String> created) {
-		for (String id : created) {
-			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleDeparted(id);
+		for (String departedID : departedQ.get()) {
+			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
+			vehicles.put(departedID, departed);
+			stepAdvanceListeners.add(departed);
+			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
+				observer.vehicleDeparted(departed);
+			}
 		}
-	}
-
-	protected void notifyArrived(Set<String> destroyed) {
-		for (String id : destroyed) {
-			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleArrived(id);
+		
+		for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
+			for (String teleportStarting : teleportStartQ.get()) {
+				observer.vehicleTeleportStarting(vehicles.get(teleportStarting));
+			}
+			for (String teleportEnding : teleportEndQ.get()) {
+				observer.vehicleTeleportEnding(vehicles.get(teleportEnding));
+			}
 		}
-	}
-
-	protected void notifyTeleportStarting(Set<String> starting) {
-		for (String id : starting) {
-			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleTeleportStarting(id);
-		}
-	}
-
-	protected void notifyTeleportEnding(Set<String> ending) {
-		for (String id : ending) {
-			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers)
-				observer.vehicleTeleportEnding(id);
-		}
-	}
-
-	/**
-	 * Returns a set containing which vehicles are currently circulating.
-	 * Vehicles are identified by their string ID.
-	 */
-	public Set<String> getActiveVehicles() {
-		return activeVehicles;
+		
+		for (StepAdvanceListener listener : stepAdvanceListeners)
+			listener.nextStep(currentSimStep);
+		
 	}
 
 	/**
@@ -581,6 +498,26 @@ public class SumoTraciConnection {
 		return currentSimStep;
 	}
 
+	public Collection<Vehicle> getVehicles() {
+		return Collections.unmodifiableCollection(vehicles.values());
+	}
+	
+	public Vehicle getVehicleByID(String vehicleID) {
+		return vehicles.get(vehicleID);
+	}
+	
+	public Repository<Edge> getEdgeRepository() throws IOException {
+		return edgeRepo;
+	}
+	
+	public SimValues getSimValues() {
+		return simValues;
+	}
+	
+	public Repository<Lane> getLaneRepository() throws IOException {
+		return laneRepo;
+	}
+	
 	/**
 	 * Allows a {@link VehicleLifecycleObserver}-implementing object to be
 	 * notified about vehicles' creation and destruction.
@@ -598,298 +535,37 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Returns a {@link Vehicle} object with the given ID.
+	 * Creates a {@link MultiQuery} bound to this server connection.
+	 * @return
+	 */
+	public MultiQuery makeMultiQuery() {
+		return new MultiQuery(dos, dis);
+	}
+
+	/**
+	 * If set to true, the roadmap position of all vehicle is read at every
+	 * simulation step. This will increase performance, since the query for all
+	 * vehicles is made in a single TraCI query at the next sim step.
 	 * 
-	 * @param id
-	 *            the internal ID of the vehicle
-	 * @return the corresponding Vehicle object
-	 * @throws IllegalArgumentException
-	 *             if the given ID doesn't match any active vehicle
-	 */
-	public Vehicle getVehicle(String id) {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		if (vehicles.containsKey(id))
-			return vehicles.get(id);
-		else
-			throw new IllegalArgumentException("Vehicle ID " + id
-					+ " does not exist");
-	}
-
-	/**
-	 * Returns a collection of {@link Lane} objects, representing the entire
-	 * traffic network.
-	 * <p>
-	 * NOTE: this command can require some time to complete.
-	 * @return a collection of {@link Lane}s
-	 * @throws IOException
-	 *             if something wrong happened while sending the TraCI command.
-	 */
-	public Collection<Lane> queryLanes() throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		if (cachedLanes == null) {
-			log.info("Retrieving lanes...");
-			Set<Lane> lanes = (new RoadmapQuery(socket)).queryLanes(readInternalLinks);
-			log.info("... done, " + lanes.size() + " roads read");
-			
-			cachedLanes = new HashMap<String, Lane>();
-			for (Lane r : lanes) {
-				cachedLanes.put(r.externalID, r);
-			}
-			cachedLanes = Collections.unmodifiableMap(cachedLanes);
-		}
-			
-
-		return cachedLanes.values();
-	}
-	
-	public Map<String, Lane> getLanesMap() throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		queryLanes();
-		return cachedLanes;
-	}
-
-	/**
-	 * Returns the length of a single road given its string ID.
-	 * 
-	 * @param roadID
-	 * @throws IOException
-	 *             if something wrong happened while sending the TraCI command.
-	 * @throws NullPointerException
-	 *             if the ID doesn't match any road
-	 */
-	public double getRoadLength(String roadID) throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		Lane r = getLane(roadID);
-		return r.getLength();
-	}
-
-	/**
-	 * Returns a {@link Lane} object matching the given ID
-	 * 
-	 * @param roadID
-	 * @return the requested {@link Lane} object, or null if such road doesn't
-	 *         exist.
-	 * @throws IOException
-	 */
-	public Lane getLane(String roadID) throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		if (cachedLanes == null)
-			queryLanes();
-
-		return cachedLanes.get(roadID);
-	}
-
-	@SuppressWarnings("serial")
-	private static class DataFoundException extends SAXException {
-		public DataFoundException(String string) {
-			super(string);
-		}
-	};
-
-	/**
-	 * Since SUMO can't yet provide geographical info about the map via TraCI,
-	 * and it's needed to geo-localize city maps (e.g. with Google Maps), this
-	 * method tries to read the geographic offset from an external file. This
-	 * information is contained in the network description file whose path is
-	 * specified in the config file. So this method will look there.
-	 * <p>
-	 * NOTE: I marked this as "deprecated" since it may not work with the HTTP
-	 * retrieval feature. Testing needed.
-	 * @param configFile
+	 * @deprecated this method will do nothing now. All the vehicles' positions
+	 * can be read using a {@link MultiQuery}.
+	 * @param booleanProperty
 	 */
 	@Deprecated
-	private static Point2D lookForGeoOffset(String configFile) {
-		try {
-			ContentHandler sumoConfHandler = new DefaultHandler() {
-
-				boolean doRead = false;
-
-				@Override
-				public void startElement(String namespaceURI, String localName,
-						String qName, Attributes atts) throws SAXException {
-					if (localName.equals("net-file"))
-						doRead = true;
-				}
-
-				@Override
-				public void characters(char[] ch, int start, int length)
-						throws SAXException {
-					if (doRead) {
-						throw new DataFoundException(new String(ch, start,
-								length));
-					}
-				}
-			};
-
-			String netFile = null;
-
-			XMLReader xmlReader = XMLReaderFactory
-					.createXMLReader("org.apache.xerces.parsers.SAXParser");
-
-			xmlReader.setContentHandler(sumoConfHandler);
-			try {
-				xmlReader
-						.parse(new InputSource(new FileInputStream(configFile)));
-				return null;
-			} catch (DataFoundException dfe) {
-				netFile = dfe.getMessage();
-			}
-
-			String basePath = configFile.substring(0, configFile
-					.lastIndexOf(File.separatorChar));
-			String absNetFile = basePath + File.separatorChar + netFile;
-
-			ContentHandler netDescHandler = new DefaultHandler() {
-
-				boolean doRead = false;
-
-				@Override
-				public void startElement(String namespaceURI, String localName,
-						String qName, Attributes atts) throws SAXException {
-					if (localName.equals("net-offset"))
-						doRead = true;
-				}
-
-				@Override
-				public void characters(char[] ch, int start, int length)
-						throws SAXException {
-					if (doRead) {
-						throw new DataFoundException(new String(ch, start,
-								length));
-					}
-				}
-			};
-
-			xmlReader = XMLReaderFactory
-					.createXMLReader("org.apache.xerces.parsers.SAXParser");
-
-			xmlReader.setContentHandler(netDescHandler);
-			try {
-				xmlReader
-						.parse(new InputSource(new FileInputStream(absNetFile)));
-				return null;
-			} catch (DataFoundException dfe) {
-				String geoOffsetStr = dfe.getMessage();
-				String[] geoOffsetStrFields = geoOffsetStr.split(",");
-				return new Point2D.Float(Float
-						.parseFloat(geoOffsetStrFields[0]), Float
-						.parseFloat(geoOffsetStrFields[1]));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Point2D.Float(0, 0);
-		}
-
+	public void setGetVehiclesEdgeAtSimStep(boolean booleanProperty) {
+		
 	}
 
 	/**
-	 * Returns whether the inner-junction links will be read.
+	 * Returns the geo-coordinates (as longitude-latitude) of the network.
+	 * @deprecated since the mechanism to obtain this data must be rewritten
+	 * from scratch after changes in the XML network file format; it's better
+	 * to obtain this data directly from TraCI, that is currently not supported
+	 * @return
 	 */
-	public boolean isReadInternalLinks() {
-		return readInternalLinks;
-	}
-
-	/**
-	 * Enables or disable reading of internal, inner-junction links. If such
-	 * feature is changed, the lanes will be re-read from SUMO.
-	 * @param readInternalLinks
-	 */
-	public void setReadInternalLinks(boolean readInternalLinks) {
-		if (this.readInternalLinks != readInternalLinks) {
-			cachedLanes = null;
-		}
-		
-		this.readInternalLinks = readInternalLinks;
-	}
-
-	/**
-	 * Sets the maximum speed (in m/s) of a certain lane. Note that it doesn't
-	 * affect subsequent rerouting (for that, use e.g.
-	 * {@link #changeEdgeTravelTime(int, int, String, float)}).
-	 * 
-	 * @param laneID
-	 * @param vmax
-	 * @throws IOException
-	 */
-	public void changeLaneMaxVelocity(String laneID, float vmax) throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		ChangeLaneStateQuery clsq = new ChangeLaneStateQuery(socket, laneID);
-		clsq.changeMaxVelocity(vmax);
-	}
-
-	/**
-	 * Sets the travel time of a given edge in the specified time frame.
-	 * Subsequent rerouting of vehicles (either with {@link Vehicle#reroute()}
-	 * or {@link Vehicle#setEdgeTravelTime(String, Number)}) will be affected by this
-	 * setting, if they don't have another specified travel time for this edge.
-	 * 
-	 * @param begin
-	 * @param end
-	 * @param edgeID
-	 * @param travelTime
-	 * @throws IOException
-	 */
-	public void changeEdgeTravelTime(int begin, int end, String edgeID, double travelTime) throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		ChangeEdgeStateQuery cesq = new ChangeEdgeStateQuery(socket, edgeID);
-		cesq.changeGlobalTravelTime(begin, end, travelTime);
-	}
-
-	/**
-	 * Returns the globally-specified travel time of an edge in the current
-	 * time step.
-	 * @param edgeID
-	 * @throws IOException
-	 */
-	public double getEdgeTravelTime(String edgeID) throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		return getEdgeTravelTime(edgeID, currentSimStep);
-	}
-
-	/**
-	 * Returns the globally-specified travel time of an edge in a given time
-	 * step.
-	 * @param edgeID
-	 * @param time
-	 * @throws IOException
-	 */
-	private double getEdgeTravelTime(String edgeID, int time) throws IOException {
-		RetrieveEdgeStateQuery resq = new RetrieveEdgeStateQuery(socket, edgeID);
-		return resq.getGlobalTravelTime(time);
-	}
-
-	public Map<String, RoadmapPosition> getAllVehiclesRoadmapPos() throws IOException {
-		if (isClosed())
-			throw new IllegalStateException("connection is closed");
-		
-		Set<String> vehicleIDs = new HashSet<String>();
-		for (Vehicle v : vehicles.values()) {
-			vehicleIDs.add(v.getID());
-		}
-		MultiVehiclePositionQuery mvpq = new MultiVehiclePositionQuery(socket, 
-				vehicleIDs);
-		
-		return mvpq.getVehiclesPositionRoadmap();
-	}
-	
-	public void setGetVehiclesEdgeAtSimStep(boolean state) {
-		getVehiclesEdgeAtSimStep = state;
+	@Deprecated
+	public Point2D getGeoOffset() {
+		return null;
 	}
 }
 

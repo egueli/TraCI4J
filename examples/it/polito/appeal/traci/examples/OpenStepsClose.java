@@ -20,8 +20,9 @@
 package it.polito.appeal.traci.examples;
 
 import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.Vehicle;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -42,7 +43,7 @@ public class OpenStepsClose {
 			
 			for (int i = 0; i < 10; i++) {
 				int time = conn.getCurrentSimStep();
-				Set<String> vehicles = conn.getActiveVehicles();
+				Collection<Vehicle> vehicles = conn.getVehicles();
 				
 				System.out.println("At time step " + time + ", there are "
 						+ vehicles.size() + " vehicles: " + vehicles);

@@ -17,7 +17,7 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci.newquery;
+package it.polito.appeal.traci;
 
 
 import java.io.DataInputStream;

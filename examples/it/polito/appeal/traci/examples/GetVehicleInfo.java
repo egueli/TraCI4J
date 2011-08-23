@@ -22,6 +22,7 @@ package it.polito.appeal.traci.examples;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 
+import java.util.Collection;
 import java.util.Set;
 
 public class GetVehicleInfo {
@@ -39,14 +40,13 @@ public class GetVehicleInfo {
 			conn.nextSimStep();
 			conn.nextSimStep();
 			
-			Set<String> vehicles = conn.getActiveVehicles();
+			Collection<Vehicle> vehicles = conn.getVehicles();
 
-			String aVehicleID = vehicles.iterator().next();
-			Vehicle aVehicle = conn.getVehicle(aVehicleID);
+			Vehicle aVehicle = vehicles.iterator().next();
 			
-			System.out.println("Vehicle " + aVehicleID
+			System.out.println("Vehicle " + aVehicle
 					+ " will traverse these edges: "
-					+ aVehicle.getCurrentRoute());
+					+ aVehicle.queryReadRoute().get());
 			
 			conn.close();
 		}

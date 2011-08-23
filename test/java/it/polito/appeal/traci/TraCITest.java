@@ -20,23 +20,40 @@
 package it.polito.appeal.traci;
 
 import static org.junit.Assert.*;
-import it.polito.appeal.traci.Vehicle.NotActiveException;
+import it.polito.appeal.traci.Edge;
+import it.polito.appeal.traci.Lane;
+import it.polito.appeal.traci.MultiQuery;
+import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.ValueReadQuery;
+import it.polito.appeal.traci.Vehicle;
+import it.polito.appeal.traci.VehicleLifecycleObserver;
+import it.polito.appeal.traci.Edge.ChangeGlobalTravelTimeQuery;
+import it.polito.appeal.traci.Edge.ReadGlobalTravelTimeQuery;
+import it.polito.appeal.traci.Lane.Link;
+import it.polito.appeal.traci.Vehicle.ChangeEdgeTravelTimeQuery;
+import it.polito.appeal.traci.Vehicle.ChangeRouteQuery;
+import it.polito.appeal.traci.Vehicle.ChangeTargetQuery;
 
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test case for TraCI4J.
+ * Test case for TraCI4J. This is similar to {@link TraCITest}, but uses new
+ * API instead. Many tests have the same name and do the same things, therefore
+ * they can be used as a usage comparison between old and new APIs.
  * <p>
  * To run tests, please set the following system variable:
  * <dl>
@@ -83,6 +100,11 @@ public class TraCITest {
 			conn.close();
 	}
 	
+	@Ignore
+	public void ignore() {
+		// do nothing, it's here just to avoid an unused import warning
+	}
+	
 	/**
 	 * The sim step at startup must be zero.
 	 */
@@ -104,22 +126,22 @@ public class TraCITest {
 	
 	@Test
 	public void testGetSubscriptionResponses() throws IOException {
-		final List<String> departed = new ArrayList<String>();
+		final List<Vehicle> departed = new ArrayList<Vehicle>();
 		
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			@Override
-			public void vehicleArrived(String id) { }
+			public void vehicleArrived(Vehicle v) { }
 			
 			@Override
-			public void vehicleDeparted(String id) {
-				departed.add(id);
+			public void vehicleDeparted(Vehicle v) {
+				departed.add(v);
 			}
 
 			@Override
-			public void vehicleTeleportEnding(String id) { }
+			public void vehicleTeleportEnding(Vehicle v) { }
 
 			@Override
-			public void vehicleTeleportStarting(String id) { }
+			public void vehicleTeleportStarting(Vehicle v) { }
 		});
 		conn.nextSimStep();
 		conn.nextSimStep();
@@ -127,25 +149,73 @@ public class TraCITest {
 		
 		assertFalse(departed.isEmpty());
 	}
+
+	@Test
+	public void testVehicleSet() throws IllegalStateException, IOException {
+		for (int i=0; i<10; i++) {
+			conn.nextSimStep();
+			int t = conn.getCurrentSimStep();
+			Collection<Vehicle> vehicles = conn.getVehicles();
+			System.out.println(t + "\t" + vehicles);
+			assertTrue(vehicles.size() > 0);
+		}
+	}
 	
-	private String firstVehicleID = null;
+	@Test
+	public void testRefreshedValues() throws IllegalStateException, IOException {
+		conn.nextSimStep();
+		Vehicle v = conn.getVehicles().iterator().next();
+		ValueReadQuery<Double> readSpeedQuery = v.queryReadSpeed();
+		Double speedFirst = readSpeedQuery.get();
+		
+		for (int i=0; i<10; i++) {
+			conn.nextSimStep();
+			Double speedNow = readSpeedQuery.get();
+			System.out.println(speedNow);
+			assertTrue(Math.abs(speedFirst - speedNow) > DELTA);
+		}
+	}
+
+	
+	private Vehicle firstVehicle = null;
+	
+	@Test
+	public void testRoute() throws IOException {
+		getFirstVehicleID();
+		
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
+		List<Edge> route = routeQuery.get();
+		assertEquals(4, route.size());
+
+		Iterator<Edge> it = route.iterator();
+		assertEquals("beg",    it.next().getID());
+		assertEquals("middle", it.next().getID());
+		assertEquals("end",    it.next().getID());
+		assertEquals("rend",   it.next().getID());
+	}
 	
 	@Test
 	public void testRerouting()
-			throws IOException, NotActiveException {
+			throws IOException {
 		
 		
 		getFirstVehicleID();
 		
-		Vehicle v0 = conn.getVehicle(firstVehicleID);
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
 		
-		List<String> routeBefore = v0.getCurrentRoute();
+		List<Edge> routeBefore = routeQuery.get();
 		System.out.println("Route before:         " + routeBefore);
 
-		String edgeToSlowDown = "middle";
-		v0.setEdgeTravelTime(edgeToSlowDown, 10000);
+		String edgeID = "middle";
+		Edge edge = conn.getEdgeRepository().getByID(edgeID);
+		ChangeEdgeTravelTimeQuery settq = firstVehicle.querySetEdgeTravelTime();
+		settq.setEdge(edge);
+		settq.setTravelTime(10000);
+		settq.run();
 		
-		List<String> routeAfter = v0.getCurrentRoute();
+		firstVehicle.queryReroute().run();
+		
+		List<Edge> routeAfter = routeQuery.get();
 		System.out.println("Route after:          " + routeAfter);
 		
 		assertFalse(routeBefore.equals(routeAfter));
@@ -154,39 +224,47 @@ public class TraCITest {
 	public void getFirstVehicleID()
 			throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleDeparted(String id) {
-				firstVehicleID = id;
+			@Override public void vehicleDeparted(Vehicle v) {
+				firstVehicle = v;
 			}
-			@Override public void vehicleArrived(String id) { }
+			@Override public void vehicleArrived(Vehicle v) { }
 			
 			@Override
-			public void vehicleTeleportEnding(String id) { }
+			public void vehicleTeleportEnding(Vehicle v) { }
 			@Override
-			public void vehicleTeleportStarting(String id) { }
+			public void vehicleTeleportStarting(Vehicle v) { }
 		});
 		
-		while(firstVehicleID == null)
+		while(firstVehicle == null)
 			conn.nextSimStep();
 	}
 
 	@Test
 	public void testChangeGlobalTravelTime()
-			throws IOException, NotActiveException {
+			throws IOException {
 
 		getFirstVehicleID();
-		Vehicle v0 = conn.getVehicle(firstVehicleID);
 		
-		List<String> routeBefore = v0.getCurrentRoute();
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
+		List<Edge> routeBefore = routeQuery.get();
 		System.out.println("Route before:         " + routeBefore);
 
-		String edgeToSlowDown = "middle";
-		conn.changeEdgeTravelTime(0, 1000, edgeToSlowDown, 10000);
-		double newTravelTime = conn.getEdgeTravelTime(edgeToSlowDown);
+		String edgeID = "middle";
+		Edge edge = conn.getEdgeRepository().getByID(edgeID);
+		ChangeGlobalTravelTimeQuery cttq = edge.queryChangeTravelTime();
+		cttq.setBeginTime(0);
+		cttq.setEndTime(1000);
+		cttq.setTravelTime(10000);
+		cttq.run();
+		
+		ReadGlobalTravelTimeQuery rgttq = edge.queryReadGlobalTravelTime();
+		rgttq.setTime(conn.getCurrentSimStep());
+		double newTravelTime = rgttq.get();
 		assertEquals(10000, newTravelTime, DELTA);
 
-		v0.reroute();
+		firstVehicle.queryReroute().run();
 
-		List<String> routeAfter = v0.getCurrentRoute();
+		List<Edge> routeAfter = routeQuery.get();
 		System.out.println("Route after:          " + routeAfter);
 
 		assertFalse(routeBefore.equals(routeAfter));
@@ -194,8 +272,8 @@ public class TraCITest {
 	
 	@Test
 	public void testGetShape() throws IOException {
-		Lane r = conn.getLane("beg_0");
-		PathIterator it = r.shape.getPathIterator(null);
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
+		PathIterator it = lane.queryReadShape().get().getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];
 		assertEquals(PathIterator.SEG_MOVETO, it.currentSegment(coords));
@@ -210,44 +288,121 @@ public class TraCITest {
 	}
 	
 	@Test
+	public void testGetBelongingEdge() throws IOException {
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
+		Edge edge = lane.queryReadParentEdge().get();
+		assertEquals("beg", edge.getID());
+	}
+	
+	@Test
+//	@Ignore // its duration may be annoying; feel free to comment this
+	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
+		final int RETRIES = 5;
+		
+		while (conn.getCurrentSimStep() < 300)
+			conn.nextSimStep();
+		
+		Collection<Vehicle> vehicles = conn.getVehicles();
+		
+		long start = System.currentTimeMillis();
+		for (int r = 0; r < RETRIES; r++) {
+			for (Vehicle vehicle : vehicles) {
+				vehicle.queryReadPosition().get();
+			}
+			conn.nextSimStep();
+		}
+		long elapsedSingle = System.currentTimeMillis() - start;
+		System.out.println("Individual queries: " + elapsedSingle + " ms");
+		
+		conn.nextSimStep(); // to clear already read values
+		
+		start = System.currentTimeMillis();
+		for (int r = 0; r < RETRIES; r++) {
+			MultiQuery multi = conn.makeMultiQuery();
+			for (Vehicle vehicle : vehicles) {
+				multi.add(vehicle.queryReadPosition());
+			}
+			multi.run();
+			conn.nextSimStep();
+		}
+		long elapsedMulti = System.currentTimeMillis() - start;
+		System.out.println("MultiQuery queries: " + elapsedMulti + " ms");
+		
+		assertTrue(elapsedMulti < elapsedSingle);
+	}
+	
+	@Test
 	public void testQueryBounds() throws IOException {
-		Rectangle2D bounds = conn.queryBounds();
+		Rectangle2D bounds = conn.getSimValues().queryNetBoundaries().get();
+//		assertEquals(0.0, bounds.getMinX(), DELTA);
+//		assertEquals(-1.65, bounds.getMinY(), DELTA);
+//		assertEquals(2500.0, bounds.getMaxX(), DELTA);
+//		assertEquals(498.35, bounds.getMaxY(), DELTA);
 		assertEquals(0.0, bounds.getMinX(), DELTA);
-		assertEquals(-1.65, bounds.getMinY(), DELTA);
+		assertEquals(0.0, bounds.getMinY(), DELTA);
 		assertEquals(2500.0, bounds.getMaxX(), DELTA);
-		assertEquals(498.35, bounds.getMaxY(), DELTA);
+		assertEquals(500.0, bounds.getMaxY(), DELTA);	}
+	
+	@Test
+	public void testQueryRoads() throws IOException, InterruptedException {
+		Set<String> expectedLaneIDs = new HashSet<String>();
+		expectedLaneIDs.add("beg_0");
+		expectedLaneIDs.add(":beg_0_0");
+		expectedLaneIDs.add(":beg_1_0");
+		expectedLaneIDs.add("beg2left_0");
+		expectedLaneIDs.add(":begleft_0_0");
+		expectedLaneIDs.add("middle_0");
+		expectedLaneIDs.add("left_0");
+		expectedLaneIDs.add(":endleft_0_0");
+		expectedLaneIDs.add("left2end_0");
+		expectedLaneIDs.add(":end_0_0");
+		expectedLaneIDs.add(":end_1_0");
+		expectedLaneIDs.add("end_0");
+		expectedLaneIDs.add(":absEnd_0_0");
+		expectedLaneIDs.add("rend_0");
+		
+		
+		Collection<Lane> lanes = conn.getLaneRepository().getAll().values();
+		Set<String> laneIDs = new HashSet<String>();
+		for (Lane lane : lanes) {
+			laneIDs.add(lane.getID());
+		}
+		
+		assertEquals(expectedLaneIDs, laneIDs);
 	}
 	
 	@Test
 	public void testCloseInObserverBody() throws IOException {
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleArrived(String id) {
+			@Override public void vehicleArrived(Vehicle v) {
+			}
+			@Override public void vehicleDeparted(Vehicle v) {
 				try {
 					conn.close();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			}
-			@Override public void vehicleDeparted(String id) { }
 			@Override
-			public void vehicleTeleportEnding(String id) { }
+			public void vehicleTeleportEnding(Vehicle v) { }
 			@Override
-			public void vehicleTeleportStarting(String id) { }
+			public void vehicleTeleportStarting(Vehicle v) { }
 		});
 		getFirstVehicleID();
 	}
 	
 	@Test
+//	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
 		
-		final Set<String> traveling = new HashSet<String>();
+		final Set<Vehicle> traveling = new HashSet<Vehicle>();
 		
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			
 			@Override
-			public void vehicleArrived(String id) {
-				assertTrue(traveling.contains(id));
-				traveling.remove(id);
+			public void vehicleArrived(Vehicle v) {
+				assertTrue(traveling.contains(v));
+				traveling.remove(v);
 				if (traveling.isEmpty()) {
 					try {
 						conn.close();
@@ -258,16 +413,16 @@ public class TraCITest {
 			}
 			
 			@Override
-			public void vehicleDeparted(String id) {
-				assertFalse(traveling.contains(id));
-				traveling.add(id);
+			public void vehicleDeparted(Vehicle v) {
+				assertFalse(traveling.contains(v));
+				traveling.add(v);
 			}
 
 			@Override
-			public void vehicleTeleportEnding(String id) { }
+			public void vehicleTeleportEnding(Vehicle v) { }
 
 			@Override
-			public void vehicleTeleportStarting(String id) { }
+			public void vehicleTeleportStarting(Vehicle v) { }
 		});
 		
 		while(!conn.isClosed()) {
@@ -280,42 +435,62 @@ public class TraCITest {
 	@Test
 	public void testChangeTarget() throws IOException {
 		getFirstVehicleID();
-		Vehicle v = conn.getVehicle(firstVehicleID);
-		try {
-			v.changeTarget("end");
-			
-			String lastEdge = null;
-			while (v.isAlive()) {
-				lastEdge = v.queryCurrentEdge();
-				assertFalse(lastEdge.equals("end"));
+		Vehicle v = firstVehicle;
 
-				conn.nextSimStep();
-			}
-			
-		} catch (NotActiveException e) {
-			throw new RuntimeException("should never happen");
+		ChangeTargetQuery ctq = v.queryChangeTarget();
+		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
+		ctq.run();
+		
+		Edge lastEdge = null;
+		while (conn.getVehicles().contains(v)) {
+			lastEdge = v.queryReadCurrentEdge().get();
+			assertFalse(lastEdge.getID().equals("end"));
+
+			conn.nextSimStep();
 		}
 	}
 	
 	@Test
-	public void testChangeTargetAlsoAffectsRouteList() throws IOException, NotActiveException {
+	public void testChangeTargetAlsoAffectsRouteList() throws IOException {
 		getFirstVehicleID();
-		Vehicle v = conn.getVehicle(firstVehicleID);
-		v.changeTarget("end");
-		List<String> route = v.getCurrentRoute();
-		assertEquals("end", route.get(route.size()-1));
+		Vehicle v = firstVehicle;
+		ChangeTargetQuery ctq = v.queryChangeTarget();
+		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
+		ctq.run();
+		List<Edge> route = v.queryReadRoute().get();
+		assertEquals("end", route.get(route.size()-1).getID());
 	}
 	
 	@Test
-	public void testChangeRoute() throws IOException, NotActiveException {
+	public void testChangeRoute() throws IOException {
 		getFirstVehicleID();
-		Vehicle v = conn.getVehicle(firstVehicleID);
-		List<String> newRoute = new ArrayList<String>();
-		newRoute.add("beg");
-		newRoute.add("beg2left");
-		newRoute.add("left");
-		newRoute.add("left2end");
-		v.changeRoute(newRoute);
-		assertEquals(newRoute, v.getCurrentRoute());
+		Vehicle v = firstVehicle;
+		List<Edge> newRoute = new ArrayList<Edge>();
+		newRoute.add(conn.getEdgeRepository().getByID("beg"));
+		newRoute.add(conn.getEdgeRepository().getByID("beg2left"));
+		newRoute.add(conn.getEdgeRepository().getByID("left"));
+		newRoute.add(conn.getEdgeRepository().getByID("left2end"));
+		ChangeRouteQuery crq = v.queryChangeRoute();
+		crq.setNewRoute(newRoute);
+		crq.run();
+		assertEquals(newRoute, v.queryReadRoute().get());
+	}
+	
+	@Test
+	public void testLaneLinks() throws IOException {
+		Lane begLane = conn.getLaneRepository().getByID("beg_0");
+		List<Link> links = begLane.queryReadLinks().get();
+		Set<String> linkIDs = new HashSet<String>();
+		Set<String> intLinkIDs = new HashSet<String>();
+		for (Link link : links) {
+			linkIDs.add(link.getNextNonInternalLane().getID());
+			intLinkIDs.add(link.getNextInternalLane().getID());
+		}
+		
+		assertEquals(2, linkIDs.size());
+		assertTrue(linkIDs.contains("middle_0"));
+		assertTrue(intLinkIDs.contains(":beg_0_0"));
+		assertTrue(linkIDs.contains("beg2left_0"));
+		assertTrue(intLinkIDs.contains(":beg_1_0"));
 	}
 }

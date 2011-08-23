@@ -17,8 +17,30 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci.newquery;
+package it.polito.appeal.traci;
 
-public interface ObjectFactory<V> {
-	V newObject(String objectID);
+import it.polito.appeal.traci.protocol.Constants;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+
+import de.uniluebeck.itm.tcpip.Storage;
+
+public class SimStepQuery extends ChangeStateQuery {
+
+	private int targetTime;
+
+	public SimStepQuery(DataInputStream dis, DataOutputStream dos) {
+		super(dis, dos, Constants.CMD_SIMSTEP2);
+	}
+
+	public void setTargetTime(int millis) {
+		targetTime = millis;
+	}
+	
+	@Override
+	protected void writeRequestTo(Storage content) {
+		content.writeInt(targetTime);
+	}
+
 }

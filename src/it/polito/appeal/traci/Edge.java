@@ -17,9 +17,8 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci.newquery;
+package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.TraCIException;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.ResponseContainer;
@@ -141,7 +140,7 @@ public class Edge extends TraciObject<Edge.Variable> {
 		changeTravelTimeQuery = new ChangeGlobalTravelTimeQuery(dis, dos, id);
 	}
 	
-	ReadGlobalTravelTimeQuery queryReadGlobalTravelTime() {
+	public ReadGlobalTravelTimeQuery queryReadGlobalTravelTime() {
 		return (ReadGlobalTravelTimeQuery) getReadQuery(Variable.TRAVEL_TIME);
 	}
 

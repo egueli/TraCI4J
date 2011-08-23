@@ -26,7 +26,6 @@ import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.RequestMessage;
 import it.polito.appeal.traci.protocol.ResponseMessage;
 import it.polito.appeal.traci.protocol.ResponseContainer;
-import it.polito.appeal.traci.query.SimStepQuery;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -223,13 +222,4 @@ public class TraCIServerTest {
 		assertNull(pair.getResponse());
 	}
 	
-	/**
-	 * What happens when the simulation ends?
-	 * @throws IOException 
-	 */
-	public void testSimulationEnd() throws IOException {
-		SimStepQuery ssq = new SimStepQuery(socket, 1000);
-		while(true)
-			ssq.doCommand();
-	}
 }
