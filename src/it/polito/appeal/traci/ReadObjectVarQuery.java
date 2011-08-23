@@ -114,6 +114,7 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		@Override
 		protected Point2D readValue(Command resp) throws TraCIException {
 			Storage content = resp.content();
+			Utils.checkType(content, Constants.POSITION_2D);
 			double x = content.readDouble();
 			double y = content.readDouble();
 			return new Point2D.Double(x, y);

@@ -35,6 +35,7 @@ import it.polito.appeal.traci.Vehicle.ChangeRouteQuery;
 import it.polito.appeal.traci.Vehicle.ChangeTargetQuery;
 
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -492,5 +493,44 @@ public class TraCITest {
 		assertTrue(intLinkIDs.contains(":beg_0_0"));
 		assertTrue(linkIDs.contains("beg2left_0"));
 		assertTrue(intLinkIDs.contains(":beg_1_0"));
+	}
+
+	@Test
+	public void testVehiclePositionIsInBounds() throws IOException {
+		getFirstVehicleID();
+		while (conn.getVehicles().contains(firstVehicle)) {
+			conn.nextSimStep();
+			Point2D pos = firstVehicle.queryReadPosition().get();
+			assertTrue(pos.getX() >= 0);
+			assertTrue(pos.getX() < 2000);
+			assertEquals(-1.65, pos.getY(), DELTA);
+		}
+	}
+	
+	@Test
+	public void testUsingInactiveVehicle() throws IOException {
+		getFirstVehicleID();
+		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
+			@Override
+			public void vehicleTeleportStarting(Vehicle vehicle) {}
+			@Override
+			public void vehicleTeleportEnding(Vehicle vehicle) { }
+			@Override
+			public void vehicleDeparted(Vehicle vehicle) { }
+			@Override
+			public void vehicleArrived(Vehicle vehicle) {
+				if (vehicle.equals(firstVehicle)) {
+					try {
+						System.out.println(firstVehicle.queryReadPosition().get());
+						fail("it should throw an exception");
+					} catch (IOException e) {
+					}
+				}
+			}
+		});
+		
+		for (int t=0; t<500; t++) {
+			conn.nextSimStep();
+		}
 	}
 }
