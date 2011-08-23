@@ -26,9 +26,9 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class CloseQuery extends ChangeStateQuery {
+class CloseQuery extends ChangeStateQuery {
 
-	public CloseQuery(DataInputStream dis, DataOutputStream dos) {
+	CloseQuery(DataInputStream dis, DataOutputStream dos) {
 		super(dis, dos, Constants.CMD_CLOSE);
 	}
 

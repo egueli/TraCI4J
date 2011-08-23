@@ -19,6 +19,6 @@
 
 package it.polito.appeal.traci;
 
-public interface ObjectFactory<V> {
+interface ObjectFactory<V> {
 	V newObject(String objectID);
 }

@@ -17,7 +17,7 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci;
+package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 

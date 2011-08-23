@@ -48,13 +48,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
-public class SumoHttpRetriever {
+class SumoHttpRetriever {
 	
 	private URL configURL;
 	private File tempDataDir;
 	private File configFile;
 
-	public SumoHttpRetriever(String configURL) throws MalformedURLException {
+	SumoHttpRetriever(String configURL) throws MalformedURLException {
 		this.configURL = new URL(configURL);
 	}
 

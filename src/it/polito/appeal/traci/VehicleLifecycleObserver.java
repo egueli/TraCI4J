@@ -35,7 +35,7 @@ public interface VehicleLifecycleObserver {
 	 * 
 	 * @param id
 	 */
-	void vehicleDeparted(Vehicle id);
+	void vehicleDeparted(Vehicle vehicle);
 
 	/**
 	 * Method called when a vehicle has exited the simulation. This method will
@@ -45,9 +45,9 @@ public interface VehicleLifecycleObserver {
 	 * 
 	 * @param id
 	 */
-	void vehicleArrived(Vehicle id);
+	void vehicleArrived(Vehicle vehicle);
 	
-	void vehicleTeleportStarting(Vehicle id);
+	void vehicleTeleportStarting(Vehicle vehicle);
 	
-	void vehicleTeleportEnding(Vehicle id);
+	void vehicleTeleportEnding(Vehicle vehicle);
 }

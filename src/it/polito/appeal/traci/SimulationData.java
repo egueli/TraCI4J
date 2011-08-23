@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class SimValues extends TraciObject<SimValues.Variable> implements StepAdvanceListener {
+public class SimulationData extends TraciObject<SimulationData.Variable> implements StepAdvanceListener {
 
 	enum Variable {
 		CURRENT_SIM_TIME (Constants.VAR_TIME_STEP),
@@ -37,7 +37,7 @@ public class SimValues extends TraciObject<SimValues.Variable> implements StepAd
 		}
 	}
 	
-	SimValues(DataInputStream dis, DataOutputStream dos) {
+	SimulationData(DataInputStream dis, DataOutputStream dos) {
 		super("", Variable.class);
 		
 		addReadQuery(Variable.CURRENT_SIM_TIME,

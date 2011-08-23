@@ -17,7 +17,7 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci;
+package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 import it.polito.appeal.traci.Edge;
@@ -333,7 +333,7 @@ public class TraCITest {
 	
 	@Test
 	public void testQueryBounds() throws IOException {
-		Rectangle2D bounds = conn.getSimValues().queryNetBoundaries().get();
+		Rectangle2D bounds = conn.getSimulationData().queryNetBoundaries().get();
 //		assertEquals(0.0, bounds.getMinX(), DELTA);
 //		assertEquals(-1.65, bounds.getMinY(), DELTA);
 //		assertEquals(2500.0, bounds.getMaxX(), DELTA);

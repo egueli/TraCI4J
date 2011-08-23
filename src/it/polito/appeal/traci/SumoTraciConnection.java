@@ -149,7 +149,7 @@ public class SumoTraciConnection {
 	private Repository<Edge> edgeRepo;
 	private Repository<Lane> laneRepo;
 
-	private SimValues simValues;
+	private SimulationData simData;
 	
 	/**
 	 * Constructor for the object.
@@ -289,7 +289,7 @@ public class SumoTraciConnection {
 				Constants.CMD_GET_EDGE_VARIABLE, "", Constants.ID_LIST));
 		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, new StringListQ(dis, dos,
 				Constants.CMD_GET_LANE_VARIABLE, "", Constants.ID_LIST));
-		simValues = new SimValues(dis, dos);
+		simData = new SimulationData(dis, dos);
 	}
 
 	private void retrieveFromURLs() throws IOException {
@@ -430,7 +430,7 @@ public class SumoTraciConnection {
 		
 		currentSimStep++;
 
-		simValues.nextStep(currentSimStep);
+		simData.nextStep(currentSimStep);
 		
 		MultiQuery multi = new MultiQuery(dos, dis);
 		
@@ -510,8 +510,8 @@ public class SumoTraciConnection {
 		return edgeRepo;
 	}
 	
-	public SimValues getSimValues() {
-		return simValues;
+	public SimulationData getSimulationData() {
+		return simData;
 	}
 	
 	public Repository<Lane> getLaneRepository() throws IOException {

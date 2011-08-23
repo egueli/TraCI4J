@@ -29,7 +29,7 @@ public abstract class ChangeObjectStateQuery extends ChangeStateQuery {
 	private final String objectID;
 	private final int variableID;
 	
-	public ChangeObjectStateQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeObjectStateQuery(DataInputStream dis, DataOutputStream dos,
 			int commandID, String objectID, int variableID) {
 		super(dis, dos, commandID);
 		this.objectID = objectID;

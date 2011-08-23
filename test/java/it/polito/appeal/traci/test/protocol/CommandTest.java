@@ -17,9 +17,11 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci.protocol;
+package it.polito.appeal.traci.test.protocol;
 
 import static org.junit.Assert.*;
+
+import it.polito.appeal.traci.protocol.Command;
 
 import java.util.Iterator;
 

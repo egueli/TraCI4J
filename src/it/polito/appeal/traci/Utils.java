@@ -25,25 +25,25 @@ import it.polito.appeal.traci.protocol.StatusResponse;
 import de.uniluebeck.itm.tcpip.Storage;
 
 public class Utils {
-	public static void checkType(Storage content, int typeID) throws TraCIException.UnexpectedDatatype {
+	static void checkType(Storage content, int typeID) throws TraCIException.UnexpectedDatatype {
 		int b = content.readUnsignedByte();
 		if (b != typeID)
 			throw new TraCIException.UnexpectedDatatype(typeID, b);
 	}
 
-	public static void checkByte(Storage content, int expectedByte) throws UnexpectedData {
+	static void checkByte(Storage content, int expectedByte) throws UnexpectedData {
 		int b = content.readUnsignedByte();
 		if (b != expectedByte)
 			throw new TraCIException.UnexpectedData("byte value" , expectedByte, b);
 	}
 	
-	public static void checkObjectID(Storage content, String objectID) throws TraCIException.UnexpectedData {
+	static void checkObjectID(Storage content, String objectID) throws TraCIException.UnexpectedData {
 		String s = content.readStringASCII();
 		if (!s.equals(objectID))
 			throw new TraCIException.UnexpectedData("object ID", objectID, s);
 	}
 	
-	public static void checkStatusResponse(StatusResponse statusResponse, int commandID) throws TraCIException {
+	static void checkStatusResponse(StatusResponse statusResponse, int commandID) throws TraCIException {
 		if (statusResponse.id() != commandID)
 			throw new TraCIException.UnexpectedData("command/status ID", statusResponse.id(), commandID);
 		

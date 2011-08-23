@@ -26,11 +26,11 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class SimStepQuery extends ChangeStateQuery {
+class SimStepQuery extends ChangeStateQuery {
 
 	private int targetTime;
 
-	public SimStepQuery(DataInputStream dis, DataOutputStream dos) {
+	SimStepQuery(DataInputStream dis, DataOutputStream dos) {
 		super(dis, dos, Constants.CMD_SIMSTEP2);
 	}
 

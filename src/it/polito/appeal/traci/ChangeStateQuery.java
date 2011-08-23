@@ -48,7 +48,7 @@ public abstract class ChangeStateQuery extends Query {
 	private final DataInputStream dis;
 	private final DataOutputStream dos;
 	
-	public ChangeStateQuery(DataInputStream dis, DataOutputStream dos, int commandID) {
+	ChangeStateQuery(DataInputStream dis, DataOutputStream dos, int commandID) {
 		this.dis = dis;
 		this.dos = dos;
 		this.commandID = commandID;
