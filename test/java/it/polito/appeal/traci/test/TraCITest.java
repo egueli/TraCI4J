@@ -498,9 +498,10 @@ public class TraCITest {
 	@Test
 	public void testVehiclePositionIsInBounds() throws IOException {
 		getFirstVehicleID();
+		final ValueReadQuery<Point2D> queryReadPosition = firstVehicle.queryReadPosition();
 		while (conn.getVehicles().contains(firstVehicle)) {
 			conn.nextSimStep();
-			Point2D pos = firstVehicle.queryReadPosition().get();
+			Point2D pos = queryReadPosition.get();
 			assertTrue(pos.getX() >= 0);
 			assertTrue(pos.getX() < 2000);
 			assertEquals(-1.65, pos.getY(), DELTA);
