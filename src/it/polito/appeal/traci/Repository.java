@@ -43,7 +43,7 @@ import java.util.Set;
  *
  */
 public class Repository<V extends TraciObject<?>> {
-	private final Map<String, V> objects = new HashMap<String, V>();
+	private final Map<String, V> objectCache = new HashMap<String, V>();
 	/*
 	 * the factory is not final: there's a setter for those cases when the
 	 * factory is the subclass or points to the subclass, that doesn't exist
@@ -51,15 +51,12 @@ public class Repository<V extends TraciObject<?>> {
 	 */
 	private ObjectFactory<V> factory;
 	private final StringListQ idListQuery;
-	private Set<String> idSet;
 	
 	/**
 	 * Constructor for the repository.
 	 * @param factory the {@link ObjectFactory} that will be used to make new
 	 * objects when requested the first time
-	 * @param idListQuery a reference to a query of list of IDs. This query must
-	 * be invariant, i.e. must not give different results at different simulation
-	 * time steps.
+	 * @param idListQuery a reference to a query of list of IDs.
 	 */
 	public Repository(ObjectFactory<V> factory, StringListQ idListQuery) {
 		this.factory = factory;
@@ -71,34 +68,37 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	/**
-	 * If the repository already holds an object with the given ID, it returns
-	 * that one; otherwise, it checks that the ID is contained in the query; if
-	 * so, asks the {@link ObjectFactory} passed to the
-	 * constructor to build one. That value is stored here for later requests
-	 * and returned.
+	 * Returns the TraCI object associated to the given ID.
+	 * <p>
+	 * First, a query is made to ensure that the ID is valid: if doesn't exist,
+	 * <code>null</code> is returned and the corresponding cached object, if
+	 * present, is deleted. Then, checks if the repository already
+	 * holds an object with the given ID; if so, it returns
+	 * that one, otherwise, it asks the {@link ObjectFactory} passed to the
+	 * constructor to build a fresh one. That object is cached for future
+	 * requests.
 	 * 
 	 * @param id
-	 * @return
+	 * @return the requested object, or <code>null</code> if such object does
+	 * not exist
 	 * @throws IOException if, in the first call of this method, a query is sent
 	 * to SUMO but something bad happened
-	 * @throws IllegalArgumentException if the given ID is not present in the
-	 * repository
 	 */
 	public V getByID(String id) throws IOException {
-		if (!getIDs().contains(id))
-			throw new IllegalArgumentException("ID not found in repository: " + id);
-		
-		if (!objects.containsKey(id)) {
-			objects.put(id, factory.newObject(id));
+		if (!getIDs().contains(id)) {
+			objectCache.remove(id);
+			return null;
 		}
 		
-		return objects.get(id);
+		if (!objectCache.containsKey(id)) {
+			objectCache.put(id, factory.newObject(id));
+		}
+		
+		return objectCache.get(id);
 	}
 	
 	public Set<String> getIDs() throws IOException {
-		if (idSet == null) {
-			idSet = new HashSet<String>(idListQuery.get());
-		}
+		Set<String> idSet = new HashSet<String>(idListQuery.get());
 		return Collections.unmodifiableSet(idSet);
 	}
 	
@@ -106,7 +106,7 @@ public class Repository<V extends TraciObject<?>> {
 		for (String id : getIDs()) {
 			getByID(id); // used only for its collateral effects
 		}
-		return Collections.unmodifiableMap(objects);
+		return Collections.unmodifiableMap(objectCache);
 	}
 	
 	static class Edges extends Repository<Edge> {
@@ -133,12 +133,52 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
+	static class Vehicles extends Repository<Vehicle> {
+
+		Vehicles(
+				final DataInputStream dis, 
+				final DataOutputStream dos, 
+				final Repository<Edge> edges, 
+				final Repository<Lane> lanes, 
+				final Map<String, Vehicle> vehicles,
+				StringListQ idListQuery) {
+			super(new ObjectFactory<Vehicle>() {
+				/**
+				 * This implementation does not make a new object; instead it
+				 * looks for a vehicle in the specified map and returns that.
+				 */
+				@Override
+				public Vehicle newObject(String objectID) {
+					assert vehicles.containsKey(objectID);
+					return vehicles.get(objectID);
+				}
+			}, idListQuery);
+		}
+		
+	}
+	
 	static class POIs extends Repository<POI> {
 		public POIs(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<POI>() {
 				@Override
 				public POI newObject(String objectID) {
 					return new POI(objectID, dis, dos);
+				}
+			}, idListQuery);
+		}
+	}
+	
+	static class InductionLoops extends Repository<InductionLoop> {
+		public InductionLoops(
+				final DataInputStream dis, 
+				final DataOutputStream dos, 
+				final Repository<Lane> lanes, 
+				final Repository<Vehicle> vehicles,
+				StringListQ idListQuery) {
+			super(new ObjectFactory<InductionLoop>() {
+				@Override
+				public InductionLoop newObject(String objectID) {
+					return new InductionLoop(objectID, lanes, vehicles, dis, dos);
 				}
 			}, idListQuery);
 		}

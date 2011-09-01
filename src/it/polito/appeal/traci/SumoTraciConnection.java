@@ -146,16 +146,20 @@ public class SumoTraciConnection {
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
 	
 	private Map<String, Vehicle> vehicles;
+	private StringListQ vehicleListQuery;
 	
 	private Repository<Edge> edgeRepo;
 	private Repository<Lane> laneRepo;
+	private Repository<Vehicle> vehicleRepo;
 	private Repository<POI> poiRepo;
+	private Repository<InductionLoop> inductionLoopRepo;
 
 	/*
 	 * TODO add repositories for remaining SUMO object classes
 	 */
 	
 	private SimulationData simData;
+
 	
 	/**
 	 * Constructor for the object.
@@ -292,16 +296,34 @@ public class SumoTraciConnection {
 		simData = new SimulationData(dis, dos);
 		
 		vehicles = new HashMap<String, Vehicle>();
-		edgeRepo = new Repository.Edges(dis, dos, new StringListQ(dis, dos,
-				Constants.CMD_GET_EDGE_VARIABLE, "", Constants.ID_LIST));
-		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, new StringListQ(dis, dos,
-				Constants.CMD_GET_LANE_VARIABLE, "", Constants.ID_LIST));
-		poiRepo = new Repository.POIs(dis, dos, new StringListQ(dis, dos,
-				Constants.CMD_GET_POI_VARIABLE, "", Constants.ID_LIST));
+		
+		edgeRepo = new Repository.Edges(dis, dos, 
+				newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
+		
+		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, 
+				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
+		
+		vehicleListQuery = newIDListQuery(Constants.CMD_GET_VEHICLE_VARIABLE);
+		
+		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
+				vehicles, vehicleListQuery);
+		
+		poiRepo = new Repository.POIs(dis, dos,
+				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
+		
+		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
+				vehicleRepo,
+				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
+		
 		/*
 		 * TODO add initializers for remaining repositories
 		 */
 		
+	}
+
+	private StringListQ newIDListQuery(final int command) {
+		return new StringListQ(dis, dos,
+				command, "", Constants.ID_LIST);
 	}
 
 	private void retrieveFromURLs() throws IOException {
@@ -442,45 +464,65 @@ public class SumoTraciConnection {
 		
 		currentSimStep++;
 
+		/*
+		 * forces querying of vehicle IDs when requested
+		 */
 		simData.nextStep(currentSimStep);
 		
+		/*
+		 * save the old set of vehicles in order to compute the difference
+		 * sets
+		 */
+		Set<String> vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
+		
+		/*
+		 * constructs a multi-query that advances one step, reads the list of
+		 * active vehicles, the list of teleport-starting and teleport-ending
+		 */
+		StringListQ teleportStartQ;
+		StringListQ teleportEndQ;
 		MultiQuery multi = new MultiQuery(dos, dis);
-		
-		SimStepQuery ssq = new SimStepQuery(dis, dos);
-		ssq.setTargetTime(currentSimStep * 1000);
-		multi.add(ssq);
-		
-		StringListQ departedQ = new StringListQ(dis, dos,
-				Constants.CMD_GET_SIM_VARIABLE, "",
-				Constants.VAR_DEPARTED_VEHICLES_IDS);
-		multi.add(departedQ);
-		
-		StringListQ arrivedQ = new StringListQ(dis, dos,
-				Constants.CMD_GET_SIM_VARIABLE, "",
-				Constants.VAR_ARRIVED_VEHICLES_IDS);
-		multi.add(arrivedQ);
-		
-		StringListQ teleportStartQ = new StringListQ(dis, dos,
-				Constants.CMD_GET_SIM_VARIABLE, "",
-				Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
-		multi.add(teleportStartQ);
-		
-		StringListQ teleportEndQ = new StringListQ(dis, dos,
-				Constants.CMD_GET_SIM_VARIABLE, "",
-				Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
-		multi.add(teleportEndQ);
-		
-		
+		{ // begin multi-query
+			SimStepQuery ssq = new SimStepQuery(dis, dos);
+			ssq.setTargetTime(currentSimStep * 1000);
+			multi.add(ssq);
+
+			multi.add(vehicleListQuery);
+
+			teleportStartQ = new StringListQ(dis, dos,
+					Constants.CMD_GET_SIM_VARIABLE, "",
+					Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
+			multi.add(teleportStartQ);
+
+			teleportEndQ = new StringListQ(dis, dos,
+					Constants.CMD_GET_SIM_VARIABLE, "",
+					Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
+			multi.add(teleportEndQ);
+		} // end multi-query
 		multi.run();
 
-		for (String arrivedID : arrivedQ.get()) {
+		/*
+		 * now, compute the difference sets (departed/arrived)
+		 */
+		Set<String> vehicleListAfter = new HashSet<String>(vehicleListQuery.get());
+		Set<String> departedIDs = new HashSet<String>(vehicleListAfter);
+		departedIDs.removeAll(vehicleListBefore);
+		Set<String> arrivedIDs = new HashSet<String>(vehicleListBefore);
+		arrivedIDs.removeAll(vehicleListAfter);
+		
+		/*
+		 * now update the vehicles map, notify listeners and add/remove vehicles
+		 * from the step advance listeners
+		 */
+		
+		for (String arrivedID : arrivedIDs) {
 			Vehicle arrived = vehicles.remove(arrivedID);
 			stepAdvanceListeners.remove(arrived);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleArrived(arrived);
 			}
 		}
-		for (String departedID : departedQ.get()) {
+		for (String departedID : departedIDs) {
 			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
 			vehicles.put(departedID, departed);
 			stepAdvanceListeners.add(departed);
@@ -498,6 +540,9 @@ public class SumoTraciConnection {
 			}
 		}
 		
+		/*
+		 * finally, notify any interested listener that we advances one step
+		 */
 		for (StepAdvanceListener listener : stepAdvanceListeners)
 			listener.nextStep(currentSimStep);
 		
@@ -518,7 +563,7 @@ public class SumoTraciConnection {
 		return vehicles.get(vehicleID);
 	}
 	
-	public Repository<Edge> getEdgeRepository() throws IOException {
+	public Repository<Edge> getEdgeRepository() {
 		return edgeRepo;
 	}
 	
@@ -526,12 +571,16 @@ public class SumoTraciConnection {
 		return simData;
 	}
 	
-	public Repository<Lane> getLaneRepository() throws IOException {
+	public Repository<Lane> getLaneRepository() {
 		return laneRepo;
 	}
 	
 	public Repository<POI> getPOIRepository() {
 		return poiRepo;
+	}
+	
+	public Repository<InductionLoop> getInductionLoopRepository() {
+		return inductionLoopRepo;
 	}
 	
 	/*
