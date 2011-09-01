@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -70,7 +71,7 @@ class SumoHttpRetriever {
 		downloadTo(configURL, configFile);
 		
 		ConfigFileContentHandler configHandler = new ConfigFileContentHandler();
-		XMLReader xmlReader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader(SAXParser.class.getName());
 		xmlReader.setContentHandler(configHandler);
 		xmlReader.parse(new InputSource(new FileInputStream(configFile)));
 		
