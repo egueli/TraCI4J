@@ -132,4 +132,19 @@ public class Repository<V extends TraciObject<?>> {
 			});
 		}
 	}
+	
+	static class POIs extends Repository<POI> {
+		public POIs(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+			super(new ObjectFactory<POI>() {
+				@Override
+				public POI newObject(String objectID) {
+					return new POI(objectID, dis, dos);
+				}
+			}, idListQuery);
+		}
+	}
+	
+	/*
+	 * TODO add repository definitions for other SUMO object classes 
+	 */
 }

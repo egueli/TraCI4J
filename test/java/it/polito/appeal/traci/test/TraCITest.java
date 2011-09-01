@@ -23,6 +23,11 @@ import static org.junit.Assert.*;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.MultiQuery;
+import it.polito.appeal.traci.POI;
+import it.polito.appeal.traci.POI.ChangeColorQuery;
+import it.polito.appeal.traci.POI.ChangePositionQuery;
+import it.polito.appeal.traci.POI.ChangeTypeQuery;
+import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.ValueReadQuery;
 import it.polito.appeal.traci.Vehicle;
@@ -34,6 +39,7 @@ import it.polito.appeal.traci.Vehicle.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.Vehicle.ChangeRouteQuery;
 import it.polito.appeal.traci.Vehicle.ChangeTargetQuery;
 
+import java.awt.Color;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -534,4 +540,70 @@ public class TraCITest {
 			conn.nextSimStep();
 		}
 	}
+	
+	@Test
+	public void testPOIExistence() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		assertNotNull(poiRepo.getByID("0"));
+	}
+	
+	@Test
+	public void testPOIType() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		assertEquals("TEST_TYPE", poi.getReadTypeQuery().get());
+	}
+	
+	@Test
+	public void testPOIColor() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		Color c = new Color(255, 128, 0);
+		assertEquals(c, poi.getReadColorQuery().get());
+	}
+	
+	@Test
+	public void testPOIPosition() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		Point2D pos = new Point2D.Double(100, 50);
+		Point2D poiPos = poi.getReadPositionQuery().get();
+		assertEquals(pos.getX(), poiPos.getX(), DELTA);
+		assertEquals(pos.getY(), poiPos.getY(), DELTA);
+	}
+	
+	@Test
+	public void testSetPOIType() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		ChangeTypeQuery q = poi.getChangeTypeQuery();
+		final String newType = "NEW_TYPE";
+		q.setType(newType);
+		q.run();
+		assertEquals(newType, poi.getReadTypeQuery().get());
+	}
+	
+	@Test
+	public void testSetPOIPosition() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		ChangePositionQuery q = poi.getChangePositionQuery();
+		final Point2D newPos = new Point2D.Double(0, 0);
+		q.setPosition(newPos);
+		q.run();
+		final Point2D pos = poi.getReadPositionQuery().get();
+		assertEquals(newPos.getX(), pos.getX(), DELTA);
+		assertEquals(newPos.getY(), pos.getY(), DELTA);
+	}
+	
+	@Test
+	public void testSetPOIColor() throws IOException {
+		Repository<POI> poiRepo = conn.getPOIRepository();
+		POI poi = poiRepo.getByID("0");
+		ChangeColorQuery q = poi.getChangeColorQuery();
+		final Color newColor = Color.cyan;
+		q.setColor(newColor);
+		q.run();
+		assertEquals(newColor, poi.getReadColorQuery().get());
+	}	
 }

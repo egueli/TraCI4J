@@ -146,9 +146,15 @@ public class SumoTraciConnection {
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
 	
 	private Map<String, Vehicle> vehicles;
+	
 	private Repository<Edge> edgeRepo;
 	private Repository<Lane> laneRepo;
+	private Repository<POI> poiRepo;
 
+	/*
+	 * TODO add repositories for remaining SUMO object classes
+	 */
+	
 	private SimulationData simData;
 	
 	/**
@@ -283,13 +289,19 @@ public class SumoTraciConnection {
 		dos = new DataOutputStream(socket.getOutputStream());
 
 		closeQuery = new CloseQuery(dis, dos);
+		simData = new SimulationData(dis, dos);
 		
 		vehicles = new HashMap<String, Vehicle>();
 		edgeRepo = new Repository.Edges(dis, dos, new StringListQ(dis, dos,
 				Constants.CMD_GET_EDGE_VARIABLE, "", Constants.ID_LIST));
 		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, new StringListQ(dis, dos,
 				Constants.CMD_GET_LANE_VARIABLE, "", Constants.ID_LIST));
-		simData = new SimulationData(dis, dos);
+		poiRepo = new Repository.POIs(dis, dos, new StringListQ(dis, dos,
+				Constants.CMD_GET_POI_VARIABLE, "", Constants.ID_LIST));
+		/*
+		 * TODO add initializers for remaining repositories
+		 */
+		
 	}
 
 	private void retrieveFromURLs() throws IOException {
@@ -517,6 +529,15 @@ public class SumoTraciConnection {
 	public Repository<Lane> getLaneRepository() throws IOException {
 		return laneRepo;
 	}
+	
+	public Repository<POI> getPOIRepository() {
+		return poiRepo;
+	}
+	
+	/*
+	 * TODO add repository getters (in the form of getXXXXRepository())
+	 * for remaining SUMO object classes
+	 */
 	
 	/**
 	 * Allows a {@link VehicleLifecycleObserver}-implementing object to be

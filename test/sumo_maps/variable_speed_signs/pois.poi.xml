@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<pois>
+	<poi id="0" type="TEST_TYPE" color="1,0.5,0" x="100" y="50" />
+</pois>
