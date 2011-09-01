@@ -25,6 +25,7 @@ import it.polito.appeal.traci.protocol.ResponseContainer;
 import it.polito.appeal.traci.protocol.StatusResponse;
 import it.polito.appeal.traci.protocol.StringList;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
@@ -36,6 +37,15 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a {@link ValueReadQuery} that reads a variable of a specific
+ * SUMO object.
+ * 
+ * @see ValueReadQuery
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ * @param <V>
+ */
 public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 
 	private final int commandID;
@@ -73,6 +83,12 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	
 	protected abstract V readValue(Command resp) throws TraCIException; 
 
+	/*
+	 * The following type-specific queries will tell how to read each of the
+	 * SUMO basic types. Compound types, which are used only by a SUMO object
+	 * class, should be declared in the corresponding TraciObject class.
+	 */
+	
 	public static class IntegerQ extends ReadObjectVarQuery<Integer> {
 
 		IntegerQ(DataInputStream dis, DataOutputStream dos, int commandID,
@@ -104,6 +120,24 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 
+	public static class ColorQ extends ReadObjectVarQuery<Color> {
+
+		ColorQ(DataInputStream dis, DataOutputStream dos, int commandID,
+				String objectID, int varID) {
+			super(dis, dos, commandID, objectID, varID);
+		}
+
+		@Override
+		protected Color readValue(Command resp) throws TraCIException {
+			Storage content = resp.content();
+			Utils.checkType(content, Constants.TYPE_COLOR);
+			int r = content.readUnsignedByte();
+			int g = content.readUnsignedByte();
+			int b = content.readUnsignedByte();
+			int a = content.readUnsignedByte();
+			return new Color(r, g, b, a);
+		}
+	}
 
 	public static class PositionQ extends ReadObjectVarQuery<Point2D> {
 
