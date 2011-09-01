@@ -59,6 +59,9 @@ public abstract class TraciObject<E extends Enum<E>> {
 	
 	/**
 	 * Constructor for the SUMO object.
+	 * <p>
+	 * It is advised that the subclass constructor has package visibility as
+	 * well as this one.
 	 * @param id the string ID of the object, retrieved from SUMO
 	 * @param enumClass the class type of the variable list enum
 	 */
