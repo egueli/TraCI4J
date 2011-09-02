@@ -67,6 +67,10 @@ public class Repository<V extends TraciObject<?>> {
 		this.factory = factory;
 	}
 
+	protected Map<String, V> getCached() {
+		return Collections.unmodifiableMap(objectCache);
+	}
+	
 	/**
 	 * Returns the TraCI object associated to the given ID.
 	 * <p>
@@ -109,7 +113,29 @@ public class Repository<V extends TraciObject<?>> {
 		return Collections.unmodifiableMap(objectCache);
 	}
 	
-	static class Edges extends Repository<Edge> {
+	/**
+	 * Represents a {@link Repository} whose objects need to clear their cache
+	 * at every simulation step.
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 *
+	 * @param <V>
+	 */
+	static class RefreshableRepository<V extends TraciObject<?>> extends Repository<V> implements StepAdvanceListener {
+
+		public RefreshableRepository(ObjectFactory<V> factory,
+				StringListQ idListQuery) {
+			super(factory, idListQuery);
+		}
+
+		@Override
+		public void nextStep(double step) {
+			for (V value : getCached().values()) {
+				value.clearCache();
+			}
+		}
+	}
+	
+	static class Edges extends RefreshableRepository<Edge> {
 		Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<Edge>() {
 				@Override
@@ -133,7 +159,7 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	static class Vehicles extends Repository<Vehicle> {
+	static class Vehicles extends RefreshableRepository<Vehicle> {
 
 		Vehicles(
 				final DataInputStream dis, 
@@ -168,7 +194,7 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	static class InductionLoops extends Repository<InductionLoop> {
+	static class InductionLoops extends RefreshableRepository<InductionLoop> {
 		public InductionLoops(
 				final DataInputStream dis, 
 				final DataOutputStream dos, 
@@ -184,6 +210,21 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
+	static class TrafficLights extends RefreshableRepository<TrafficLight> {
+
+		public TrafficLights(
+				final DataInputStream dis, 
+				final DataOutputStream dos, 
+				final Repository<Lane> lanes, 
+				StringListQ idListQuery) {
+			super(new ObjectFactory<TrafficLight>() {
+				@Override
+				public TrafficLight newObject(String objectID) {
+					return new TrafficLight(objectID, dis, dos, lanes);
+				}
+			}, idListQuery);
+		}
+	}
 	/*
 	 * TODO add repository definitions for other SUMO object classes 
 	 */

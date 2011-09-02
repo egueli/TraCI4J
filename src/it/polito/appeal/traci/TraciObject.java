@@ -132,4 +132,13 @@ public abstract class TraciObject<E extends Enum<E>> {
 		TraciObject<?> that = (TraciObject<?>) other;
 		return getID().equals(that.getID());
 	}
+
+	/**
+	 * Clears all the read queries' stored values, therefore forcing all
+	 * subsequent queries to make a TraCI transaction. 
+	 */
+	public void clearCache() {
+		for (ReadObjectVarQuery<?> q : getAllReadQueries().values())
+			q.setObsolete();
+	}
 }

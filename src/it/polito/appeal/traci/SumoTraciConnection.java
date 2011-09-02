@@ -148,11 +148,12 @@ public class SumoTraciConnection {
 	private Map<String, Vehicle> vehicles;
 	private StringListQ vehicleListQuery;
 	
-	private Repository<Edge> edgeRepo;
-	private Repository<Lane> laneRepo;
-	private Repository<Vehicle> vehicleRepo;
-	private Repository<POI> poiRepo;
-	private Repository<InductionLoop> inductionLoopRepo;
+	private Repository.Edges edgeRepo;
+	private Repository.Lanes laneRepo;
+	private Repository.Vehicles vehicleRepo;
+	private Repository.POIs poiRepo;
+	private Repository.InductionLoops inductionLoopRepo;
+	private Repository.TrafficLights trafficLightRepo;
 
 	/*
 	 * TODO add repositories for remaining SUMO object classes
@@ -299,6 +300,7 @@ public class SumoTraciConnection {
 		
 		edgeRepo = new Repository.Edges(dis, dos, 
 				newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
+		addStepAdvanceListener(edgeRepo);
 		
 		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, 
 				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
@@ -307,6 +309,7 @@ public class SumoTraciConnection {
 		
 		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
 				vehicles, vehicleListQuery);
+		addStepAdvanceListener(vehicleRepo);
 		
 		poiRepo = new Repository.POIs(dis, dos,
 				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
@@ -314,6 +317,11 @@ public class SumoTraciConnection {
 		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
 				vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
+		addStepAdvanceListener(inductionLoopRepo);
+		
+		trafficLightRepo = new Repository.TrafficLights(dis, dos, laneRepo,
+				newIDListQuery(Constants.CMD_GET_TL_VARIABLE));
+		addStepAdvanceListener(trafficLightRepo);
 		
 		/*
 		 * TODO add initializers for remaining repositories
@@ -511,13 +519,11 @@ public class SumoTraciConnection {
 		arrivedIDs.removeAll(vehicleListAfter);
 		
 		/*
-		 * now update the vehicles map, notify listeners and add/remove vehicles
-		 * from the step advance listeners
+		 * now update the vehicles map and notify listeners
 		 */
 		
 		for (String arrivedID : arrivedIDs) {
 			Vehicle arrived = vehicles.remove(arrivedID);
-			stepAdvanceListeners.remove(arrived);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleArrived(arrived);
 			}
@@ -525,7 +531,6 @@ public class SumoTraciConnection {
 		for (String departedID : departedIDs) {
 			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
 			vehicles.put(departedID, departed);
-			stepAdvanceListeners.add(departed);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleDeparted(departed);
 			}
@@ -583,6 +588,10 @@ public class SumoTraciConnection {
 		return inductionLoopRepo;
 	}
 	
+	public Repository<TrafficLight> getTrafficLightRepository() {
+		return trafficLightRepo;
+	}
+	
 	/*
 	 * TODO add repository getters (in the form of getXXXXRepository())
 	 * for remaining SUMO object classes
@@ -602,6 +611,14 @@ public class SumoTraciConnection {
 	 */
 	public void removeVehicleLifecycleObserver(VehicleLifecycleObserver observer) {
 		vehicleLifecycleObservers.remove(observer);
+	}
+	
+	public void addStepAdvanceListener(StepAdvanceListener listener) {
+		stepAdvanceListeners.add(listener);
+	}
+	
+	public void removeStepAdvanceListener(StepAdvanceListener listener) {
+		stepAdvanceListeners.remove(listener);
 	}
 
 	/**

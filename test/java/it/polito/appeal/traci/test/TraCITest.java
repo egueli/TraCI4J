@@ -74,9 +74,9 @@ import org.junit.Test;
  */
 public class TraCITest {
 
-	private static final double DELTA = 1e-6;
+	protected static final double DELTA = 1e-6;
 	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
-	private SumoTraciConnection conn;
+	protected SumoTraciConnection conn;
 	
 	static {
 		// this need to be done only once
@@ -85,15 +85,15 @@ public class TraCITest {
 
 	@Before
 	public void setUp() throws Exception {
-		System.out.println();
-		System.out.println("=======================================");
-		System.out.println();
+		printSeparator();
+		conn = startSumoConn(SIM_CONFIG_LOCATION);
+	}
 
+	public static SumoTraciConnection startSumoConn(String simConfigLocation) throws Exception {
 		try {
-			conn = new SumoTraciConnection(SIM_CONFIG_LOCATION, 0, false);
-
-
-			conn.runServer();
+			SumoTraciConnection newConn = new SumoTraciConnection(simConfigLocation, 0, false);
+			newConn.runServer();
+			return newConn;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -101,8 +101,18 @@ public class TraCITest {
 		}
 	}
 
+	public static void printSeparator() {
+		System.out.println();
+		System.out.println("=======================================");
+		System.out.println();
+	}
+
 	@After
 	public void tearDown() throws IOException, InterruptedException {
+		stopSumoConn(conn);
+	}
+
+	public static void stopSumoConn(SumoTraciConnection conn) throws IOException, InterruptedException {
 		if (conn != null)
 			conn.close();
 	}
