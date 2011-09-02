@@ -23,7 +23,6 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class GetVehicleInfo {
 
