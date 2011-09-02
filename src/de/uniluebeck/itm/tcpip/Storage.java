@@ -484,8 +484,7 @@ public class Storage {
 			result = new String(content, charset);
 			
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			assert false : e;
 		}
 		
 		return result;

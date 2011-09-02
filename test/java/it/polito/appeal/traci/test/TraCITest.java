@@ -605,5 +605,7 @@ public class TraCITest {
 		q.setColor(newColor);
 		q.run();
 		assertEquals(newColor, poi.getReadColorQuery().get());
-	}	
+	}
+	
+	// TODO add induction loop tests
 }
