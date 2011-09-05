@@ -64,41 +64,29 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 
 	}
 	
-	public static class ChangeTargetQuery extends ChangeObjectStateQuery {
+	public static class ChangeTargetQuery extends ChangeObjectVarQuery<Edge> {
 
-		private Edge newTarget;
-		
 		public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
 		}
 		
-		public void setNewTarget(Edge newTarget) {
-			this.newTarget = newTarget;
-		}
-
 		@Override
-		protected void writeParamsTo(Storage content) {
+		protected void writeValueTo(Edge newTarget, Storage content) {
 			content.writeByte(Constants.TYPE_STRING);
 			content.writeStringASCII(newTarget.getID());
 		}
 	}
 
-	public static class ChangeRouteQuery extends ChangeObjectStateQuery {
+	public static class ChangeRouteQuery extends ChangeObjectVarQuery<List<Edge>> {
 
-		private List<Edge> newRoute;
-		
 		public ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
 		}
 		
-		public void setNewRoute(List<Edge> newRoute) {
-			this.newRoute = newRoute;
-		}
-
 		@Override
-		protected void writeParamsTo(Storage content) {
+		protected void writeValueTo(List<Edge> newRoute, Storage content) {
 			StringList edgeIDs = new StringList();
 			for (Edge e : newRoute)
 				edgeIDs.add(e.getID());

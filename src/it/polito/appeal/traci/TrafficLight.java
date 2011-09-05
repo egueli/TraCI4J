@@ -23,11 +23,17 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
+import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeIntegerQ;
+import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
+import it.polito.appeal.traci.ReadObjectVarQuery.DoubleQ;
 import it.polito.appeal.traci.ReadObjectVarQuery.IntegerQ;
+import it.polito.appeal.traci.ReadObjectVarQuery.StringQ;
+import it.polito.appeal.traci.TraCIException.UnexpectedDatatype;
 import it.polito.appeal.traci.TrafficLight.Variable;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
@@ -41,6 +47,7 @@ import it.polito.appeal.traci.protocol.StringList;
 public class TrafficLight extends TraciObject<Variable> {
 
 	private static final int GET_CMD = Constants.CMD_GET_TL_VARIABLE;
+	private static final int SET_CMD = Constants.CMD_SET_TL_VARIABLE;
 	
 	/**
 	 * The list of variables that can be read.
@@ -113,6 +120,26 @@ public class TrafficLight extends TraciObject<Variable> {
 					throw new IllegalArgumentException("unknown TL symbol: " + ch);
 				lightStates[i] = ls;
 			}
+		}
+		public TLState(LightState[] lightStates) {
+			this.lightStates = lightStates;
+		}
+		public String toString() {
+			char[] desc = new char[lightStates.length];
+			for (int i=0; i<desc.length; i++)
+				desc[i] = lightStates[i].symbol;
+			return new String(desc);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (obj == this) return true;
+			if (!(obj instanceof TLState)) return false;
+			return Arrays.deepEquals(((TLState)obj).lightStates, lightStates);
+		}
+		@Override
+		public int hashCode() {
+			return Arrays.hashCode(lightStates);
 		}
 	}
 	
@@ -227,6 +254,117 @@ public class TrafficLight extends TraciObject<Variable> {
 		}
 	}
 
+	public static class Phase {
+		private final int duration;
+		private final TLState state;
+		Phase(Storage content) throws UnexpectedDatatype {
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			duration = content.readInt();
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			content.readInt(); // duration 2 ignored
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			content.readInt(); // duration 3 ignored
+			Utils.checkType(content, Constants.TYPE_STRING);
+			state = new TLState(content.readStringASCII());
+		}
+		public int getDuration() {
+			return duration;
+		}
+		public TLState getState() {
+			return state;
+		}
+	}
+	
+	public static class Logic {
+		private final String subID;
+		private final int currentPhaseIndex;
+		private final Phase[] phases;
+		Logic(Storage content) throws UnexpectedDatatype {
+			Utils.checkType(content, Constants.TYPE_STRING);
+			subID = content.readStringASCII();
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			content.readInt(); // type ignored
+			Utils.checkType(content, Constants.TYPE_COMPOUND);
+			int compSize = content.readInt();
+			for (int i=0; i<compSize; i++)
+				content.readByte(); // ignore compound type SubParameter
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			currentPhaseIndex = content.readInt();
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			int nPhases = content.readInt();
+			phases = new Phase[nPhases];
+			for (int i=0; i<nPhases; i++) {
+				phases[i] = new Phase(content);
+			}
+		}
+		public String getSubID() {
+			return subID;
+		}
+		public int getCurrentPhaseIndex() {
+			return currentPhaseIndex;
+		}
+		public Phase[] getPhases() {
+			return phases;
+		}
+	}
+	
+	public static class Program {
+		private final Logic[] logics;
+		Program(Storage content) throws UnexpectedDatatype {
+			Utils.checkType(content, Constants.TYPE_COMPOUND);
+			content.readInt(); // compund length ignored
+			Utils.checkType(content, Constants.TYPE_INTEGER);
+			int nLogics = content.readInt();
+			logics = new Logic[nLogics];
+			for (int i=0; i<nLogics; i++) {
+				logics[i] = new Logic(content);
+			}
+		}
+		public Logic[] getLogics() {
+			return logics;
+		}
+	}
+	
+	static class ReadCompleteDefinitionQuery extends ReadObjectVarQuery<Program> {
+		ReadCompleteDefinitionQuery(DataInputStream dis,
+				DataOutputStream dos, String objectID) {
+			super(dis, dos, GET_CMD, objectID, Constants.TL_COMPLETE_DEFINITION_RYG);
+		}
+
+		@Override
+		protected Program readValue(Command resp) throws TraCIException {
+			Storage content = resp.content();
+			return new Program(content);
+		}
+		
+	}
+	
+	public static class ChangeLightsStateQuery extends ChangeObjectVarQuery<TLState> {
+		ChangeLightsStateQuery(DataInputStream dis, DataOutputStream dos,
+				String objectID) {
+			super(dis, dos, SET_CMD, objectID, Constants.TL_RED_YELLOW_GREEN_STATE);
+		}
+
+		@Override
+		protected void writeValueTo(TLState val, Storage content) {
+			content.writeByte(Constants.TYPE_STRING);
+			content.writeStringASCII(val.toString());
+		}
+	}
+	
+	/*
+	 * TODO add "set complete program definition" as I didn't fully understood
+	 * how the TLS model is composed; in particular, I can't say if the
+	 * Program/Logic/Phase model I wrote for reading program can be re-used,
+	 * since the related page http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Change_Traffic_Lights_State
+	 * doesn't mention any "logic"...
+	 */
+	
+	private final ChangeLightsStateQuery changeLightsStateQuery;
+	private final ChangeIntegerQ changePhaseIndexQuery;
+	private final ChangeStringQ changeProgramQuery;
+	private final ChangeIntegerQ changePhaseDurationQuery;
+	
 	TrafficLight(String id, DataInputStream dis, DataOutputStream dos, Repository<Lane> laneRepo) {
 		super(id, Variable.class);
 		
@@ -241,12 +379,60 @@ public class TrafficLight extends TraciObject<Variable> {
 		addReadQuery(Variable.CONTROLLED_LINKS, new ReadControlledLinksQuery(
 				dis, dos, id, laneRepo));
 		
-		// TODO add remaining read queries
+		addReadQuery(Variable.CURRENT_PHASE, new IntegerQ(dis, dos, GET_CMD,
+				id, Constants.TL_CURRENT_PHASE));
 		
-		// TODO add change state queries
+		addReadQuery(Variable.CURRENT_PROGRAM, new StringQ(dis, dos, GET_CMD,
+				id, Constants.TL_CURRENT_PROGRAM));
+		
+		addReadQuery(Variable.COMPLETE_DEFINITION, 
+				new ReadCompleteDefinitionQuery(dis, dos, id));
+		
+		addReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME, new DoubleQ(dis, dos,
+				GET_CMD, id, Constants.TL_NEXT_SWITCH));
+		
+		changeLightsStateQuery = new ChangeLightsStateQuery(dis, dos, id) {
+			@Override
+			protected void writeValueTo(TLState val, Storage content) {
+				super.writeValueTo(val, content);
+				getReadCurrentStateQuery().setObsolete();
+			}
+		};  
+		
+		changePhaseIndexQuery = new ChangeIntegerQ(dis, dos, SET_CMD, id,
+				Constants.TL_CURRENT_PHASE) {
+			@Override
+			protected void writeValueTo(Integer val, Storage content) {
+				super.writeValueTo(val, content);
+				getReadCurrentPhaseQuery().setObsolete();
+				getReadCurrentStateQuery().setObsolete();
+			}
+		};
+		
+		changeProgramQuery = new ChangeStringQ(dis, dos, SET_CMD, id,
+				Constants.TL_PROGRAM) {
+			@Override
+			protected void writeValueTo(String val, Storage content) {
+				super.writeValueTo(val, content);
+				getReadCurrentPhaseQuery().setObsolete();
+				getReadCurrentStateQuery().setObsolete();
+				getReadCurrentProgramQuery().setObsolete();
+			}
+		};
+		
+		changePhaseDurationQuery = new ChangeIntegerQ(dis, dos, SET_CMD, id,
+				Constants.TL_PHASE_DURATION) {
+			@Override
+			protected void writeValueTo(Integer val, Storage content) {
+				super.writeValueTo(val, content);
+				getReadCurrentPhaseDurationQuery().setObsolete();
+			}
+		};
+		
+		// TODO add "set complete program definition" initializer
 	}
 	
-	public ReadObjectVarQuery<TLState> getReadStateQuery() {
+	public ReadObjectVarQuery<TLState> getReadCurrentStateQuery() {
 		return (ReadTLStateQuery) getReadQuery(Variable.STATE);
 	}
 	
@@ -258,7 +444,40 @@ public class TrafficLight extends TraciObject<Variable> {
 		return (ReadControlledLinksQuery) getReadQuery(Variable.CONTROLLED_LINKS);
 	}
 	
-	// TODO add remaining query getters
+	public ReadObjectVarQuery<Integer> getReadCurrentPhaseQuery() {
+		return (IntegerQ) getReadQuery(Variable.CURRENT_PHASE);
+	}
+
+	public ReadObjectVarQuery<String> getReadCurrentProgramQuery() {
+		return (StringQ) getReadQuery(Variable.CURRENT_PROGRAM);
+	}
+	
+	public ReadObjectVarQuery<Program> getCompleteDefinitionQuery() {
+		return (ReadCompleteDefinitionQuery) getReadQuery(Variable.COMPLETE_DEFINITION);
+	}
+	
+	public ReadObjectVarQuery<Double> getAssumedNextSwitchTimeQuery() {
+		return (DoubleQ) getReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME);
+	}
+
+	public ChangeLightsStateQuery getChangeLightsStateQuery() {
+		return changeLightsStateQuery;
+	}
+
+	public ChangeIntegerQ getChangePhaseIndexQuery() {
+		return changePhaseIndexQuery;
+	}
+
+	public ChangeStringQ getChangeProgramQuery() {
+		return changeProgramQuery;
+	}
+
+	public ChangeIntegerQ getChangePhaseDurationQuery() {
+		return changePhaseDurationQuery;
+	}
+	
+	
+	// TODO add "set complete program definition" query getter
 	
 	
 }

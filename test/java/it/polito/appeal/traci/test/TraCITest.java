@@ -20,13 +20,13 @@
 package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
+import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
 import it.polito.appeal.traci.POI.ChangeColorQuery;
 import it.polito.appeal.traci.POI.ChangePositionQuery;
-import it.polito.appeal.traci.POI.ChangeTypeQuery;
 import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.ValueReadQuery;
@@ -455,7 +455,7 @@ public class TraCITest {
 		Vehicle v = firstVehicle;
 
 		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
+		ctq.setValue(conn.getEdgeRepository().getByID("end"));
 		ctq.run();
 		
 		Edge lastEdge = null;
@@ -472,7 +472,7 @@ public class TraCITest {
 		getFirstVehicleID();
 		Vehicle v = firstVehicle;
 		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setNewTarget(conn.getEdgeRepository().getByID("end"));
+		ctq.setValue(conn.getEdgeRepository().getByID("end"));
 		ctq.run();
 		List<Edge> route = v.queryReadRoute().get();
 		assertEquals("end", route.get(route.size()-1).getID());
@@ -488,7 +488,7 @@ public class TraCITest {
 		newRoute.add(conn.getEdgeRepository().getByID("left"));
 		newRoute.add(conn.getEdgeRepository().getByID("left2end"));
 		ChangeRouteQuery crq = v.queryChangeRoute();
-		crq.setNewRoute(newRoute);
+		crq.setValue(newRoute);
 		crq.run();
 		assertEquals(newRoute, v.queryReadRoute().get());
 	}
@@ -586,9 +586,9 @@ public class TraCITest {
 	public void testSetPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		ChangeTypeQuery q = poi.getChangeTypeQuery();
+		ChangeStringQ q = poi.getChangeTypeQuery();
 		final String newType = "NEW_TYPE";
-		q.setType(newType);
+		q.setValue(newType);
 		q.run();
 		assertEquals(newType, poi.getReadTypeQuery().get());
 	}
@@ -597,9 +597,9 @@ public class TraCITest {
 	public void testSetPOIPosition() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		ChangePositionQuery q = poi.getChangePositionQuery();
 		final Point2D newPos = new Point2D.Double(0, 0);
-		q.setPosition(newPos);
+		ChangePositionQuery q = poi.getChangePositionQuery();
+		q.setValue(newPos);
 		q.run();
 		final Point2D pos = poi.getReadPositionQuery().get();
 		assertEquals(newPos.getX(), pos.getX(), DELTA);
@@ -610,9 +610,9 @@ public class TraCITest {
 	public void testSetPOIColor() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		ChangeColorQuery q = poi.getChangeColorQuery();
 		final Color newColor = Color.cyan;
-		q.setColor(newColor);
+		ChangeColorQuery q = poi.getChangeColorQuery();
+		q.setValue(newColor);
 		q.run();
 		assertEquals(newColor, poi.getReadColorQuery().get());
 	}

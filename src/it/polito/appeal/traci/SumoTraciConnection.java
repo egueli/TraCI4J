@@ -524,12 +524,14 @@ public class SumoTraciConnection {
 		
 		for (String arrivedID : arrivedIDs) {
 			Vehicle arrived = vehicles.remove(arrivedID);
+			removeStepAdvanceListener(arrived);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleArrived(arrived);
 			}
 		}
 		for (String departedID : departedIDs) {
 			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
+			addStepAdvanceListener(departed);
 			vehicles.put(departedID, departed);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleDeparted(departed);

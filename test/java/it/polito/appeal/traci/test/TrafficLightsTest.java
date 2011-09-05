@@ -24,9 +24,13 @@ import it.polito.appeal.traci.ReadObjectVarQuery;
 import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.TrafficLight;
+import it.polito.appeal.traci.TrafficLight.ChangeLightsStateQuery;
 import it.polito.appeal.traci.TrafficLight.ControlledLink;
 import it.polito.appeal.traci.TrafficLight.ControlledLinks;
 import it.polito.appeal.traci.TrafficLight.LightState;
+import it.polito.appeal.traci.TrafficLight.Logic;
+import it.polito.appeal.traci.TrafficLight.Phase;
+import it.polito.appeal.traci.TrafficLight.Program;
 import it.polito.appeal.traci.TrafficLight.TLState;
 
 import java.io.IOException;
@@ -223,7 +227,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testStateAtFirstStep() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		TLState tlState = tl.getReadStateQuery().get();
+		TLState tlState = tl.getReadCurrentStateQuery().get();
 		final LightState[] states = tlState.lightStates;
 		assertEquals(16, states.length);
 		assertArrayEquals(PHASES[0], states);
@@ -232,7 +236,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testStateUpdate() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		final ReadObjectVarQuery<TLState> query = tl.getReadStateQuery();
+		final ReadObjectVarQuery<TLState> query = tl.getReadCurrentStateQuery();
 		
 		// looks like SUMO shifts all TL timings ahead one second
 		conn.nextSimStep();
@@ -300,5 +304,38 @@ public class TrafficLightsTest {
 			assertEquals(linksLaneIDs[i][1], link.getAcrossLane().getID());
 			assertEquals(linksLaneIDs[i][2], link.getOutgoingLane().getID());
 		}
+	}
+	
+	@Test
+	public void testCompleteProgramDefinition() throws IOException {
+		TrafficLight tl = repo.getByID("0");
+		Program program = tl.getCompleteDefinitionQuery().get();
+		
+		assertEquals(1, program.getLogics().length);
+		Logic logic = program.getLogics()[0];
+		
+		assertEquals("0", logic.getSubID());
+		assertEquals(0, logic.getCurrentPhaseIndex());
+		
+		Phase[] phases = logic.getPhases();
+		assertEquals(8, phases.length);
+		
+		for (int i=0; i<phases.length; i++) {
+			Phase ph = phases[i];
+			assertEquals(PHASES_DURATION[i] * 1000, ph.getDuration());
+			assertArrayEquals(PHASES[i], ph.getState().lightStates);
+		}
+	}
+	
+	private static final TLState TEST_TL_STATE = new TLState("rrGGyyyyggrryryr");
+
+	@Test
+	public void testChangeState() throws IOException {
+		TrafficLight tl = repo.getByID("0");
+		ChangeLightsStateQuery q = tl.getChangeLightsStateQuery();
+		q.setValue(TEST_TL_STATE);
+		q.run();
+		
+		assertEquals(TEST_TL_STATE, tl.getReadCurrentStateQuery().get());
 	}
 }

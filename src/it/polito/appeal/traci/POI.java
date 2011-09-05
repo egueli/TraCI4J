@@ -26,6 +26,7 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.protocol.Constants;
 
 /**
@@ -47,23 +48,17 @@ public class POI extends TraciObject<POI.Variable> {
 	 * This query allows to change the position of a POI.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 */
-	public class ChangePositionQuery extends ChangeObjectStateQuery {
-		private Point2D position;
-		
+	public class ChangePositionQuery extends ChangeObjectVarQuery<Point2D> {
 		private ChangePositionQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_POSITION);
 		}
 
-		public void setPosition(Point2D position) {
-			this.position = position;
-		}
-		
 		/**
 		 * After writing params, flushes the cache of {@link POI#changePositionQuery}.
 		 */
 		@Override
-		protected void writeParamsTo(Storage content) {
+		protected void writeValueTo(Point2D position, Storage content) {
 			content.writeByte(Constants.POSITION_2D);
 			content.writeDouble(position.getX());
 			content.writeDouble(position.getY());
@@ -76,56 +71,23 @@ public class POI extends TraciObject<POI.Variable> {
 	 * This query allows to change the color of a POI.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 */
-	public class ChangeColorQuery extends ChangeObjectStateQuery {
-		private Color color;
-		
+	public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
 		private ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
 		}
 
-		public void setColor(Color color) {
-			this.color = color;
-		}
-		
 		/**
 		 * After writing params, flushes the cache of {@link POI#changeColorQuery}.
 		 */
 		@Override
-		protected void writeParamsTo(Storage content) {
+		protected void writeValueTo(Color color, Storage content) {
 			content.writeByte(Constants.TYPE_COLOR);
 			content.writeUnsignedByte(color.getRed());
 			content.writeUnsignedByte(color.getGreen());
 			content.writeUnsignedByte(color.getBlue());
 			content.writeUnsignedByte(color.getAlpha());
 			getReadColorQuery().setObsolete();
-		}
-	}
-	
-	/**
-	 * This query allows to change the type (string) of a POI.
-	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
-	 */
-	public class ChangeTypeQuery extends ChangeObjectStateQuery {
-		private String type;
-		
-		private ChangeTypeQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_TYPE);
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-		
-		/**
-		 * After writing params, flushes the cache of {@link POI#changeTypeQuery}.
-		 */
-		@Override
-		protected void writeParamsTo(Storage content) {
-			content.writeByte(Constants.TYPE_STRING);
-			content.writeStringASCII(type);
-			getReadTypeQuery().setObsolete();
 		}
 	}
 
@@ -144,7 +106,7 @@ public class POI extends TraciObject<POI.Variable> {
 	/** the "change color" query instance */
 	private final ChangeColorQuery changeColorQuery;
 	/** the "change type" query instance */
-	private final ChangeTypeQuery changeTypeQuery;
+	private final ChangeStringQ changeTypeQuery;
 	
 	POI(String id, DataInputStream dis, DataOutputStream dos) {
 		super(id, Variable.class);
@@ -162,7 +124,18 @@ public class POI extends TraciObject<POI.Variable> {
 		
 		changePositionQuery = new ChangePositionQuery(dis, dos, id);
 		changeColorQuery = new ChangeColorQuery(dis, dos, id);
-		changeTypeQuery = new ChangeTypeQuery(dis, dos, id);
+		changeTypeQuery = new ChangeStringQ(dis, dos,
+				Constants.CMD_SET_POI_VARIABLE, id, Constants.VAR_TYPE) {
+			/**
+			 * After writing params, flushes the cache of
+			 * {@link POI#changeTypeQuery}.
+			 */
+			@Override
+			protected void writeValueTo(String type, Storage content) {
+				super.writeValueTo(type, content);
+				getReadTypeQuery().setObsolete();
+			}
+		};
 	}
 	
 	// read variable query getters
@@ -189,7 +162,7 @@ public class POI extends TraciObject<POI.Variable> {
 		return changeColorQuery;
 	}
 
-	public ChangeTypeQuery getChangeTypeQuery() {
+	public ChangeStringQ getChangeTypeQuery() {
 		return changeTypeQuery;
 	}
 }
