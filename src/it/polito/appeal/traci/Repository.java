@@ -89,28 +89,46 @@ public class Repository<V extends TraciObject<?>> {
 	 * to SUMO but something bad happened
 	 */
 	public V getByID(String id) throws IOException {
-		if (!getIDs().contains(id)) {
-			objectCache.remove(id);
-			return null;
-		}
-		
-		if (!objectCache.containsKey(id)) {
-			objectCache.put(id, factory.newObject(id));
-		}
-		
+		getIDs(); // used only for its collateral effects
 		return objectCache.get(id);
 	}
 	
+	/**
+	 * Returns a {@link Set} made of all the string IDs of the objects
+	 * represented by this repository.
+	 * @return
+	 * @throws IOException
+	 */
 	public Set<String> getIDs() throws IOException {
+		/*
+		 * Here we also update the cache.
+		 */
 		Set<String> idSet = new HashSet<String>(idListQuery.get());
+		
+		final Set<String> cachedSet = objectCache.keySet();
+		
+		if (!cachedSet.equals(idSet)) {
+			Set<String> added = Utils.getAddedItems(cachedSet, idSet);
+			for (String newID : added) {
+				objectCache.put(newID, factory.newObject(newID));
+			}
+			
+			Set<String> removed = Utils.getRemovedItems(cachedSet, idSet);
+			for (String oldID : removed) {
+				objectCache.remove(oldID);
+			}
+		}
+		
 		return Collections.unmodifiableSet(idSet);
 	}
 	
 	public Map<String, V> getAll() throws IOException {
-		for (String id : getIDs()) {
-			getByID(id); // used only for its collateral effects
-		}
+		getIDs(); // used only for its collateral effects
 		return Collections.unmodifiableMap(objectCache);
+	}
+
+	public Query getQuery() {
+		return idListQuery;
 	}
 	
 	/**
@@ -228,4 +246,5 @@ public class Repository<V extends TraciObject<?>> {
 	/*
 	 * TODO add repository definitions for other SUMO object classes 
 	 */
+
 }

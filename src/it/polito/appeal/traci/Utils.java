@@ -19,6 +19,9 @@
 
 package it.polito.appeal.traci;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import it.polito.appeal.traci.TraCIException.UnexpectedData;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.StatusResponse;
@@ -50,5 +53,35 @@ public class Utils {
 		if (statusResponse.result() != Constants.RTYPE_OK)
 			throw new TraCIException("SUMO error for command "
 					+ statusResponse.id() + ": " + statusResponse.description());
+	}
+
+	/**
+	 * Given two sets "before" and "after", returns which element were added to
+	 * the first one to get to the second one.
+	 * Please note that adding the returned items to the "before" set does not
+	 * result in a set that is equal to the "after" set.
+	 * @param <T>
+	 * @param before
+	 * @param after
+	 * @return
+	 */
+	public static <T> Set<T> getAddedItems(Set<T> before, Set<T> after) {
+		Set<T> out = new HashSet<T>(after);
+		out.removeAll(before);
+		return out;
+	}
+	
+	/**
+	 * Given two sets "before" and "after", returns which elements were removed to
+	 * the first one to get to the second one.
+	 * Please note that removing the returned items to the "before" set does not
+	 * result in a set that is equal to the "after" set.
+	 * @param <T>
+	 * @param before
+	 * @param after
+	 * @return
+	 */
+	public static <T> Set<T> getRemovedItems(Set<T> before, Set<T> after) {
+		return getAddedItems(after, before);
 	}
 }

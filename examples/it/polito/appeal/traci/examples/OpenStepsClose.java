@@ -43,7 +43,7 @@ public class OpenStepsClose {
 			
 			for (int i = 0; i < 10; i++) {
 				int time = conn.getCurrentSimStep();
-				Collection<Vehicle> vehicles = conn.getVehicles();
+				Collection<Vehicle> vehicles = conn.getVehicleRepository().getAll().values();
 				
 				System.out.println("At time step " + time + ", there are "
 						+ vehicles.size() + " vehicles: " + vehicles);

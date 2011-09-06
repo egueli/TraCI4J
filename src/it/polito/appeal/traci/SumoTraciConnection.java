@@ -36,8 +36,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -147,6 +145,7 @@ public class SumoTraciConnection {
 	
 	private Map<String, Vehicle> vehicles;
 	private StringListQ vehicleListQuery;
+	private Set<String> vehicleListBefore;
 	
 	private Repository.Edges edgeRepo;
 	private Repository.Lanes laneRepo;
@@ -306,6 +305,13 @@ public class SumoTraciConnection {
 				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
 		
 		vehicleListQuery = newIDListQuery(Constants.CMD_GET_VEHICLE_VARIABLE);
+		addStepAdvanceListener(new StepAdvanceListener() {
+			@Override
+			public void nextStep(double step) {
+				vehicleListQuery.setObsolete();
+			}
+		});
+		vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
 		
 		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
 				vehicles, vehicleListQuery);
@@ -478,12 +484,6 @@ public class SumoTraciConnection {
 		simData.nextStep(currentSimStep);
 		
 		/*
-		 * save the old set of vehicles in order to compute the difference
-		 * sets
-		 */
-		Set<String> vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
-		
-		/*
 		 * constructs a multi-query that advances one step, reads the list of
 		 * active vehicles, the list of teleport-starting and teleport-ending
 		 */
@@ -513,10 +513,8 @@ public class SumoTraciConnection {
 		 * now, compute the difference sets (departed/arrived)
 		 */
 		Set<String> vehicleListAfter = new HashSet<String>(vehicleListQuery.get());
-		Set<String> departedIDs = new HashSet<String>(vehicleListAfter);
-		departedIDs.removeAll(vehicleListBefore);
-		Set<String> arrivedIDs = new HashSet<String>(vehicleListBefore);
-		arrivedIDs.removeAll(vehicleListAfter);
+		Set<String> departedIDs = Utils.getAddedItems(vehicleListBefore, vehicleListAfter);
+		Set<String> arrivedIDs = Utils.getRemovedItems(vehicleListBefore, vehicleListAfter);
 		
 		/*
 		 * now update the vehicles map and notify listeners
@@ -548,11 +546,12 @@ public class SumoTraciConnection {
 		}
 		
 		/*
-		 * finally, notify any interested listener that we advances one step
+		 * notify any interested listener that we advances one step
 		 */
 		for (StepAdvanceListener listener : stepAdvanceListeners)
 			listener.nextStep(currentSimStep);
 		
+		vehicleListBefore = vehicleListAfter;
 	}
 
 	/**
@@ -562,12 +561,8 @@ public class SumoTraciConnection {
 		return currentSimStep;
 	}
 
-	public Collection<Vehicle> getVehicles() {
-		return Collections.unmodifiableCollection(vehicles.values());
-	}
-	
-	public Vehicle getVehicleByID(String vehicleID) {
-		return vehicles.get(vehicleID);
+	public Repository<Vehicle> getVehicleRepository() {
+		return vehicleRepo;
 	}
 	
 	public Repository<Edge> getEdgeRepository() {

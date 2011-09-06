@@ -49,6 +49,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
@@ -172,8 +173,8 @@ public class TraCITest {
 		for (int i=0; i<10; i++) {
 			conn.nextSimStep();
 			int t = conn.getCurrentSimStep();
-			Collection<Vehicle> vehicles = conn.getVehicles();
-			System.out.println(t + "\t" + vehicles);
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
+			System.out.println(t + "\t" + vehicles.keySet());
 			assertTrue(vehicles.size() > 0);
 		}
 	}
@@ -181,7 +182,7 @@ public class TraCITest {
 	@Test
 	public void testRefreshedValues() throws IllegalStateException, IOException {
 		conn.nextSimStep();
-		Vehicle v = conn.getVehicles().iterator().next();
+		Vehicle v = conn.getVehicleRepository().getAll().values().iterator().next();
 		ValueReadQuery<Double> readSpeedQuery = v.queryReadSpeed();
 		Double speedFirst = readSpeedQuery.get();
 		
@@ -198,7 +199,7 @@ public class TraCITest {
 	
 	@Test
 	public void testRoute() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		
 		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
 		List<Edge> route = routeQuery.get();
@@ -216,7 +217,7 @@ public class TraCITest {
 			throws IOException {
 		
 		
-		getFirstVehicleID();
+		getFirstVehicle();
 		
 		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
 		
@@ -238,29 +239,19 @@ public class TraCITest {
 		assertFalse(routeBefore.equals(routeAfter));
 	}
 
-	public void getFirstVehicleID()
-			throws IOException {
-		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleDeparted(Vehicle v) {
-				firstVehicle = v;
-			}
-			@Override public void vehicleArrived(Vehicle v) { }
-			
-			@Override
-			public void vehicleTeleportEnding(Vehicle v) { }
-			@Override
-			public void vehicleTeleportStarting(Vehicle v) { }
-		});
-		
-		while(firstVehicle == null)
+	public void getFirstVehicle() throws IOException {
+		Repository<Vehicle> repo = conn.getVehicleRepository();
+		while(repo.getAll().isEmpty())
 			conn.nextSimStep();
+		
+		firstVehicle = repo.getAll().values().iterator().next();
 	}
 
 	@Test
 	public void testChangeGlobalTravelTime()
 			throws IOException {
 
-		getFirstVehicleID();
+		getFirstVehicle();
 		
 		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
 		List<Edge> routeBefore = routeQuery.get();
@@ -319,11 +310,11 @@ public class TraCITest {
 		while (conn.getCurrentSimStep() < 300)
 			conn.nextSimStep();
 		
-		Collection<Vehicle> vehicles = conn.getVehicles();
 		
 		long start = System.currentTimeMillis();
 		for (int r = 0; r < RETRIES; r++) {
-			for (Vehicle vehicle : vehicles) {
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
+			for (Vehicle vehicle : vehicles.values()) {
 				vehicle.queryReadPosition().get();
 			}
 			conn.nextSimStep();
@@ -335,10 +326,12 @@ public class TraCITest {
 		
 		start = System.currentTimeMillis();
 		for (int r = 0; r < RETRIES; r++) {
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			MultiQuery multi = conn.makeMultiQuery();
-			for (Vehicle vehicle : vehicles) {
+			for (Vehicle vehicle : vehicles.values()) {
 				multi.add(vehicle.queryReadPosition());
 			}
+			multi.add(conn.getVehicleRepository().getQuery());
 			multi.run();
 			conn.nextSimStep();
 		}
@@ -389,26 +382,6 @@ public class TraCITest {
 	}
 	
 	@Test
-	public void testCloseInObserverBody() throws IOException {
-		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
-			@Override public void vehicleArrived(Vehicle v) {
-			}
-			@Override public void vehicleDeparted(Vehicle v) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-			@Override
-			public void vehicleTeleportEnding(Vehicle v) { }
-			@Override
-			public void vehicleTeleportStarting(Vehicle v) { }
-		});
-		getFirstVehicleID();
-	}
-	
-	@Test
 //	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
 		
@@ -451,7 +424,7 @@ public class TraCITest {
 
 	@Test
 	public void testChangeTarget() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		Vehicle v = firstVehicle;
 
 		ChangeTargetQuery ctq = v.queryChangeTarget();
@@ -459,7 +432,7 @@ public class TraCITest {
 		ctq.run();
 		
 		Edge lastEdge = null;
-		while (conn.getVehicles().contains(v)) {
+		while (conn.getVehicleRepository().getByID(v.getID()) != null) {
 			lastEdge = v.queryReadCurrentEdge().get();
 			assertFalse(lastEdge.getID().equals("end"));
 
@@ -469,7 +442,7 @@ public class TraCITest {
 	
 	@Test
 	public void testChangeTargetAlsoAffectsRouteList() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		Vehicle v = firstVehicle;
 		ChangeTargetQuery ctq = v.queryChangeTarget();
 		ctq.setValue(conn.getEdgeRepository().getByID("end"));
@@ -480,7 +453,7 @@ public class TraCITest {
 	
 	@Test
 	public void testChangeRoute() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		Vehicle v = firstVehicle;
 		List<Edge> newRoute = new ArrayList<Edge>();
 		newRoute.add(conn.getEdgeRepository().getByID("beg"));
@@ -513,20 +486,20 @@ public class TraCITest {
 
 	@Test
 	public void testVehiclePositionIsInBounds() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		final ValueReadQuery<Point2D> queryReadPosition = firstVehicle.queryReadPosition();
-		while (conn.getVehicles().contains(firstVehicle)) {
-			conn.nextSimStep();
+		while (conn.getVehicleRepository().getByID(firstVehicle.getID()) != null) {
 			Point2D pos = queryReadPosition.get();
 			assertTrue(pos.getX() >= 0);
 			assertTrue(pos.getX() < 2000);
 			assertEquals(-1.65, pos.getY(), DELTA);
+			conn.nextSimStep();
 		}
 	}
 	
 	@Test
 	public void testUsingInactiveVehicle() throws IOException {
-		getFirstVehicleID();
+		getFirstVehicle();
 		conn.addVehicleLifecycleObserver(new VehicleLifecycleObserver() {
 			@Override
 			public void vehicleTeleportStarting(Vehicle vehicle) {}

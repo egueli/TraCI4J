@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  * Represents a set of {@link Query}s to run as a whole, i.e. within a single
  * SUMO request and response message. This may significantly reduce the
@@ -45,6 +47,9 @@ import java.util.List;
  *
  */
 public class MultiQuery {
+	
+	private static final Logger log = Logger.getLogger(MultiQuery.class);
+	
 	private final DataOutputStream dos;
 	private final DataInputStream dis;
 	
@@ -64,6 +69,10 @@ public class MultiQuery {
 	}
 	
 	public void run() throws IOException {
+		if (log.isDebugEnabled()) {
+			log.debug("Running a batch of " + queries.size() + " queries");
+		}
+		
 		RequestMessage reqMsg = new RequestMessage();
 		for (Query q : queries) {
 			for (Command req : q.getRequests()) {

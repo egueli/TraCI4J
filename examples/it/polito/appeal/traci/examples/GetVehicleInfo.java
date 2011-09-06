@@ -39,7 +39,7 @@ public class GetVehicleInfo {
 			conn.nextSimStep();
 			conn.nextSimStep();
 			
-			Collection<Vehicle> vehicles = conn.getVehicles();
+			Collection<Vehicle> vehicles = conn.getVehicleRepository().getAll().values();
 
 			Vehicle aVehicle = vehicles.iterator().next();
 			
