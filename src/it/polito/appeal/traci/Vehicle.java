@@ -117,7 +117,22 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		ANGLE(Constants.VAR_ANGLE),
 		CURRENT_EDGE(Constants.VAR_ROAD_ID),
 		CURRENT_LANE(Constants.VAR_LANE_ID),
-		ROUTE(Constants.VAR_ROUTE)
+		LANE_INDEX(Constants.VAR_LANE_INDEX),
+		//TYPE(Constants.VAR_TYPE),  // TODO implement VehicleType object
+		//ROUTE(Constants.VAR_ROUTE_ID), // TODO implement Route object
+		CURRENT_ROUTE(Constants.VAR_ROUTE),
+		//COLOR(Constants.VAR_COLOR), // TODO
+		LANE_POSITION(Constants.VAR_LANEPOSITION),
+		//SIGNAL_STATES(Constants.VAR_SIGNALS), // TODO
+		//CO2_EMISSIONS(Constants.VAR_CO2EMISSION), // TODO
+		//CO_EMISSIONS(Constants.VAR_COEMISSION), // TODO
+		//HC_EMISSIONS(Constants.VAR_HCEMISSION), // TODO
+		//PMX_EMISSIONS(Constants.VAR_PMXEMISSION), // TODO
+		//NOX_EMISSIONS(Constants.VAR_NOXEMISSION), // TODO
+		//FUEL_CONSUMPTION(Constants.VAR_FUELCONSUMPTION), // TODO
+		//NOISE_EMISSION(Constants.VAR_NOISEEMISSION), // TODO
+		//BEST_LANES(Constants.VAR_BEST_LANES) // missing format info
+		
 		;
 		
 		public final int id; 
@@ -144,8 +159,10 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 				new ReadObjectVarQuery.EdgeQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_EDGE.id, edges));
 		addReadQuery(Variable.CURRENT_LANE, 
 				new ReadObjectVarQuery.LaneQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_LANE.id, lanes));
-		addReadQuery(Variable.ROUTE, 
+		addReadQuery(Variable.CURRENT_ROUTE, 
 				new RouteQuery(dis, dos, id, edges));
+		addReadQuery(Variable.LANE_POSITION,
+				new ReadObjectVarQuery.DoubleQ(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.LANE_POSITION.id));
 		
 		edgeTravelTimeQuery = new ChangeEdgeTravelTimeQuery(dis, dos, id);
 		changeTargetQuery = new ChangeTargetQuery(dis, dos, id);
@@ -160,7 +177,7 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 			void pickResponses(Iterator<ResponseContainer> responseIterator)
 					throws TraCIException {
 				super.pickResponses(responseIterator);
-				queryReadRoute().setObsolete();
+				queryReadCurrentRoute().setObsolete();
 			}
 			
 		};
@@ -189,8 +206,8 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		return (ReadObjectVarQuery.LaneQ) getReadQuery(Variable.CURRENT_LANE);
 	}
 	
-	public ValueReadQuery<List<Edge>> queryReadRoute() {
-		return (RouteQuery) getReadQuery(Variable.ROUTE);
+	public ValueReadQuery<List<Edge>> queryReadCurrentRoute() {
+		return (RouteQuery) getReadQuery(Variable.CURRENT_ROUTE);
 	}
 
 	public ChangeEdgeTravelTimeQuery querySetEdgeTravelTime() {
@@ -207,6 +224,10 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 	
 	public ChangeRouteQuery queryChangeRoute() {
 		return changeRouteQuery;
+	}
+
+	public ValueReadQuery<Double> queryReadLanePosition() {
+		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LANE_POSITION);
 	}
 }
 

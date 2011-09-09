@@ -20,6 +20,7 @@
 package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
@@ -46,6 +47,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -194,6 +196,41 @@ public class TraCITest {
 		}
 	}
 
+	@Test
+	public void testNoVehiclesAtStepZero() throws IOException {
+		assertTrue(conn.getVehicleRepository().getIDs().isEmpty());
+	}
+	
+	@Test
+	public void testOneVehicleAtStepOne() throws IOException {
+		conn.nextSimStep();
+		final Repository<Vehicle> repo = conn.getVehicleRepository();
+		assertThat(repo.getIDs().size(), equalTo(1));
+	}
+	
+	@Test
+	public void testVehicleIDAtStepOne() throws IOException {
+		conn.nextSimStep();
+		final Repository<Vehicle> repo = conn.getVehicleRepository();
+		assertThat(repo.getIDs(), equalTo(Collections.singleton("0.0")));	
+	}
+	
+	@Test
+	public void testVehiclePositionAtStepOne() throws IOException {
+		conn.nextSimStep();
+		final Repository<Vehicle> repo = conn.getVehicleRepository();
+		Vehicle v0 = repo.getByID("0.0");
+		assertEquals(0, v0.queryReadLanePosition().get(), DELTA);
+	}
+	
+	@Test
+	public void testVehiclePositionAtStepTwo() throws IOException {
+		conn.nextSimStep();
+		conn.nextSimStep();
+		final Repository<Vehicle> repo = conn.getVehicleRepository();
+		Vehicle v0 = repo.getByID("0.0");
+		assertEquals(1.886542, v0.queryReadLanePosition().get(), DELTA);
+	}
 	
 	private Vehicle firstVehicle = null;
 	
@@ -201,7 +238,7 @@ public class TraCITest {
 	public void testRoute() throws IOException {
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
 		List<Edge> route = routeQuery.get();
 		assertEquals(4, route.size());
 
@@ -219,7 +256,7 @@ public class TraCITest {
 		
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
 		
 		List<Edge> routeBefore = routeQuery.get();
 		System.out.println("Route before:         " + routeBefore);
@@ -253,7 +290,7 @@ public class TraCITest {
 
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadRoute();
+		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
 		List<Edge> routeBefore = routeQuery.get();
 		System.out.println("Route before:         " + routeBefore);
 
@@ -447,7 +484,7 @@ public class TraCITest {
 		ChangeTargetQuery ctq = v.queryChangeTarget();
 		ctq.setValue(conn.getEdgeRepository().getByID("end"));
 		ctq.run();
-		List<Edge> route = v.queryReadRoute().get();
+		List<Edge> route = v.queryReadCurrentRoute().get();
 		assertEquals("end", route.get(route.size()-1).getID());
 	}
 	
@@ -463,7 +500,7 @@ public class TraCITest {
 		ChangeRouteQuery crq = v.queryChangeRoute();
 		crq.setValue(newRoute);
 		crq.run();
-		assertEquals(newRoute, v.queryReadRoute().get());
+		assertEquals(newRoute, v.queryReadCurrentRoute().get());
 	}
 	
 	@Test
