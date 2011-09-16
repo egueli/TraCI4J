@@ -27,14 +27,12 @@ import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,48 +79,10 @@ public class SumoTraciConnection {
 	 */
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
-	/**
-	 * Reads an InputStream object and logs each row in the containing class's
-	 * logger.
-	 * 
-	 * @author Enrico
-	 * 
-	 */
-	private static class StreamLogger implements Runnable {
-		final InputStream stream;
-		final String prefix;
-
-		public StreamLogger(InputStream stream, String prefix) {
-			this.stream = stream;
-			this.prefix = prefix;
-		}
-
-		public void run() {
-			StringBuilder buf = new StringBuilder();
-			InputStreamReader isr = new InputStreamReader(stream);
-			try {
-				int ch;
-				while((ch = isr.read()) != -1) {
-					if(log.isInfoEnabled()) {
-						if(ch != '\r' && ch != '\n')
-							buf.append((char)ch);
-						else {
-							log.info(prefix + buf.toString());
-							buf = new StringBuilder();
-						}
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	private static final Logger log = Logger.getLogger(SumoTraciConnection.class);
 
 	private String configFile;
 	private int randomSeed;
-	private int remotePort;
 	private Socket socket;
 	
 	private int currentSimStep;
@@ -181,32 +141,11 @@ public class SumoTraciConnection {
 		this.configFile = configFile;
 	}
 	
-	public SumoTraciConnection(SocketAddress sockAddr) throws IOException,
+	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
 			InterruptedException {
-		
-		socket = new Socket();
-		if (log.isDebugEnabled())
-			log.debug("Connecting to remote TraCI server at " + socket.toString());
 
-		int waitTime = 500; // milliseconds
-		for (int i = 0; i < CONNECT_RETRIES; i++) {
-
-			try {
-				socket.connect(sockAddr);
-				log.info("Connection to SUMO established.");
-				break;
-			} catch (ConnectException ce) {
-				log.debug("Server not ready, retrying in " + waitTime
-						+ "ms");
-				Thread.sleep(waitTime);
-				waitTime *= 2;
-			}
-		}
-
-		if (!socket.isConnected()) {
-			log.error("Couldn't connect to server");
-			throw new IOException("can't connect to SUMO server");
-		}
+		tryConnect(addr, port, null);
+		postConnect();
 	}
 
 	/**
@@ -231,61 +170,73 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 *             if something wrong occurs while starting SUMO or connecting
 	 *             at it.
+	 * @throws InterruptedException 
 	 */
-	public void runServer() throws IOException {
+	public void runServer() throws IOException, InterruptedException {
 		retrieveFromURLs();		
 		
-		findAvailablePort();
+		int port = findAvailablePort();
 
-		runSUMO();
+		runSUMO(port);
 
-		/*
-		 * wait for simulator's loading before connecting.
-		 */
+		tryConnect(InetAddress.getLocalHost(), port, sumoProcess);
+		postConnect();
+
+	}
+	
+	/**
+	 * Tries to connect to the TraCI server reachable at the given address and
+	 * TCP port. If also specified, checks that the SUMO process is present.
+	 * @param addr the address of the TraCI server
+	 * @param port the TCP port of the TraCI server
+	 * @param process a reference to a {@link Process} object representing SUMO
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 */
+	private void tryConnect(InetAddress addr, int port, Process process) throws IOException, InterruptedException {
 		int waitTime = 500; // milliseconds
-		try {
-			for (int i = 0; i < CONNECT_RETRIES; i++) {
-				/*
-				 * first, check that the SUMO process is still alive.
-				 */
+		for (int i = 0; i < CONNECT_RETRIES; i++) {
+			if (process != null) {
 				try {
-					int retVal = sumoProcess.exitValue();
+					int retVal = process.exitValue();
 					throw new IOException(
 							"SUMO process terminated unexpectedly with value "
-									+ retVal);
+							+ retVal);
 				} catch (IllegalThreadStateException e) {
 					// it's alive, go ahead.
 				}
-
-				socket = new Socket();
-				if (log.isDebugEnabled())
-					log.debug("Connecting to local port " + remotePort);
-
-				try {
-					socket.connect(new InetSocketAddress(InetAddress
-							.getLocalHost(), remotePort));
-					log.info("Connection to SUMO established.");
-					break;
-				} catch (ConnectException ce) {
-					log.debug("Server not ready, retrying in " + waitTime
-							+ "ms");
-					Thread.sleep(waitTime);
-					waitTime *= 2;
-				}
 			}
 
-			if (!socket.isConnected()) {
-				log.error("Couldn't connect to server");
-				throw new IOException("can't connect to SUMO server");
-			}
+			if (log.isDebugEnabled())
+				log.debug("Connecting to " + addr + ":" + port);
 
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			if (tryConnectOnce(addr, port)) {
+				log.info("Connection to SUMO established.");
+				break;
+			}
+			else {
+				log.debug("Server not ready, retrying in " + waitTime + "ms");
+				Thread.sleep(waitTime);
+				waitTime *= 2;
+			}
 		}
 
-		postConnect();
+		if (!socket.isConnected()) {
+			log.error("Couldn't connect to server");
+			throw new IOException("can't connect to SUMO server");
+		}
 	}
 
+	private boolean tryConnectOnce(InetAddress addr, int port) throws UnknownHostException, IOException {
+		socket = new Socket();
+		try {
+			socket.connect(new InetSocketAddress(addr, port));
+			return true;
+		} catch (ConnectException ce) {
+			return false;
+		}
+	}
+	
 	private void postConnect() throws IOException {
 		currentSimStep = 0;
 
@@ -357,7 +308,7 @@ public class SumoTraciConnection {
 			
 	}
 
-	private void runSUMO() throws IOException {
+	private void runSUMO(int remotePort) throws IOException {
 		final String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
 			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
@@ -385,17 +336,17 @@ public class SumoTraciConnection {
 		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
 		// + 1);
 
-		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO-err:");
-		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO-out:");
+		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO-err:", log);
+		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO-out:", log);
 		new Thread(errStreamLogger, "StreamLogger-SUMO-err").start();
 		new Thread(outStreamLogger, "StreamLogger-SUMO-out").start();
 	}
 
-	private void findAvailablePort() throws IOException {
+	private int findAvailablePort() throws IOException {
 		ServerSocket testSock = new ServerSocket(0);
-		remotePort = testSock.getLocalPort();
+		int port = testSock.getLocalPort();
 		testSock.close();
-		testSock = null;
+		return port;
 	}
 
 	/**

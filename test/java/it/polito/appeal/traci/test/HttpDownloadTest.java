@@ -30,7 +30,7 @@ public class HttpDownloadTest {
 
 
 	@Test
-	public void testHttpDownload() throws IOException {
+	public void testHttpDownload() throws IOException, InterruptedException {
 		new NanoHTTPD(5432);
 
 		SumoTraciConnection conn = new SumoTraciConnection("http://127.0.0.1:5432/test/sumo_maps/variable_speed_signs/test.sumo.cfg", 1, false);
