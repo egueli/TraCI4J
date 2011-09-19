@@ -24,11 +24,9 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import it.polito.appeal.traci.StreamLogger;
 import it.polito.appeal.traci.SumoTraciConnection;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
