@@ -21,7 +21,6 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.ResponseContainer;
-import it.polito.appeal.traci.protocol.StringList;
 
 import java.awt.geom.Point2D;
 import java.io.DataInputStream;
@@ -33,85 +32,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanceListener {
 	
-	
-	public static class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
-
-		private Edge edge;
-		private double travelTime;
-
-		public ChangeEdgeTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_EDGE_TRAVELTIME);
-		}
-
-		@Override
-		protected void writeParamsTo(Storage content) {
-			content.writeByte(Constants.TYPE_COMPOUND);
-			content.writeInt(2);
-			content.writeByte(Constants.TYPE_STRING);
-			content.writeStringASCII(edge.getID());
-			content.writeByte(Constants.TYPE_DOUBLE);
-			content.writeDouble(travelTime);
-		}
-
-		public void setEdge(Edge edge) {
-			this.edge = edge;
-		}
-
-		public void setTravelTime(double travelTime) {
-			this.travelTime = travelTime;
-		}
-
-	}
-	
-	public static class ChangeTargetQuery extends ChangeObjectVarQuery<Edge> {
-
-		public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
-		}
-		
-		@Override
-		protected void writeValueTo(Edge newTarget, Storage content) {
-			content.writeByte(Constants.TYPE_STRING);
-			content.writeStringASCII(newTarget.getID());
-		}
-	}
-
-	public static class ChangeRouteQuery extends ChangeObjectVarQuery<List<Edge>> {
-
-		public ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
-		}
-		
-		@Override
-		protected void writeValueTo(List<Edge> newRoute, Storage content) {
-			StringList edgeIDs = new StringList();
-			for (Edge e : newRoute)
-				edgeIDs.add(e.getID());
-			
-			edgeIDs.writeTo(content, true);
-		}
-	}
-
-	
-	public static class RerouteQuery extends ChangeObjectStateQuery {
-
-		public RerouteQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_REROUTE_TRAVELTIME);
-		}
-
-		@Override
-		protected void writeParamsTo(Storage content) {
-			content.writeByte(Constants.TYPE_COMPOUND);
-			content.writeInt(0);
-		}
-	}
-
-	
-	static enum Variable {
+	enum Variable {
 		SPEED(Constants.VAR_SPEED),
 		POSITION(Constants.VAR_POSITION),
 		ANGLE(Constants.VAR_ANGLE),
@@ -141,6 +62,20 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		}
 	}
 	
+	public static class ChangeTargetQuery extends ChangeObjectVarQuery<Edge> {
+
+		public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
+				String objectID) {
+			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
+		}
+		
+		@Override
+		protected void writeValueTo(Edge newTarget, Storage content) {
+			content.writeByte(Constants.TYPE_STRING);
+			content.writeStringASCII(newTarget.getID());
+		}
+	}
+
 	private final ChangeEdgeTravelTimeQuery edgeTravelTimeQuery;
 	private final RerouteQuery rerouteQuery;
 	private final ChangeTargetQuery changeTargetQuery;
@@ -160,7 +95,7 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		addReadQuery(Variable.CURRENT_LANE, 
 				new ReadObjectVarQuery.LaneQ (dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_LANE.id, lanes));
 		addReadQuery(Variable.CURRENT_ROUTE, 
-				new RouteQuery(dis, dos, id, edges));
+				new RouteQuery(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.CURRENT_ROUTE.id, edges));
 		addReadQuery(Variable.LANE_POSITION,
 				new ReadObjectVarQuery.DoubleQ(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, id, Variable.LANE_POSITION.id));
 		

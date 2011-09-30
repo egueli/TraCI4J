@@ -22,8 +22,6 @@
  */
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.protocol.Constants;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
@@ -31,8 +29,8 @@ import java.util.List;
 
 public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
 
-	RouteQuery(final DataInputStream dis, final DataOutputStream dos, String vehicleID, Repository<Edge> repo) {
-		super(dis, dos, Constants.CMD_GET_VEHICLE_VARIABLE, repo, vehicleID, Constants.VAR_EDGES);
+	RouteQuery(final DataInputStream dis, final DataOutputStream dos, int commandID, String vehicleID, int varID, Repository<Edge> repo) {
+		super(dis, dos, commandID, repo, vehicleID, varID);
 	}
 
 	@Override

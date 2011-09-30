@@ -55,6 +55,12 @@
             <classpath refid="TraCI4J.classpath"/>
         </javac>
     </target>
+	<target name="generate" depends="init">
+		<xslt basedir="src/xml/traciObjects" destdir="src/java-gen/it/polito/appeal/traci"
+		       extension=".java" style="src/xslt/traciObject.xslt">
+			<param name="queries-file-name" expression="../xml/queries.xml" />
+		</xslt>
+	</target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target name="TraCITest">
         <mkdir dir="${junit.output.dir}"/>

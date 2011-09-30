@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="test/java"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="examples"/>
+	<classpathentry kind="src" path="src/java-gen"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/org.hamcrest.core_1.1.0.v20090501071000.jar"/>

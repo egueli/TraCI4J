@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2011 ApPeAL Group, Politecnico di Torino This file is 
+	part of TraCI4J. TraCI4J is free software: you can redistribute it and/or 
+	modify it under the terms of the GNU General Public License as published 
+	by the Free Software Foundation, either version 3 of the License, or (at 
+	your option) any later version. TraCI4J is distributed in the hope that it 
+	will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+	Public License for more details. You should have received a copy of the GNU 
+	General Public License along with TraCI4J. If not, see <http://www.gnu.org/licenses/>. -->
+
+<!-- This file is used to generate a Java class with the same name for a 
+	TraCI object. This saves manually writing a lot of boilerplate code. -->
+<traciClass>
+	<!-- The name of the object. It will be used as the class name. First letter 
+		is capital. Must be equal to this document's file name. -->
+	<name>Vehicle</name>
+
+	<!-- If true, the object set may change at each simulation step, therefore 
+		the corresponding cache must be always cleared (or not used at all) -->
+	<dynamicSet>true</dynamicSet>
+
+	<!-- Lists all the other repositories that are needed by the queries -->
+	<repos>
+		<repo>Edge</repo>
+		<repo>Lane</repo>
+	</repos>
+
+	<!-- List of all "read" queries, i.e. those that don't change the state 
+		of the object and return a value -->
+	<readQueries>
+
+		<readQuery>
+
+			<!-- The name of the query. If the name is XXX, the Java class will contain 
+				a method named queryXXX() -->
+			<name>ReadSpeed</name>
+			
+			<!-- The enum name of the query. It will appear as an enum entry
+			in the inner Variable enum, and can be used with the getReadQuery() method -->
+			<enum>SPEED</enum>
+
+			<!-- A numeric value or a constant of type int that tells the variable 
+				ID -->
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_SPEED</const>
+
+			<!-- The Java class name that can make the query. It must be a subclass 
+				of ReadObjectVarQuery. -->
+			<query>it.polito.appeal.traci.ReadObjectVarQuery.DoubleQ</query>
+
+			<!-- The return type of the query. It must be the same type (or a supertype) 
+				of the type parameter V specified in the above class. -->
+			<returnType>java.lang.Double</returnType>
+
+			<!-- If true, it means that this value may change at every simulation 
+				step. -->
+			<dynamic>true</dynamic>
+		</readQuery>
+
+		<readQuery>
+			<name>ReadPosition</name>
+			<enum>POSITION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION
+				</const>
+			<query>it.polito.appeal.traci.ReadObjectVarQuery.PositionQ</query>
+			<returnType>java.awt.geom.Point2D</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadCurrentRoute</name>
+			<enum>CURRENT_ROUTE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_ROUTE</const>
+			<query>it.polito.appeal.traci.RouteQuery</query>
+			<returnType>List&lt;Edge&gt;</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+	</readQueries>
+
+	<!-- List of all "change state" queries, i.e. those that change the state 
+		of the object and don't return a value -->
+	<changeStateQueries>
+
+		<!-- The syntax of a changeStateQuery is similar to readQuery, differences 
+			are listed below. -->
+		<changeStateQuery>
+			<name>SetEdgeTravelTime</name>
+			<query>it.polito.appeal.traci.ChangeEdgeTravelTimeQuery</query>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>Reroute</name>
+			<query>it.polito.appeal.traci.RerouteQuery</query>
+				<!-- Lists the read queries that may be changed by the execution of this 
+				query, identified by their name. Calling this query will clear the caches 
+				of the queries contained here. -->
+			<affects>
+				<affect>ReadCurrentRoute</affect>
+			</affects>
+		</changeStateQuery>
+	</changeStateQueries>
+
+</traciClass>

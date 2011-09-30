@@ -1,0 +1,8 @@
+<queries>
+	<query>
+		<class>it.polito.appeal.traci.RouteQuery</class>
+		<usedRepos>
+			<repo>Edge</repo>
+		</usedRepos>
+	</query>
+</queries>

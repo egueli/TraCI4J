@@ -21,7 +21,9 @@ package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
+import it.polito.appeal.traci.ChangeRouteQuery;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.MultiQuery;
@@ -36,8 +38,6 @@ import it.polito.appeal.traci.VehicleLifecycleObserver;
 import it.polito.appeal.traci.Edge.ChangeGlobalTravelTimeQuery;
 import it.polito.appeal.traci.Edge.ReadGlobalTravelTimeQuery;
 import it.polito.appeal.traci.Lane.Link;
-import it.polito.appeal.traci.Vehicle.ChangeEdgeTravelTimeQuery;
-import it.polito.appeal.traci.Vehicle.ChangeRouteQuery;
 import it.polito.appeal.traci.Vehicle.ChangeTargetQuery;
 
 import java.awt.Color;
