@@ -17,6 +17,7 @@
 <xsl:variable name="queries" select="document($queries-file-name)" />
 
 <xsl:template match="/traciClass">
+
 /*   
     Copyright (C) 2011 ApPeAL Group, Politecnico di Torino
 
@@ -45,18 +46,15 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class <xsl:value-of select="name"/> extends TraciObject&lt;<xsl:value-of select="name"/>.Variable&gt; {
+public class <xsl:value-of select="name"/> 
+extends TraciObject&lt;<xsl:value-of select="name"/>.Variable&gt;
+implements StepAdvanceListener
+{
 
 	public static enum Variable {
 		<xsl:for-each select="readQueries/readQuery">
-		<xsl:value-of select="enum"/>(<xsl:value-of select="const"/>),
+		<xsl:value-of select="enum"/>,
 		</xsl:for-each>
-		;
-		
-		public final int id; 
-		private Variable(int id) {
-			this.id = id;
-		}
 	}
 	
 	<xsl:for-each select="changeStateQueries/changeStateQuery">
@@ -80,7 +78,10 @@ public class <xsl:value-of select="name"/> extends TraciObject&lt;<xsl:value-of 
 		<xsl:variable name="query-class" select="query" />
 		<xsl:variable name="query-data" select="$queries/queries/query[class=$query-class]" />
 		addReadQuery(Variable.<xsl:value-of select="enum"/>, 
-				new <xsl:value-of select="query"/> (dis, dos, <xsl:value-of select="const"/>, id, Variable.<xsl:value-of select="enum"/>.id
+				new <xsl:value-of select="query"/> (dis, dos, 
+				<xsl:value-of select="../../command"/>, 
+				id, 
+				<xsl:value-of select="const"/>
 				<xsl:for-each select="$query-data/usedRepos/repo">
 				, repo<xsl:apply-templates/>
 				</xsl:for-each>
@@ -93,14 +94,13 @@ public class <xsl:value-of select="name"/> extends TraciObject&lt;<xsl:value-of 
 		 */
 		<xsl:for-each select="changeStateQueries/changeStateQuery">
 		csqvar_<xsl:value-of select="name"/> = new <xsl:value-of select="query"/>(dis, dos, id)
-		<xsl:if test="affects">
-		{
+		<xsl:if test="affects">{
 			@Override
 			void pickResponses(java.util.Iterator&lt;it.polito.appeal.traci.protocol.ResponseContainer&gt; responseIterator)
 					throws TraCIException {
 				super.pickResponses(responseIterator);
 				<xsl:for-each select="affects/affect">
-				query<xsl:apply-templates/>.setObsolete();
+				query<xsl:apply-templates/>().setObsolete();
 				</xsl:for-each>
 			}
 		}</xsl:if>;
@@ -108,7 +108,32 @@ public class <xsl:value-of select="name"/> extends TraciObject&lt;<xsl:value-of 
 	
 	}
 	
-	<!--  TODO getter query -->
+	<!-- CACHE CLEANER -->
+	
+	@Override
+	public void nextStep(double step) {
+		<xsl:for-each select="readQueries/readQuery[dynamic='true']">
+		getReadQuery(Variable.<xsl:value-of select="enum"/>).setObsolete();
+		</xsl:for-each>
+	}
+	
+	
+	<!-- QUERY GETTERS -->
+	
+	<xsl:for-each select="readQueries/readQuery">
+	public ValueReadQuery&lt;<xsl:value-of select="returnType"/>&gt; query<xsl:value-of select="name" />() {
+		return (<xsl:value-of select="query"/>) getReadQuery(Variable.<xsl:value-of select="enum"/>);
+	}
+	
+	</xsl:for-each>
+	
+	<!--  QUERY SETTERS -->
+	
+	<xsl:for-each select="changeStateQueries/changeStateQuery">
+	public <xsl:value-of select="query" /> query<xsl:value-of select="name"/>() {
+		return csqvar_<xsl:value-of select="name"/>;
+	}
+	</xsl:for-each>
 }
 
 </xsl:template>

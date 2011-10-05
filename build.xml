@@ -55,10 +55,24 @@
             <classpath refid="TraCI4J.classpath"/>
         </javac>
     </target>
-	<target name="generate" depends="init">
-		<xslt basedir="src/xml/traciObjects" destdir="src/java-gen/it/polito/appeal/traci"
-		       extension=".java" style="src/xslt/traciObject.xslt">
-			<param name="queries-file-name" expression="../xml/queries.xml" />
+	
+	<target name="cleanOldGenerated" depends="init">
+		<dependset>
+			<srcfileset dir="src/xml/traciObjects/"/>
+			<srcfileset file="src/xml/queries.xml"/>
+			<targetfileset dir="src/java-gen/it/polito/appeal/traci"/>
+		</dependset>
+	</target>
+	
+	<target name="generate" depends="init,cleanOldGenerated">
+		<xslt 
+			basedir="src/xml/traciObjects" 
+			destdir="src/java-gen/it/polito/appeal/traci"
+			extension=".java"
+			style="src/xslt/traciObject.xslt">
+			<param 
+				name="queries-file-name" 
+				expression="../xml/queries.xml" />
 		</xslt>
 	</target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>

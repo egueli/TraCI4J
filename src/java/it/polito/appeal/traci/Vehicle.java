@@ -62,19 +62,7 @@ public class Vehicle extends TraciObject<Vehicle.Variable> implements StepAdvanc
 		}
 	}
 	
-	public static class ChangeTargetQuery extends ChangeObjectVarQuery<Edge> {
 
-		public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
-		}
-		
-		@Override
-		protected void writeValueTo(Edge newTarget, Storage content) {
-			content.writeByte(Constants.TYPE_STRING);
-			content.writeStringASCII(newTarget.getID());
-		}
-	}
 
 	private final ChangeEdgeTravelTimeQuery edgeTravelTimeQuery;
 	private final RerouteQuery rerouteQuery;

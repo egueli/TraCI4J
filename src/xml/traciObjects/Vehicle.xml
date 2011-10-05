@@ -25,6 +25,8 @@
 		<repo>Edge</repo>
 		<repo>Lane</repo>
 	</repos>
+	
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE</command>
 
 	<!-- List of all "read" queries, i.e. those that don't change the state 
 		of the object and return a value -->
@@ -45,8 +47,9 @@
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_SPEED</const>
 
 			<!-- The Java class name that can make the query. It must be a subclass 
-				of ReadObjectVarQuery. -->
-			<query>it.polito.appeal.traci.ReadObjectVarQuery.DoubleQ</query>
+				of ReadObjectVarQuery. If the class is on the package
+				it.polito.appeal.traci, the package name can be omitted-->
+			<query>ReadObjectVarQuery.DoubleQ</query>
 
 			<!-- The return type of the query. It must be the same type (or a supertype) 
 				of the type parameter V specified in the above class. -->
@@ -60,19 +63,34 @@
 		<readQuery>
 			<name>ReadPosition</name>
 			<enum>POSITION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION
-				</const>
-			<query>it.polito.appeal.traci.ReadObjectVarQuery.PositionQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION</const>
+			<query>ReadObjectVarQuery.PositionQ</query>
 			<returnType>java.awt.geom.Point2D</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadLanePosition</name>
+			<enum>LANE_POSITION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANEPOSITION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
 		<readQuery>
 			<name>ReadCurrentRoute</name>
 			<enum>CURRENT_ROUTE</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_ROUTE</const>
-			<query>it.polito.appeal.traci.RouteQuery</query>
-			<returnType>List&lt;Edge&gt;</returnType>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_EDGES</const>
+			<query>RouteQuery</query>
+			<returnType>java.util.List&lt;Edge&gt;</returnType>
 			<dynamic>false</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadCurrentEdge</name>
+			<enum>CURRENT_EDGE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_ROAD_ID</const>
+			<query>ReadObjectVarQuery.EdgeQ</query>
+			<returnType>Edge</returnType>
+			<dynamic>true</dynamic>
 		</readQuery>
 	</readQueries>
 
@@ -84,19 +102,36 @@
 			are listed below. -->
 		<changeStateQuery>
 			<name>SetEdgeTravelTime</name>
-			<query>it.polito.appeal.traci.ChangeEdgeTravelTimeQuery</query>
+			<query>ChangeEdgeTravelTimeQuery</query>
 		</changeStateQuery>
 		
 		<changeStateQuery>
 			<name>Reroute</name>
-			<query>it.polito.appeal.traci.RerouteQuery</query>
-				<!-- Lists the read queries that may be changed by the execution of this 
-				query, identified by their name. Calling this query will clear the caches 
-				of the queries contained here. -->
+			<query>RerouteQuery</query>
+			<!-- Lists the read queries that may be changed by the execution of this 
+			query, identified by their name. Calling this query will clear the caches 
+			of the queries contained here. -->
 			<affects>
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeTarget</name>
+			<query>ChangeTargetQuery</query>
+			<affects>
+				<affect>ReadCurrentRoute</affect>
+			</affects>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeRoute</name>
+			<query>ChangeRouteQuery</query>
+			<affects>
+				<affect>ReadCurrentRoute</affect>
+			</affects>
+		</changeStateQuery>
+		
 	</changeStateQueries>
 
 </traciClass>

@@ -1,6 +1,16 @@
+<?xml version='1.0'?>
+
+<!--  This XML document defines which repositories are needed by each query. -->
+
 <queries>
 	<query>
-		<class>it.polito.appeal.traci.RouteQuery</class>
+		<class>RouteQuery</class>
+		<usedRepos>
+			<repo>Edge</repo>
+		</usedRepos>
+	</query>
+	<query>
+		<class>ReadObjectVarQuery.EdgeQ</class>
 		<usedRepos>
 			<repo>Edge</repo>
 		</usedRepos>
