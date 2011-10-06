@@ -52,7 +52,8 @@
 			<query>ReadObjectVarQuery.DoubleQ</query>
 
 			<!-- The return type of the query. It must be the same type (or a supertype) 
-				of the type parameter V specified in the above class. -->
+				of the type parameter V specified in the above class. 
+				Leave it empty to use the query class as the return type. -->
 			<returnType>java.lang.Double</returnType>
 
 			<!-- If true, it means that this value may change at every simulation 
