@@ -23,7 +23,7 @@
 		<readQuery>
 			<name>ReadGlobalTravelTime</name>
 			<enum>TRAVEL_TIME</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_CURRENT_TRAVELTIME</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_EDGE_TRAVELTIME</const>
 			<query>ReadGlobalTravelTimeQuery</query>
 			<returnType></returnType>
 			<dynamic>false</dynamic>
