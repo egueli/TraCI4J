@@ -21,8 +21,6 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.util.HashSet;
-import java.util.Set;
 
 import it.polito.appeal.traci.InductionLoop.Variable;
 import it.polito.appeal.traci.ReadObjectVarQuery.LaneQ;
@@ -42,19 +40,6 @@ public class InductionLoop extends TraciObject<Variable> {
 		LAST_DETECTION_TIME
 	}
 	
-	public static class VehicleSetQuery extends ObjectCollectionQuery<Vehicle, Set<Vehicle>> {
-		VehicleSetQuery(DataInputStream dis, DataOutputStream dos,
-				int commandID, Repository<Vehicle> repository, String objectID,
-				int varID) {
-			super(dis, dos, commandID, repository, objectID, varID);
-		}
-
-		@Override
-		protected Set<Vehicle> makeCollection() {
-			return new HashSet<Vehicle>();
-		}
-	};
-	
 	protected InductionLoop(String id, Repository<Lane> lanesRepo,
 			Repository<Vehicle> vehicles, DataInputStream dis, DataOutputStream dos) {
 		super(id, Variable.class);
@@ -73,7 +58,7 @@ public class InductionLoop extends TraciObject<Variable> {
 				Constants.LAST_STEP_MEAN_SPEED));
 
 		addReadQuery(Variable.VEHICLES, new VehicleSetQuery(dis, dos, cmd,
-				vehicles, id, Constants.LAST_STEP_VEHICLE_ID_LIST));
+				id, Constants.LAST_STEP_VEHICLE_ID_LIST, vehicles));
 
 		addReadQuery(Variable.OCCUPANCY, new DoubleQ(dis, dos, cmd, id,
 				Constants.LAST_STEP_OCCUPANCY));

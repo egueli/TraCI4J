@@ -20,18 +20,18 @@
 package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
+import it.polito.appeal.traci.ChangeLightsStateQuery;
+import it.polito.appeal.traci.ControlledLink;
+import it.polito.appeal.traci.ControlledLinks;
+import it.polito.appeal.traci.LightState;
+import it.polito.appeal.traci.Logic;
+import it.polito.appeal.traci.Phase;
+import it.polito.appeal.traci.Program;
 import it.polito.appeal.traci.ReadObjectVarQuery;
 import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.TLState;
 import it.polito.appeal.traci.TrafficLight;
-import it.polito.appeal.traci.TrafficLight.ChangeLightsStateQuery;
-import it.polito.appeal.traci.TrafficLight.ControlledLink;
-import it.polito.appeal.traci.TrafficLight.ControlledLinks;
-import it.polito.appeal.traci.TrafficLight.LightState;
-import it.polito.appeal.traci.TrafficLight.Logic;
-import it.polito.appeal.traci.TrafficLight.Phase;
-import it.polito.appeal.traci.TrafficLight.Program;
-import it.polito.appeal.traci.TrafficLight.TLState;
 
 import java.io.IOException;
 import java.util.Arrays;

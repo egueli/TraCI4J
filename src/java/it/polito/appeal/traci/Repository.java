@@ -132,28 +132,29 @@ public class Repository<V extends TraciObject<?>> {
 	}
 	
 	/**
-	 * Represents a {@link Repository} whose objects need to clear their cache
-	 * at every simulation step.
+	 * Represents a {@link Repository} whose objects implement
+	 * {@link StepAdvanceListener} and therefore need to be updated at
+	 * every simulation step.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 *
 	 * @param <V>
 	 */
-	static class RefreshableRepository<V extends TraciObject<?>> extends Repository<V> implements StepAdvanceListener {
+	static class UpdatableRepository<V extends TraciObject<?> & StepAdvanceListener> extends Repository<V> implements StepAdvanceListener {
 
-		public RefreshableRepository(ObjectFactory<V> factory,
+		public UpdatableRepository(ObjectFactory<V> factory,
 				StringListQ idListQuery) {
 			super(factory, idListQuery);
 		}
 
 		@Override
 		public void nextStep(double step) {
-			for (V value : getCached().values()) {
-				value.clearCache();
+			for (V item : getCached().values()) {
+				item.nextStep(step);
 			}
 		}
 	}
 	
-	static class Edges extends RefreshableRepository<Edge> {
+	static class Edges extends UpdatableRepository<Edge> {
 		Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<Edge>() {
 				@Override
@@ -177,7 +178,7 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	static class Vehicles extends RefreshableRepository<Vehicle> {
+	static class Vehicles extends UpdatableRepository<Vehicle> {
 
 		Vehicles(
 				final DataInputStream dis, 
@@ -212,7 +213,8 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	static class InductionLoops extends RefreshableRepository<InductionLoop> {
+	//TODO replace with static class InductionLoops extends UpdatableRepository<InductionLoop> {
+	static class InductionLoops extends Repository<InductionLoop> {
 		public InductionLoops(
 				final DataInputStream dis, 
 				final DataOutputStream dos, 
@@ -228,7 +230,7 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	static class TrafficLights extends RefreshableRepository<TrafficLight> {
+	static class TrafficLights extends UpdatableRepository<TrafficLight> {
 
 		public TrafficLights(
 				final DataInputStream dis, 
@@ -239,6 +241,21 @@ public class Repository<V extends TraciObject<?>> {
 				@Override
 				public TrafficLight newObject(String objectID) {
 					return new TrafficLight(objectID, dis, dos, lanes);
+				}
+			}, idListQuery);
+		}
+	}
+	
+	static class MeMeDetectors extends UpdatableRepository<MeMeDetector> {
+		public MeMeDetectors(
+				final DataInputStream dis, 
+				final DataOutputStream dos, 
+				final Repository<Vehicle> vehicles, 
+				StringListQ idListQuery) {
+			super(new ObjectFactory<MeMeDetector>() {
+				@Override
+				public MeMeDetector newObject(String objectID) {
+					return new MeMeDetector(dis, dos, objectID, vehicles);
 				}
 			}, idListQuery);
 		}

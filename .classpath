@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="test/java"/>
-	<classpathentry excluding="it/polito/appeal/traci/Vehicle.java|it/polito/appeal/traci/Edge.java" kind="src" path="src/java"/>
+	<classpathentry excluding="it/polito/appeal/traci/Vehicle.java|it/polito/appeal/traci/Edge.java|it/polito/appeal/traci/Lane.java" kind="src" path="src/java"/>
 	<classpathentry kind="src" path="examples"/>
 	<classpathentry kind="src" path="src/java-gen"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>

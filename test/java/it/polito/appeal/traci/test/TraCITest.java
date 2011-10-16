@@ -28,6 +28,8 @@ import it.polito.appeal.traci.ChangeRouteQuery;
 import it.polito.appeal.traci.ChangeTargetQuery;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
+import it.polito.appeal.traci.Link;
+import it.polito.appeal.traci.MeMeDetector;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
 import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
@@ -38,7 +40,6 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.ValueReadQuery;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
-import it.polito.appeal.traci.Lane.Link;
 
 import java.awt.Color;
 import java.awt.geom.PathIterator;
@@ -625,6 +626,40 @@ public class TraCITest {
 		q.setValue(newColor);
 		q.run();
 		assertEquals(newColor, poi.getReadColorQuery().get());
+	}
+	
+	@Test
+	public void testMeMeExistence() throws IOException {
+		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
+		assertNotNull(memeRepo.getByID("e3_0"));
+	}
+	
+	@Test
+	public void testMeMeDetectorIsDetecting() throws IOException {
+		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
+		MeMeDetector detector = memeRepo.getByID("e3_0");
+		
+//		ValueReadQuery<Double> meanSpeed = detector.queryReadLastStepMeanSpeed();
+		ValueReadQuery<Integer> vehicleNum = detector.queryReadLastStepVehicleNumber();
+//		ValueReadQuery<Set<Vehicle>> vehicles = detector.queryReadLastStepVehicles();
+		
+		MultiQuery batch = conn.makeMultiQuery();
+//		batch.add(meanSpeed);
+		batch.add(vehicleNum);
+//		batch.add(vehicles);
+		
+		
+		for (int t=0; t<100; t++) {
+			conn.nextSimStep();
+		}
+		
+		batch.run();
+//		System.out.println(""
+//				+ ":   " + meanSpeed.get() 
+//				+ "    " + vehicleNum.get()
+//				+ "    " + vehicles.get());
+		
+		assertEquals(38, (int)vehicleNum.get());
 	}
 	
 	// TODO add induction loop tests

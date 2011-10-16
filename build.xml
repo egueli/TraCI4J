@@ -56,7 +56,7 @@
         </javac>
     </target>
 	
-	<target name="cleanOldGenerated" depends="init">
+	<target name="clean-old-generated" depends="init">
 		<dependset>
 			<srcfileset dir="src/xml/traciObjects/"/>
 			<srcfileset file="src/xml/queries.xml"/>
@@ -64,7 +64,7 @@
 		</dependset>
 	</target>
 	
-	<target name="generate" depends="init,cleanOldGenerated">
+	<target name="generate" depends="init,clean-old-generated">
 		<xslt 
 			basedir="src/xml/traciObjects" 
 			destdir="src/java-gen/it/polito/appeal/traci"

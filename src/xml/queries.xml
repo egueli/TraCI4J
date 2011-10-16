@@ -15,4 +15,14 @@
 			<repo>Edge</repo>
 		</usedRepos>
 	</query>
-</queries>
+<query>
+		<class>ReadLinksQuery</class>
+		<usedRepos>
+			<repo>Lane</repo>
+		</usedRepos>
+	</query><query>
+		<class>VehicleSetQuery</class>
+		<usedRepos>
+			<repo>Vehicle</repo>
+		</usedRepos>
+	</query></queries>
