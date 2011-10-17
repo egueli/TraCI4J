@@ -246,6 +246,17 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
+	static class VehicleTypes extends Repository<VehicleType> {
+		public VehicleTypes(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+			super(new ObjectFactory<VehicleType>() {
+				@Override
+				public VehicleType newObject(String objectID) {
+					return new VehicleType(dis, dos, objectID);
+				}
+			}, idListQuery);
+		}
+	}
+	
 	static class MeMeDetectors extends UpdatableRepository<MeMeDetector> {
 		public MeMeDetectors(
 				final DataInputStream dis, 
