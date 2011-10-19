@@ -115,6 +115,7 @@ public class SumoTraciConnection {
 	private Repository.TrafficLights trafficLightRepo;
 	private Repository.VehicleTypes vehicleTypeRepo;
 	private Repository.MeMeDetectors memeDetectorRepo;
+	private Repository.Routes routeRepo;
 
 	/*
 	 * TODO add repositories for remaining SUMO object classes
@@ -276,7 +277,7 @@ public class SumoTraciConnection {
 		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
 				vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
-		//addStepAdvanceListener(inductionLoopRepo); TODO fix this in Repository
+		addStepAdvanceListener(inductionLoopRepo);
 		
 		trafficLightRepo = new Repository.TrafficLights(dis, dos, laneRepo,
 				newIDListQuery(Constants.CMD_GET_TL_VARIABLE));
@@ -288,6 +289,9 @@ public class SumoTraciConnection {
 		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo, 
 				newIDListQuery(Constants.CMD_GET_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE));
 		addStepAdvanceListener(memeDetectorRepo);
+		
+		routeRepo = new Repository.Routes(dis, dos, edgeRepo, 
+				newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
 		
 		/*
 		 * TODO add initializers for remaining repositories
@@ -555,6 +559,10 @@ public class SumoTraciConnection {
 	
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
+	}
+	
+	public Repository<Route> getRouteRepository() {
+		return routeRepo;
 	}
 	
 	/*

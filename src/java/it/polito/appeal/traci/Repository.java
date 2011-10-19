@@ -213,8 +213,7 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 	
-	//TODO replace with static class InductionLoops extends UpdatableRepository<InductionLoop> {
-	static class InductionLoops extends Repository<InductionLoop> {
+	static class InductionLoops extends UpdatableRepository<InductionLoop> {
 		public InductionLoops(
 				final DataInputStream dis, 
 				final DataOutputStream dos, 
@@ -224,7 +223,7 @@ public class Repository<V extends TraciObject<?>> {
 			super(new ObjectFactory<InductionLoop>() {
 				@Override
 				public InductionLoop newObject(String objectID) {
-					return new InductionLoop(objectID, lanes, vehicles, dis, dos);
+					return new InductionLoop(dis, dos, objectID, lanes, vehicles);
 				}
 			}, idListQuery);
 		}
@@ -271,6 +270,22 @@ public class Repository<V extends TraciObject<?>> {
 			}, idListQuery);
 		}
 	}
+	
+	static class Routes extends UpdatableRepository<Route> {
+		public Routes(
+				final DataInputStream dis, 
+				final DataOutputStream dos, 
+				final Repository<Edge> edges, 
+				StringListQ idListQuery) {
+			super(new ObjectFactory<Route>() {
+				@Override
+				public Route newObject(String objectID) {
+					return new Route(dis, dos, objectID, edges);
+				}
+			}, idListQuery);
+		}
+	}	
+	
 	/*
 	 * TODO add repository definitions for other SUMO object classes 
 	 */

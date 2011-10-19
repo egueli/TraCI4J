@@ -25,4 +25,9 @@
 		<usedRepos>
 			<repo>Vehicle</repo>
 		</usedRepos>
+	</query><query>
+		<class>ReadObjectVarQuery.LaneQ</class>
+		<usedRepos>
+			<repo>Lane</repo>
+		</usedRepos>
 	</query></queries>
