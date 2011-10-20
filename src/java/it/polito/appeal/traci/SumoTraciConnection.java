@@ -107,6 +107,8 @@ public class SumoTraciConnection {
 	private StringListQ vehicleListQuery;
 	private Set<String> vehicleListBefore;
 	
+	private AddVehicleQuery addVehicleQuery;	
+	
 	private Repository.Edges edgeRepo;
 	private Repository.Lanes laneRepo;
 	private Repository.Vehicles vehicleRepo;
@@ -270,6 +272,8 @@ public class SumoTraciConnection {
 		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
 				vehicles, vehicleListQuery);
 		addStepAdvanceListener(vehicleRepo);
+
+		addVehicleQuery = new AddVehicleQuery(dis, dos, vehicleRepo);
 		
 		poiRepo = new Repository.POIs(dis, dos,
 				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
@@ -527,6 +531,10 @@ public class SumoTraciConnection {
 
 	public Repository<Vehicle> getVehicleRepository() {
 		return vehicleRepo;
+	}
+	
+	public AddVehicleQuery queryAddVehicle() {
+		return addVehicleQuery;
 	}
 	
 	public Repository<Edge> getEdgeRepository() {

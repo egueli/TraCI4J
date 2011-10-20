@@ -30,6 +30,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniluebeck.itm.tcpip.Storage;
+
 /**
  * Represents a collection of TraCI objects, that may or may not be complete
  * w.r.t. its counterpart in SUMO.
@@ -186,7 +188,7 @@ public class Repository<V extends TraciObject<?>> {
 				final Repository<Edge> edges, 
 				final Repository<Lane> lanes, 
 				final Map<String, Vehicle> vehicles,
-				StringListQ idListQuery) {
+				final StringListQ idListQuery) {
 			super(new ObjectFactory<Vehicle>() {
 				/**
 				 * This implementation does not make a new object; instead it
@@ -198,8 +200,8 @@ public class Repository<V extends TraciObject<?>> {
 					return vehicles.get(objectID);
 				}
 			}, idListQuery);
+			
 		}
-		
 	}
 	
 	static class POIs extends Repository<POI> {

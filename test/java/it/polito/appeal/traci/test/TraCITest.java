@@ -21,6 +21,7 @@ package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import it.polito.appeal.traci.AddVehicleQuery;
 import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
@@ -36,10 +37,12 @@ import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
 import it.polito.appeal.traci.POI.ChangeColorQuery;
 import it.polito.appeal.traci.POI.ChangePositionQuery;
 import it.polito.appeal.traci.Repository;
+import it.polito.appeal.traci.Route;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.ValueReadQuery;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
+import it.polito.appeal.traci.VehicleType;
 
 import java.awt.Color;
 import java.awt.geom.PathIterator;
@@ -660,6 +663,30 @@ public class TraCITest {
 //				+ "    " + vehicles.get());
 		
 		assertEquals(38, (int)vehicleNum.get());
+	}
+	
+	@Test
+	public void testAddVehicle() throws IOException {
+		conn.nextSimStep();
+
+		//assertTrue(conn.getVehicleRepository().getIDs().size() > 0);
+		final String id = "A_NEW_VEHICLE";
+		Route route = conn.getRouteRepository().getByID("0");
+		VehicleType vType = conn.getVehicleTypeRepository().getByID("KRAUSS_DEFAULT");
+		
+		AddVehicleQuery avq = conn.queryAddVehicle();
+		avq.setVehicleData(id, vType, route, 0, 0, 0);
+		avq.run();
+		
+		/*
+		 * The new vehicle won't enter the simulation immediately, because other
+		 * vehicles are waiting the lane to be freed before entering.
+		 */
+		
+		for (int t=0; t<70; t++)
+			conn.nextSimStep();
+		
+		assertTrue(conn.getVehicleRepository().getAll().containsKey(id));
 	}
 	
 	// TODO add induction loop tests
