@@ -27,8 +27,14 @@
 			<query>ReadShapeQuery</query>
 			<returnType>java.awt.geom.Path2D</returnType>
 			<dynamic>false</dynamic>
-		</readQuery>
-	<readQuery>
+		</readQuery><readQuery>
+            <name>ReadLastStepOccupancy</name>
+            <enum>LAST_STEP_OCCUPANCY</enum>
+            <const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_OCCUPANCY</const>
+            <query>ReadObjectVarQuery.DoubleQ</query>
+            <returnType>Double</returnType>
+            <dynamic>true</dynamic>
+        </readQuery><readQuery>
 			<name>ReadParentEdge</name>
 			<enum>PARENT_EDGE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.LANE_EDGE_ID</const>
@@ -42,8 +48,8 @@
 			<query>ReadLinksQuery</query>
 			<returnType>java.util.List&lt;Link&gt;</returnType>
 			<dynamic>false</dynamic>
-		</readQuery></readQueries>
-
+		</readQuery>
+	</readQueries>
 	<changeStateQueries>
 	</changeStateQueries>
 </traciClass>
