@@ -35,6 +35,13 @@
             <returnType>Double</returnType>
             <dynamic>true</dynamic>
         </readQuery><readQuery>
+            <name>ReadMaxSpeed</name>
+            <enum>MAX_SPEED</enum>
+            <const>it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED</const>
+            <query>ReadObjectVarQuery.DoubleQ</query>
+            <returnType>Double</returnType>
+            <dynamic>true</dynamic>
+        </readQuery><readQuery>
 			<name>ReadParentEdge</name>
 			<enum>PARENT_EDGE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.LANE_EDGE_ID</const>
