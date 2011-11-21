@@ -40,7 +40,7 @@
             <const>it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED</const>
             <query>ReadObjectVarQuery.DoubleQ</query>
             <returnType>Double</returnType>
-            <dynamic>true</dynamic>
+            <dynamic>false</dynamic>
         </readQuery><readQuery>
 			<name>ReadParentEdge</name>
 			<enum>PARENT_EDGE</enum>
