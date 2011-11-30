@@ -73,6 +73,9 @@ public class MultiQuery {
 			log.debug("Running a batch of " + queries.size() + " queries");
 		}
 		
+		if(queries.isEmpty())
+			return;
+		
 		RequestMessage reqMsg = new RequestMessage();
 		for (Query q : queries) {
 			for (Command req : q.getRequests()) {

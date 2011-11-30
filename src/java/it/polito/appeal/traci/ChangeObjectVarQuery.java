@@ -87,4 +87,18 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 			content.writeInt(val);
 		}
 	}
+	
+	public static class ChangeDoubleQ extends ChangeObjectVarQuery<Double> {
+
+		public ChangeDoubleQ(DataInputStream dis, DataOutputStream dos,
+				int commandID, String objectID, int variableID) {
+			super(dis, dos, commandID, objectID, variableID);
+		}
+
+		@Override
+		protected void writeValueTo(Double val, Storage content) {
+			content.writeByte(Constants.TYPE_DOUBLE);
+			content.writeDouble(val);
+		}
+	}
 }

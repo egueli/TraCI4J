@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 //import java.util.zip.CRC32;
+import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 import org.apache.log4j.Logger;
@@ -45,7 +46,6 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class RequestMessage {
 
-	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(RequestMessage.class);
 
 	private final List<Command> commands = new ArrayList<Command>();
@@ -75,11 +75,11 @@ public class RequestMessage {
 		}
 
 		Checksum checksum = null;
-//		if (log.isDebugEnabled()) {
-//			checksum = new CRC32();
-//			log.debug("sending a message " + totalLen + " bytes long");
-//			
-//		}
+		if (log.isDebugEnabled()) {
+			checksum = new CRC32();
+			log.debug("sending a message " + totalLen + " bytes long");
+			
+		}
 		
 		dos.writeInt(totalLen);
 
@@ -90,8 +90,8 @@ public class RequestMessage {
 			writeStorage(s, dos, checksum);
 		}
 
-//		if (log.isDebugEnabled())
-//			log.debug("message checksum (without len) = " + checksum.getValue());
+		if (log.isDebugEnabled())
+			log.debug("message checksum (without len) = " + checksum.getValue());
 	}
 
 	private void writeStorage(Storage storage, OutputStream os, Checksum checksum)

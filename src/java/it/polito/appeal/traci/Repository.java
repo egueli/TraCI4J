@@ -27,10 +27,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniluebeck.itm.tcpip.Storage;
+import org.apache.log4j.Logger;
+
 
 /**
  * Represents a collection of TraCI objects, that may or may not be complete
@@ -45,6 +47,10 @@ import de.uniluebeck.itm.tcpip.Storage;
  *
  */
 public class Repository<V extends TraciObject<?>> {
+	
+	// log4j Logger
+	private static final Logger log = Logger.getLogger(Repository.class);
+	
 	private final Map<String, V> objectCache = new HashMap<String, V>();
 	/*
 	 * the factory is not final: there's a setter for those cases when the
@@ -103,6 +109,18 @@ public class Repository<V extends TraciObject<?>> {
 	 */
 	public Set<String> getIDs() throws IOException {
 		/*
+		 * If the ID list query wasn't made obsolete, just get the key set
+		 * from the object cache (i.e. the previously made object set).
+		 */
+//		if (idListQuery.hasValue()) {
+//			List<String> set1 = idListQuery.get();
+//			Set<String> set2 = objectCache.keySet();
+//			System.out.println(set1);
+//			System.out.println(set2);
+//			return set2;
+//		}
+//		boolean test = idListQuery.hasValue();
+		/*
 		 * Here we also update the cache.
 		 */
 		Set<String> idSet = new HashSet<String>(idListQuery.get());
@@ -110,9 +128,14 @@ public class Repository<V extends TraciObject<?>> {
 		final Set<String> cachedSet = objectCache.keySet();
 		
 		if (!cachedSet.equals(idSet)) {
+//			if(test)
+//				System.out.println("Doveva essere false e invece è true");
 			Set<String> added = Utils.getAddedItems(cachedSet, idSet);
 			for (String newID : added) {
-				objectCache.put(newID, factory.newObject(newID));
+				V newObject = factory.newObject(newID);
+				if (newObject == null)
+					throw new IllegalStateException("newObject == null");
+				objectCache.put(newID, newObject);
 			}
 			
 			Set<String> removed = Utils.getRemovedItems(cachedSet, idSet);
@@ -151,7 +174,12 @@ public class Repository<V extends TraciObject<?>> {
 		@Override
 		public void nextStep(double step) {
 			for (V item : getCached().values()) {
-				item.nextStep(step);
+				
+				if(item == null){
+					log.error("Item is null! ");
+				}
+				else
+					item.nextStep(step);
 			}
 		}
 	}
@@ -196,7 +224,10 @@ public class Repository<V extends TraciObject<?>> {
 				 */
 				@Override
 				public Vehicle newObject(String objectID) {
-					assert vehicles.containsKey(objectID);
+					if (!vehicles.containsKey(objectID))
+						throw new IllegalArgumentException("vehicleID '" + objectID + "' not found in vehicles map");
+					else
+						log.debug(" vehicleID " + objectID + " found in vehicles map");
 					return vehicles.get(objectID);
 				}
 			}, idListQuery);

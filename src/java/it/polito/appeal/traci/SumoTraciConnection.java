@@ -107,7 +107,8 @@ public class SumoTraciConnection {
 	private StringListQ vehicleListQuery;
 	private Set<String> vehicleListBefore;
 	
-	private AddVehicleQuery addVehicleQuery;	
+	private AddVehicleQuery addVehicleQuery;
+	private RemoveVehicleQuery removeVehicleQuery;
 	
 	private Repository.Edges edgeRepo;
 	private Repository.Lanes laneRepo;
@@ -275,6 +276,8 @@ public class SumoTraciConnection {
 
 		addVehicleQuery = new AddVehicleQuery(dis, dos, vehicleRepo);
 		
+		removeVehicleQuery = new RemoveVehicleQuery(dis, dos);
+		
 		poiRepo = new Repository.POIs(dis, dos,
 				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
 		
@@ -303,7 +306,7 @@ public class SumoTraciConnection {
 		
 	}
 
-	private StringListQ newIDListQuery(final int command) {
+	public StringListQ newIDListQuery(final int command) {
 		return new StringListQ(dis, dos,
 				command, "", Constants.ID_LIST);
 	}
@@ -478,11 +481,18 @@ public class SumoTraciConnection {
 		multi.run();
 
 		/*
-		 * now, compute the difference sets (departed/arrived)
+		 * now, compute the difference sets (departed/arrived) and teleports
 		 */
+		List<String> teleportStart = teleportStartQ.get();
+		List<String> teleportEnd = teleportEndQ.get();
+		
 		Set<String> vehicleListAfter = new HashSet<String>(vehicleListQuery.get());
+
 		Set<String> departedIDs = Utils.getAddedItems(vehicleListBefore, vehicleListAfter);
+		departedIDs.removeAll(teleportEnd);
+		
 		Set<String> arrivedIDs = Utils.getRemovedItems(vehicleListBefore, vehicleListAfter);
+		arrivedIDs.removeAll(teleportStart);
 		
 		/*
 		 * now update the vehicles map and notify listeners
@@ -490,6 +500,8 @@ public class SumoTraciConnection {
 		
 		for (String arrivedID : arrivedIDs) {
 			Vehicle arrived = vehicles.remove(arrivedID);
+			if(log.isDebugEnabled())
+				log.debug(" arrivedID = "+arrivedID+" Vehicle = "+arrived);
 			removeStepAdvanceListener(arrived);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleArrived(arrived);
@@ -497,19 +509,38 @@ public class SumoTraciConnection {
 		}
 		for (String departedID : departedIDs) {
 			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
+			if(log.isDebugEnabled())
+				log.debug(" departedID = "+departedID+" Vehicle = "+departed);
 			addStepAdvanceListener(departed);
 			vehicles.put(departedID, departed);
+		}
+		for (String departedID : departedIDs) {
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
-				observer.vehicleDeparted(departed);
+				observer.vehicleDeparted(vehicles.get(departedID));
 			}
 		}
 		
 		for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
-			for (String teleportStarting : teleportStartQ.get()) {
-				observer.vehicleTeleportStarting(vehicles.get(teleportStarting));
+			
+			for (String teleportStarting : teleportStart) {
+				Vehicle vehicle = vehicles.get(teleportStarting);
+				if (vehicle != null){
+					if(log.isDebugEnabled())
+						log.debug(" Vehicle "+teleportStarting+" started teleporting.");
+					observer.vehicleTeleportStarting(vehicle);
+				}
+				else
+					log.warn(" Teleporting vehicle "+teleportStarting+" not found!");
 			}
-			for (String teleportEnding : teleportEndQ.get()) {
-				observer.vehicleTeleportEnding(vehicles.get(teleportEnding));
+			for (String teleportEnding : teleportEnd) {
+				Vehicle vehicle = vehicles.get(teleportEnding);
+				if (vehicle != null){
+					if(log.isDebugEnabled())
+						log.debug(" Vehicle "+teleportEnding+" ended teleporting.");
+					observer.vehicleTeleportEnding(vehicle);
+				}
+				else
+					log.warn(" Teleporting vehicle "+teleportEnding+" not found!");
 			}
 		}
 		
@@ -535,6 +566,10 @@ public class SumoTraciConnection {
 	
 	public AddVehicleQuery queryAddVehicle() {
 		return addVehicleQuery;
+	}
+	
+	public RemoveVehicleQuery queryRemoveVehicle() {
+		return removeVehicleQuery;
 	}
 	
 	public Repository<Edge> getEdgeRepository() {

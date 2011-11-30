@@ -34,6 +34,7 @@ import it.polito.appeal.traci.MeMeDetector;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
 import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
+import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.POI.ChangeColorQuery;
 import it.polito.appeal.traci.POI.ChangePositionQuery;
 import it.polito.appeal.traci.Repository;
@@ -687,6 +688,16 @@ public class TraCITest {
 			conn.nextSimStep();
 		
 		assertTrue(conn.getVehicleRepository().getAll().containsKey(id));
+	}
+	
+	@Test
+	public void testRemoveVehicle() throws IOException {
+		getFirstVehicle();
+		RemoveVehicleQuery rvq = conn.queryRemoveVehicle();
+		rvq.setVehicleData(firstVehicle, 1);
+		rvq.run();
+		conn.nextSimStep();
+		assertNull(conn.getVehicleRepository().getByID(firstVehicle.getID()));
 	}
 	
 	// TODO add induction loop tests

@@ -126,6 +126,11 @@
 		</changeStateQuery>
 		
 		<changeStateQuery>
+			<name>ChangeMaxSpeed</name>
+			<query>ChangeMaxSpeedQuery</query>
+			<affects>
+			</affects>
+		</changeStateQuery><changeStateQuery>
 			<name>ChangeRoute</name>
 			<query>ChangeRouteQuery</query>
 			<affects>
