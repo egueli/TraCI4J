@@ -147,6 +147,10 @@ implements StepAdvanceListener {
 		return (IntegerQ) getReadQuery(Variable.DEFAULT_CURRENT_PHASE_DURATION);
 	}
 	
+	public LaneListQuery getReadControlledLanesQuery() {
+		return (LaneListQuery) getReadQuery(Variable.CONTROLLED_LANES);
+	}
+	
 	public ReadObjectVarQuery<ControlledLinks> getReadControlledLinksQuery() {
 		return (ReadControlledLinksQuery) getReadQuery(Variable.CONTROLLED_LINKS);
 	}

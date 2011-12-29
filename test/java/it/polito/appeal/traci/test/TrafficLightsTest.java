@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import it.polito.appeal.traci.ChangeLightsStateQuery;
 import it.polito.appeal.traci.ControlledLink;
 import it.polito.appeal.traci.ControlledLinks;
+import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.LightState;
 import it.polito.appeal.traci.Logic;
 import it.polito.appeal.traci.Phase;
@@ -33,8 +34,12 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.TLState;
 import it.polito.appeal.traci.TrafficLight;
 
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -337,5 +342,35 @@ public class TrafficLightsTest {
 		q.run();
 		
 		assertEquals(TEST_TL_STATE, tl.getReadCurrentStateQuery().get());
+	}
+	
+	@Test
+	public void testTrafficLightsPosition() throws IOException {
+		TrafficLight tl = repo.getByID("0");
+		List<Lane> lanes = tl.getReadControlledLanesQuery().get();
+		
+		assertEquals(16, lanes.size());
+		
+		for (Lane lane : lanes) {
+		
+			Point2D lastPoint = getLastPointOfALane(lane);
+
+			assertTrue(lastPoint.getX() > 486.0);
+			assertTrue(lastPoint.getY() > 486.0);
+			assertTrue(lastPoint.getX() < 513.0);
+			assertTrue(lastPoint.getY() < 513.0);
+		}
+	}
+
+	private static Point2D getLastPointOfALane(Lane lane) throws IOException {
+		Path2D shape = lane.queryReadShape().get();
+		PathIterator it = shape.getPathIterator(null);
+		double[] coords = new double[6];
+		while (!it.isDone()) {
+			it.currentSegment(coords);
+			it.next();
+		}
+		Point2D lastPoint = new Point2D.Double(coords[0], coords[1]);
+		return lastPoint;
 	}
 }
