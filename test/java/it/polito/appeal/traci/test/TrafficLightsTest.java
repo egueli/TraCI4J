@@ -332,6 +332,47 @@ public class TrafficLightsTest {
 		}
 	}
 	
+	@Test
+	public void testChangingCompleteProgramDefinition() throws IOException {
+		TrafficLight tl = repo.getByID("0");
+		
+		final Logic expectedLogic = new Logic("0", 0, new Phase[] {
+			new Phase(10000, new TLState("rrGGyyyyggrryryr")),
+			new Phase(15000, new TLState("GGyyrrrrrrGGrGrG")),
+			new Phase(55000, new TLState("yyrrGGGGGGyyGyGy"))
+		});
+		tl.getChangeCompleteProgramDefinitionQuery().setValue(expectedLogic);
+		tl.getChangeCompleteProgramDefinitionQuery().run();
+		
+		Program newProgram = tl.getCompleteDefinitionQuery().get();
+		
+		assertEquals(1, newProgram.getLogics().length);
+		Logic actualLogic = newProgram.getLogics()[0];
+
+		assertEquals(
+				expectedLogic.getSubID(),
+				actualLogic.getSubID());
+		assertEquals(
+				expectedLogic.getCurrentPhaseIndex(),
+				actualLogic.getCurrentPhaseIndex());
+
+		Phase[] actualPhases = actualLogic.getPhases();
+		Phase[] expectedPhases = expectedLogic.getPhases();
+		assertEquals(expectedPhases.length, actualPhases.length);
+
+		for (int i = 0; i < actualPhases.length; i++) {
+			Phase actualPhase = actualPhases[i];
+			Phase expectedPhase = expectedPhases[i];
+			assertEquals(
+					expectedPhase.getDuration(),
+					actualPhase.getDuration());
+			assertArrayEquals(
+					expectedPhase.getState().lightStates,
+					actualPhase.getState().lightStates);
+		}
+	}
+
+
 	private static final TLState TEST_TL_STATE = new TLState("rrGGyyyyggrryryr");
 
 	@Test

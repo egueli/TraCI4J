@@ -28,6 +28,13 @@
 			<returnType>java.awt.geom.Path2D</returnType>
 			<dynamic>false</dynamic>
 		</readQuery><readQuery>
+            <name>ReadLength</name>
+            <enum>LENGTH</enum>
+            <const>it.polito.appeal.traci.protocol.Constants.VAR_LENGTH</const>
+            <query>ReadObjectVarQuery.DoubleQ</query>
+            <returnType>Double</returnType>
+            <dynamic>false</dynamic>
+        </readQuery><readQuery>
             <name>ReadLastStepOccupancy</name>
             <enum>LAST_STEP_OCCUPANCY</enum>
             <const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_OCCUPANCY</const>
@@ -55,7 +62,14 @@
 			<query>ReadLinksQuery</query>
 			<returnType>java.util.List&lt;Link&gt;</returnType>
 			<dynamic>false</dynamic>
-		</readQuery>
+		</readQuery><readQuery>
+            <name>ReadLastStepVehicleNumber</name>
+            <enum>LAST_STEP_VEHICLE_NUMBER</enum>
+            <const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_NUMBER</const>
+            <query>ReadObjectVarQuery.IntegerQ</query>
+            <returnType>Integer</returnType>
+            <dynamic>true</dynamic>
+        </readQuery>
 	</readQueries>
 	<changeStateQueries>
 	</changeStateQueries>

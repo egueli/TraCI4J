@@ -134,4 +134,12 @@
             <link href="http://java.sun.com/javase/6/docs/api/"/>
         </javadoc>
     </target>
+
+	<target name="deploy">
+        <jar destfile="traci4j.jar"
+        	duplicate="fail"
+        	update="yes">
+            <fileset dir="bin"/>
+	    </jar>
+    </target>
 </project>

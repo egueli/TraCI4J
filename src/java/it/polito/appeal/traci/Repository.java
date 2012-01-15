@@ -127,8 +127,6 @@ public class Repository<V extends TraciObject<?>> {
 		final Set<String> cachedSet = objectCache.keySet();
 		
 		if (!cachedSet.equals(idSet)) {
-//			if(test)
-//				System.out.println("Doveva essere false e invece è true");
 			Set<String> added = Utils.getAddedItems(cachedSet, idSet);
 			for (String newID : added) {
 				V newObject = factory.newObject(newID);

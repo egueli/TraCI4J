@@ -45,6 +45,11 @@ public class Logic {
 			phases[i] = new Phase(content);
 		}
 	}
+	public Logic(String subID, int currentPhaseIndex, Phase[] phases) {
+		this.subID = subID;
+		this.currentPhaseIndex = currentPhaseIndex;
+		this.phases = phases;
+	}
 	public String getSubID() {
 		return subID;
 	}

@@ -36,6 +36,10 @@ public class Phase {
 		Utils.checkType(content, Constants.TYPE_STRING);
 		state = new TLState(content.readStringASCII());
 	}
+	public Phase(final int duration, final TLState state) {
+		this.duration = duration;
+		this.state = state;
+	}
 	public int getDuration() {
 		return duration;
 	}

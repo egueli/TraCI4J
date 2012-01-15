@@ -25,7 +25,6 @@ import java.io.DataOutputStream;
 import de.uniluebeck.itm.tcpip.Storage;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeIntegerQ;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
-import it.polito.appeal.traci.ReadObjectVarQuery.DoubleQ;
 import it.polito.appeal.traci.ReadObjectVarQuery.IntegerQ;
 import it.polito.appeal.traci.ReadObjectVarQuery.StringQ;
 import it.polito.appeal.traci.TrafficLight.Variable;
@@ -61,6 +60,7 @@ implements StepAdvanceListener {
 	private final ChangeIntegerQ changePhaseIndexQuery;
 	private final ChangeStringQ changeProgramQuery;
 	private final ChangeIntegerQ changePhaseDurationQuery;
+	private final ChangeCompleteProgramQuery changeCompleteProgramQuery;
 	
 	TrafficLight(String id, DataInputStream dis, DataOutputStream dos, Repository<Lane> laneRepo) {
 		super(id, Variable.class);
@@ -86,7 +86,7 @@ implements StepAdvanceListener {
 		addReadQuery(Variable.COMPLETE_DEFINITION, 
 				new ReadCompleteDefinitionQuery(dis, dos, GET_CMD, id, Constants.TL_COMPLETE_DEFINITION_RYG));
 		
-		addReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME, new DoubleQ(dis, dos,
+		addReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME, new IntegerQ(dis, dos,
 				GET_CMD, id, Constants.TL_NEXT_SWITCH));
 		
 		changeLightsStateQuery = new ChangeLightsStateQuery(dis, dos, SET_CMD, id, Constants.TL_RED_YELLOW_GREEN_STATE) {
@@ -127,7 +127,18 @@ implements StepAdvanceListener {
 			}
 		};
 		
-		// TODO add "set complete program definition" initializer
+		changeCompleteProgramQuery = new ChangeCompleteProgramQuery(dis, dos,
+				SET_CMD, id, Constants.TL_COMPLETE_PROGRAM_RYG) {
+			
+			@Override
+			protected void writeValueTo(Logic logic, Storage content) {
+				super.writeValueTo(logic, content);
+		        getReadCurrentPhaseQuery().setObsolete();
+		        getReadCurrentStateQuery().setObsolete();
+	            getReadCurrentProgramQuery().setObsolete();
+		    }
+	    };
+
 	}
 
 	@Override
@@ -167,8 +178,8 @@ implements StepAdvanceListener {
 		return (ReadCompleteDefinitionQuery) getReadQuery(Variable.COMPLETE_DEFINITION);
 	}
 	
-	public ReadObjectVarQuery<Double> getAssumedNextSwitchTimeQuery() {
-		return (DoubleQ) getReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME);
+	public ReadObjectVarQuery<Integer> getAssumedNextSwitchTimeQuery() {
+		return (IntegerQ) getReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME);
 	}
 
 	public ChangeLightsStateQuery getChangeLightsStateQuery() {
@@ -187,9 +198,7 @@ implements StepAdvanceListener {
 		return changePhaseDurationQuery;
 	}
 
-	
-	
-	// TODO add "set complete program definition" query getter
-	
-	
+	public ChangeCompleteProgramQuery getChangeCompleteProgramDefinitionQuery() {
+		return changeCompleteProgramQuery;
+	}
 }
