@@ -476,7 +476,7 @@ public class TraCITest {
 		Edge lastEdge = null;
 		while (conn.getVehicleRepository().getByID(v.getID()) != null) {
 			lastEdge = v.queryReadCurrentEdge().get();
-			assertFalse(lastEdge.getID().equals("end"));
+			assertFalse(lastEdge.getID().equals("rend"));
 
 			conn.nextSimStep();
 		}
@@ -533,7 +533,7 @@ public class TraCITest {
 		while (conn.getVehicleRepository().getByID(firstVehicle.getID()) != null) {
 			Point2D pos = queryReadPosition.get();
 			assertTrue(pos.getX() >= 0);
-			assertTrue(pos.getX() < 2000);
+			assertTrue(pos.getX() < 2500);
 			assertEquals(-1.65, pos.getY(), DELTA);
 			conn.nextSimStep();
 		}
