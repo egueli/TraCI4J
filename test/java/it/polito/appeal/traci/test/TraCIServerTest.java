@@ -48,6 +48,8 @@ import org.junit.Test;
  */
 public class TraCIServerTest {
 	
+	private static final int API_VERSION = 2;
+
 	/**
 	 * The system property name to get the executable path and name to run.
 	 */
@@ -137,7 +139,7 @@ public class TraCIServerTest {
 		System.out.println("response length = " + respLen);
 		assertTrue("minimum response length", respLen > 5);
 		assertEquals("Response ID", Constants.CMD_GETVERSION, inStream.readByte());
-		assertEquals("API version", 1, inStream.readInt());
+		assertEquals("API version", API_VERSION, inStream.readInt());
 		int nameLen = inStream.readInt();
 		assertEquals(1 + 1 + 4 + 4 + nameLen, respLen);
 		byte[] name = new byte[nameLen];
@@ -202,7 +204,7 @@ public class TraCIServerTest {
 		
 		Command resp = pair.getResponse();
 		assertEquals(Constants.CMD_GETVERSION, resp.id());
-		assertEquals(1, resp.content().readInt());
+		assertEquals(API_VERSION, resp.content().readInt());
 		System.out.println(resp.content().readStringASCII());
 	}
 	
