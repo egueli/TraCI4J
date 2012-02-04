@@ -1,12 +1,14 @@
 This is TraCI4J, a Java library for high-level interaction with SUMO through
 its TraCI interface.
 
-Copyright (C) 2011 ApPeAL Group, Politecnico di Torino
+Copyright (C) 2012 ApPeAL Group, Politecnico di Torino
 
 - INSTALLATION
 
-Import this package as an Eclipse project. It should start rebuilding the
-.class files.
+1- With Eclipse, import this package as a project in your workspace. 
+2- Right-click the "build.xml" file, then do "Run As", then "Ant Build".
+   (it may end with a "build failed" message: it's harmful).   
+
 The library requires no external dependencies, apart from JUnit 4. It comes
 with log4j and Xerces libraries built-in.
 

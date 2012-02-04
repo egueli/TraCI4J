@@ -148,6 +148,10 @@ implements StepAdvanceListener {
 		getReadCurrentProgramQuery().setObsolete();
 		getReadCurrentStateQuery().setObsolete();
 		getAssumedNextSwitchTimeQuery().setObsolete();
+		
+		// Complete definitions contain current phase information which is
+		// likely to change between simulation steps.
+		getCompleteDefinitionQuery().setObsolete();
 	}
 	
 	public ReadObjectVarQuery<TLState> getReadCurrentStateQuery() {
