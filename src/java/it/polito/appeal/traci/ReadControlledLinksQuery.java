@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-class ReadControlledLinksQuery extends ReadObjectVarQuery<ControlledLinks> {
+public class ReadControlledLinksQuery extends ReadObjectVarQuery<ControlledLinks> {
 
 	private final Repository<Lane> laneRepo;
 

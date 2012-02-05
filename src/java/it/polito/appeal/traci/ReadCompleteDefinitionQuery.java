@@ -26,7 +26,7 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-class ReadCompleteDefinitionQuery extends ReadObjectVarQuery<Program> {
+public class ReadCompleteDefinitionQuery extends ReadObjectVarQuery<Program> {
 	ReadCompleteDefinitionQuery(DataInputStream dis,
 			DataOutputStream dos, int commandID, String objectID, int varID) {
 		super(dis, dos, commandID, objectID, varID);
