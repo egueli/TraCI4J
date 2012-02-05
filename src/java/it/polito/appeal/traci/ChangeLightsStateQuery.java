@@ -28,8 +28,9 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeLightsStateQuery extends ChangeObjectVarQuery<TLState> {
 	ChangeLightsStateQuery(DataInputStream dis, DataOutputStream dos,
-			int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+			String objectID) {
+		super(dis, dos, Constants.CMD_SET_TL_VARIABLE, objectID,
+				Constants.TL_RED_YELLOW_GREEN_STATE);
 	}
 
 	@Override

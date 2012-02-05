@@ -15,19 +15,34 @@
 			<repo>Edge</repo>
 		</usedRepos>
 	</query>
-<query>
+	<query>
 		<class>ReadLinksQuery</class>
 		<usedRepos>
 			<repo>Lane</repo>
 		</usedRepos>
-	</query><query>
+	</query>
+	<query>
 		<class>VehicleSetQuery</class>
 		<usedRepos>
 			<repo>Vehicle</repo>
 		</usedRepos>
-	</query><query>
+	</query>
+	<query>
 		<class>ReadObjectVarQuery.LaneQ</class>
 		<usedRepos>
 			<repo>Lane</repo>
 		</usedRepos>
-	</query></queries>
+	</query>
+	<query>
+		<class>LaneListQuery</class>
+		<usedRepos>
+			<repo>Lane</repo>
+		</usedRepos>
+	</query>
+	<query>
+		<class>ReadControlledLinksQuery</class>
+		<usedRepos>
+			<repo>Lane</repo>
+		</usedRepos>
+	</query>
+</queries>

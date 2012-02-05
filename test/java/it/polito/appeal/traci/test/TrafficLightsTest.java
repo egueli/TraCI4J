@@ -232,7 +232,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testStateAtFirstStep() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		TLState tlState = tl.getReadCurrentStateQuery().get();
+		TLState tlState = tl.queryReadState().get();
 		final LightState[] states = tlState.lightStates;
 		assertEquals(16, states.length);
 		assertArrayEquals(PHASES[0], states);
@@ -241,7 +241,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testStateUpdate() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		final ReadObjectVarQuery<TLState> query = tl.getReadCurrentStateQuery();
+		final ReadObjectVarQuery<TLState> query = tl.queryReadState();
 		
 		// looks like SUMO shifts all TL timings ahead one second
 		conn.nextSimStep();
@@ -262,7 +262,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testCurrentDuration() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		final ReadObjectVarQuery<Integer> query = tl.getReadCurrentPhaseDurationQuery();
+		final ReadObjectVarQuery<Integer> query = tl.queryReadDefaultCurrentPhaseDuration();
 
 		// looks like SUMO shifts all TL timings ahead one second
 		conn.nextSimStep();
@@ -298,7 +298,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testControlledLinks() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		ControlledLinks links = tl.getReadControlledLinksQuery().get();
+		ControlledLinks links = tl.queryReadControlledLinks().get();
 		
 		assertEquals(linksLaneIDs.length, links.getLinks().length);
 		for (int i=0; i<linksLaneIDs.length; i++) {
@@ -314,7 +314,7 @@ public class TrafficLightsTest {
 	@Test
 	public void testCompleteProgramDefinition() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		Program program = tl.getCompleteDefinitionQuery().get();
+		Program program = tl.queryReadCompleteDefinition().get();
 		
 		assertEquals(1, program.getLogics().length);
 		Logic logic = program.getLogics()[0];
@@ -341,10 +341,10 @@ public class TrafficLightsTest {
 			new Phase(15000, new TLState("GGyyrrrrrrGGrGrG")),
 			new Phase(55000, new TLState("yyrrGGGGGGyyGyGy"))
 		});
-		tl.getChangeCompleteProgramDefinitionQuery().setValue(expectedLogic);
-		tl.getChangeCompleteProgramDefinitionQuery().run();
+		tl.queryChangeCompleteProgramDefinition().setValue(expectedLogic);
+		tl.queryChangeCompleteProgramDefinition().run();
 		
-		Program newProgram = tl.getCompleteDefinitionQuery().get();
+		Program newProgram = tl.queryReadCompleteDefinition().get();
 		
 		assertEquals(1, newProgram.getLogics().length);
 		Logic actualLogic = newProgram.getLogics()[0];
@@ -378,17 +378,17 @@ public class TrafficLightsTest {
 	@Test
 	public void testChangeState() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		ChangeLightsStateQuery q = tl.getChangeLightsStateQuery();
+		ChangeLightsStateQuery q = tl.queryChangeLightsState();
 		q.setValue(TEST_TL_STATE);
 		q.run();
 		
-		assertEquals(TEST_TL_STATE, tl.getReadCurrentStateQuery().get());
+		assertEquals(TEST_TL_STATE, tl.queryReadState().get());
 	}
 	
 	@Test
 	public void testTrafficLightsPosition() throws IOException {
 		TrafficLight tl = repo.getByID("0");
-		List<Lane> lanes = tl.getReadControlledLanesQuery().get();
+		List<Lane> lanes = tl.queryReadControlledLanes().get();
 		
 		assertEquals(16, lanes.size());
 		

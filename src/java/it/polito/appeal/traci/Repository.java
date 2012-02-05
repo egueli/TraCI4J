@@ -269,7 +269,7 @@ public class Repository<V extends TraciObject<?>> {
 			super(new ObjectFactory<TrafficLight>() {
 				@Override
 				public TrafficLight newObject(String objectID) {
-					return new TrafficLight(objectID, dis, dos, lanes);
+					return new TrafficLight(dis, dos, objectID, lanes);
 				}
 			}, idListQuery);
 		}

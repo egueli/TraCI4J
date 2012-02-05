@@ -26,7 +26,7 @@ import java.util.List;
 
 public class LaneListQuery extends ObjectCollectionQuery<Lane, List<Lane>> {
 	LaneListQuery(DataInputStream dis, DataOutputStream dos, int commandID,
-			Repository<Lane> repository, String objectID, int varID) {
+			String objectID, int varID, Repository<Lane> repository) {
 		super(dis, dos, commandID, repository, objectID, varID);
 	}
 	@Override

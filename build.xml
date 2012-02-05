@@ -66,7 +66,8 @@
 	
 	<target name="generate" depends="init,clean-old-generated">
 		<xslt 
-			basedir="src/xml/traciObjects" 
+			basedir="src/xml/traciObjects"
+			includes="*.xml"
 			destdir="src/java-gen/it/polito/appeal/traci"
 			extension=".java"
 			style="src/xslt/traciObject.xslt">

@@ -124,8 +124,8 @@ public class POI extends TraciObject<POI.Variable> {
 		
 		changePositionQuery = new ChangePositionQuery(dis, dos, id);
 		changeColorQuery = new ChangeColorQuery(dis, dos, id);
-		changeTypeQuery = new ChangeStringQ(dis, dos,
-				Constants.CMD_SET_POI_VARIABLE, id, Constants.VAR_TYPE) {
+		changeTypeQuery = new ChangeStringQ(dis, dos, id, 
+				Constants.CMD_SET_POI_VARIABLE, Constants.VAR_TYPE) {
 			/**
 			 * After writing params, flushes the cache of
 			 * {@link POI#changeTypeQuery}.

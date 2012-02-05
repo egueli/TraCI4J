@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2011 ApPeAL Group, Politecnico di Torino This file is 
+	part of TraCI4J. TraCI4J is free software: you can redistribute it and/or 
+	modify it under the terms of the GNU General Public License as published 
+	by the Free Software Foundation, either version 3 of the License, or (at 
+	your option) any later version. TraCI4J is distributed in the hope that it 
+	will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+	Public License for more details. You should have received a copy of the GNU 
+	General Public License along with TraCI4J. If not, see <http://www.gnu.org/licenses/>. -->
+
+<traciClass>
+	<name>TrafficLight</name>
+
+	<dynamicSet>true</dynamicSet>
+
+	<repos>
+		<repo>Lane</repo>
+	</repos>
+	
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_TL_VARIABLE</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_TL_VARIABLE</changeStateCommand>
+
+	<readQueries>
+		<readQuery>
+			<name>ReadState</name>
+			<enum>STATE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE</const>
+			<query>ReadTLStateQuery</query>
+			<returnType></returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+
+		<readQuery>
+			<name>ReadDefaultCurrentPhaseDuration</name>
+			<enum>DEFAULT_CURRENT_PHASE_DURATION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION</const>
+			<query>ReadObjectVarQuery.IntegerQ</query>
+			<returnType>java.lang.Integer</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		
+		<readQuery>
+			<name>ReadControlledLanes</name>
+			<enum>CONTROLLED_LANES</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LANES</const>
+			<query>LaneListQuery</query>
+			<returnType></returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		
+		<readQuery>
+			<name>ReadControlledLinks</name>
+			<enum>CONTROLLED_LINKS</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LINKS</const>
+			<query>ReadControlledLinksQuery</query>
+			<returnType></returnType>
+			<dynamic>false</dynamic>
+		</readQuery>		
+		
+		<readQuery>
+			<name>ReadCurrentPhase</name>
+			<enum>CURRENT_PHASE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE</const>
+			<query>ReadObjectVarQuery.IntegerQ</query>
+			<returnType></returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		
+		<readQuery>
+			<name>ReadCurrentProgram</name>
+			<enum>CURRENT_PROGRAM</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PROGRAM</const>
+			<query>ReadObjectVarQuery.StringQ</query>
+			<returnType></returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		
+		<readQuery>
+			<name>ReadCompleteDefinition</name>
+			<enum>COMPLETE_DEFINITION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_DEFINITION_RYG</const>
+			<query>ReadCompleteDefinitionQuery</query>
+			<returnType></returnType>
+			<dynamic>false</dynamic>
+		</readQuery>		
+		
+		<readQuery>
+			<name>ReadAssumedNextSwitchTime</name>
+			<enum>ASSUMED_NEXT_SWITCH_TIME</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE</const>
+			<query>ReadObjectVarQuery.IntegerQ</query>
+			<returnType></returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+	</readQueries>
+
+	<changeStateQueries>
+		
+		<!-- most of the read queries are already declared as dynamic,
+		so those query definitions don't need to explicitly name them
+		as affected by. -->
+		
+		<changeStateQuery>
+			<name>ChangeLightsState</name>
+			<query>ChangeLightsStateQuery</query>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangePhaseIndex</name>
+			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE</const>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeProgram</name>
+			<query>ChangeObjectVarQuery.ChangeStringQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PROGRAM</const>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangePhaseDuration</name>
+			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION</const>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeCompleteProgramDefinition</name>
+			<query>ChangeCompleteProgramQuery</query>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_PROGRAM_RYG</const>
+		</changeStateQuery>
+	</changeStateQueries>
+
+</traciClass>
