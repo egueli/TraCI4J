@@ -81,7 +81,6 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="it.polito.appeal.traci.FastStorageTest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.TraCIServerTest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.TraCITest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.protocol.CommandTest" todir="${junit.output.dir}"/>
@@ -96,7 +95,6 @@
         	<jvmarg value="-Xdebug" />
         	<jvmarg value="-Xrunjdwp:transport=dt_socket,address=5555,server=y,suspend=y" />
             <formatter type="xml"/>
-            <test name="it.polito.appeal.traci.FastStorageTest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.TraCIServerTest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.TraCITest" todir="${junit.output.dir}"/>
             <test name="it.polito.appeal.traci.protocol.CommandTest" todir="${junit.output.dir}"/>
