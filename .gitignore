@@ -1,1 +1,5 @@
 bin/
+junit*.properties
+junit/
+
+*~
