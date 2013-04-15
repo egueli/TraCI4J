@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -87,8 +88,13 @@ public class TraCITest {
 	protected SumoTraciConnection conn;
 	
 	static {
-		// this need to be done only once
+		// Log4j configuration must be done only once, otherwise output will be duplicated for each test
+		
+		// Basic configuration that outputs everything		
 		BasicConfigurator.configure();
+		
+		// Configuration specified by a properties file
+		PropertyConfigurator.configure("test/log4j.properties");
 	}
 
 	@Before
