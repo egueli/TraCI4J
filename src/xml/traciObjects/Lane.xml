@@ -70,6 +70,63 @@
             <returnType>Integer</returnType>
             <dynamic>true</dynamic>
         </readQuery>
+		<readQuery>
+			<name>ReadCO2Emission</name>
+			<enum>CO2_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_CO2EMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadCOEmission</name>
+			<enum>CO_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COEMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadHCEmission</name>
+			<enum>HC_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_HCEMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadPMXEmission</name>
+			<enum>PMX_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_PMXEMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadNOXEmission</name>
+			<enum>NOX_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOXEMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadFuelConsumption</name>
+			<enum>FUEL_CONSUMPTION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_FUELCONSUMPTION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		<readQuery>
+			<name>ReadNoiseEmission</name>
+			<enum>NOISE_EMISSION</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOISEEMISSION</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
+		
 	</readQueries>
 	<changeStateQueries>
 	</changeStateQueries>
