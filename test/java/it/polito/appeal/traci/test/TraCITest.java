@@ -67,9 +67,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test case for TraCI4J. This is similar to {@link TraCITest}, but uses new API
- * instead. Many tests have the same name and do the same things, therefore they
- * can be used as a usage comparison between old and new APIs.
+ * Main test case for TraCI4J. This class tries to test and describe all the basic
+ * features of the library.
+ * <p>
+ * Each test is run on an existing SUMO simulation, initialized with the
+ * configuration file specified in {@link #SIM_CONFIG_LOCATION}. The simulation is
+ * reset for each test.
  * <p>
  * The tests assume that the SUMO binary directory is in the system PATH. If
  * not, please set the Java system variable
@@ -102,6 +105,13 @@ public class TraCITest {
 		conn = startSumoConn(SIM_CONFIG_LOCATION);
 	}
 
+	/**
+	 * Start SUMO and connect to it.
+	 * 
+	 * @param simConfigLocation
+	 * @return
+	 * @throws Exception
+	 */
 	public static SumoTraciConnection startSumoConn(String simConfigLocation) throws Exception {
 		try {
 			SumoTraciConnection newConn = new SumoTraciConnection(simConfigLocation, 0, false);
@@ -136,7 +146,8 @@ public class TraCITest {
 	}
 	
 	/**
-	 * The sim step at startup must be zero.
+	 * The sim step at startup must be zero (this should match the "begin"
+	 * parameter in the SUMO configuration).
 	 */
 	@Test
 	public void testFirstStepIsZero() {
@@ -154,6 +165,12 @@ public class TraCITest {
 		assertEquals(1, conn.getCurrentSimStep());
 	}
 	
+	/**
+	 * This test shows how a vehicle lifecycle listener can be attached
+	 * to the simulation, and how its callbacks are called by TraCI4J
+	 * when something about a vehicle happens.
+	 * @throws IOException
+	 */
 	@Test
 	public void testGetSubscriptionResponses() throws IOException {
 		final List<Vehicle> departed = new ArrayList<Vehicle>();
@@ -173,6 +190,8 @@ public class TraCITest {
 			@Override
 			public void vehicleTeleportStarting(Vehicle v) { }
 		});
+		
+		// In this simulation, the first vehicles are been seen at step 2.  
 		conn.nextSimStep();
 		conn.nextSimStep();
 		conn.nextSimStep();
@@ -180,6 +199,12 @@ public class TraCITest {
 		assertFalse(departed.isEmpty());
 	}
 
+	/**
+	 * This test shows a basic usage of {@link SumoTraciConnection#getVehicleRepository()}.
+	 * The method {@link Repository#getAll()} will return all vehicles in the simulation.
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	@Test
 	public void testVehicleSet() throws IllegalStateException, IOException {
 		for (int i=0; i<10; i++) {
@@ -191,6 +216,13 @@ public class TraCITest {
 		}
 	}
 	
+	/**
+	 * This test shows how a TraCI object is updated; calling {@link ValueReadQuery#get()}
+	 * on the same query object in two different simulation steps may give different
+	 * results. 
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	@Test
 	public void testRefreshedValues() throws IllegalStateException, IOException {
 		conn.nextSimStep();
