@@ -46,6 +46,9 @@ public class RemoteTraCITest {
 	@Before
 	public void setUp() throws IOException, InterruptedException {
 		String exe = System.getProperty(SumoTraciConnection.SUMO_EXE_PROPERTY);
+		if (exe == null) {
+			exe = "sumo";
+		}
 		
 		String[] args = new String[] {
 			exe,

@@ -67,16 +67,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test case for TraCI4J. This is similar to {@link TraCITest}, but uses new
- * API instead. Many tests have the same name and do the same things, therefore
- * they can be used as a usage comparison between old and new APIs.
+ * Test case for TraCI4J. This is similar to {@link TraCITest}, but uses new API
+ * instead. Many tests have the same name and do the same things, therefore they
+ * can be used as a usage comparison between old and new APIs.
  * <p>
- * To run tests, please set the following system variable:
- * <dl>
- * <dt>it.polito.appeal.traci.sumo_exe</dt>
- * <dd>set this to the SUMO executable, e.g. &lt;SUMO_BASE&gt;/bin/sumo; see
- * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd>
- * </dl>
+ * The tests assume that the SUMO binary directory is in the system PATH. If
+ * not, please set the Java system variable
+ * <code>it.polito.appeal.traci.sumo_exe</code> to the full path of the "sumo"
+ * executable, e.g. <code>/usr/bin/sumo</code>; see
+ * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd> </dl>
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 

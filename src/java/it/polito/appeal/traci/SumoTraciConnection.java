@@ -63,8 +63,10 @@ import org.xml.sax.SAXException;
  * to register and unregister objects that will be notified whenever a vehicle
  * enters or exits the simulation.
  * <p>
- * The executable path must be specified via the system property specified in
- * {@link #SUMO_EXE_PROPERTY}.
+ * The class looks for the system property
+ * <code>{@value #SUMO_EXE_PROPERTY}</code> that should contain the full path of
+ * the executable. If such property is not found, the "sumo" executable will be
+ * searched in the system PATH instead.
  * <p>
  * At simulation end, one should call {@link #close()} to gracefully close the
  * simulator and free any resources.
@@ -329,10 +331,9 @@ public class SumoTraciConnection {
 	}
 
 	private void runSUMO(int remotePort) throws IOException {
-		final String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
+		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
-			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
-					+ " must be set");
+			sumoEXE = "sumo";
 
 		args.add(0, sumoEXE);
 		
