@@ -48,7 +48,7 @@ import org.junit.Test;
  */
 public class TraCIServerTest {
 	
-	private static final int API_VERSION = 3;
+	private static final int API_VERSION = 5;
 
 	/**
 	 * The system property name to get the executable path and name to run.
