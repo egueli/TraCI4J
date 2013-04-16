@@ -90,7 +90,7 @@ public class TraCITest {
 		// Log4j configuration must be done only once, otherwise output will be duplicated for each test
 		
 		// Basic configuration that outputs everything		
-		BasicConfigurator.configure();
+		//BasicConfigurator.configure();
 		
 		// Configuration specified by a properties file
 		PropertyConfigurator.configure("test/log4j.properties");
