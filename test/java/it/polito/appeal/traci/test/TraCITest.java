@@ -238,11 +238,19 @@ public class TraCITest {
 		}
 	}
 
+	/**
+	 * Normally, the simulation at step zero contains no vehicles.
+	 * @throws IOException
+	 */
 	@Test
 	public void testNoVehiclesAtStepZero() throws IOException {
 		assertTrue(conn.getVehicleRepository().getIDs().isEmpty());
 	}
 	
+	/**
+	 * In this simulation, there should be exactly one vehicle at step one.
+	 * @throws IOException
+	 */
 	@Test
 	public void testOneVehicleAtStepOne() throws IOException {
 		conn.nextSimStep();
@@ -250,6 +258,10 @@ public class TraCITest {
 		assertThat(repo.getIDs().size(), equalTo(1));
 	}
 	
+	/**
+	 * Tests that the vehicle's ID of the first vehicle is correct.
+	 * @throws IOException
+	 */
 	@Test
 	public void testVehicleIDAtStepOne() throws IOException {
 		conn.nextSimStep();
@@ -257,6 +269,10 @@ public class TraCITest {
 		assertThat(repo.getIDs(), equalTo(Collections.singleton("0.0")));	
 	}
 	
+	/**
+	 * Tests that the vehicle at step 1 is at beginning of its departure lane. 
+	 * @throws IOException
+	 */
 	@Test
 	public void testVehiclePositionAtStepOne() throws IOException {
 		conn.nextSimStep();
@@ -265,6 +281,12 @@ public class TraCITest {
 		assertEquals(0, v0.queryReadLanePosition().get(), DELTA);
 	}
 	
+	/**
+	 * Tests that the vehicle at step 2 is about 1.9m at beginning of
+	 * its departure lane.
+	 * Note: this may change if SUMO's internal mobiility model is changed.
+	 * @throws IOException
+	 */	
 	@Test
 	public void testVehiclePositionAtStepTwo() throws IOException {
 		conn.nextSimStep();
@@ -276,6 +298,10 @@ public class TraCITest {
 	
 	private Vehicle firstVehicle = null;
 	
+	/**
+	 * This test reads a vehicle's route and checks for its correctness.
+	 * @throws IOException
+	 */
 	@Test
 	public void testRoute() throws IOException {
 		getFirstVehicle();
