@@ -19,12 +19,18 @@
 
 package it.polito.appeal.traci.test;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import it.polito.appeal.traci.AddVehicleQuery;
 import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
-import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
+import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
 import it.polito.appeal.traci.ChangeRouteQuery;
 import it.polito.appeal.traci.ChangeTargetQuery;
 import it.polito.appeal.traci.Edge;
@@ -33,10 +39,10 @@ import it.polito.appeal.traci.Link;
 import it.polito.appeal.traci.MeMeDetector;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
-import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
-import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.POI.ChangeColorQuery;
 import it.polito.appeal.traci.POI.ChangePositionQuery;
+import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
+import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.Route;
 import it.polito.appeal.traci.SumoTraciConnection;
@@ -59,7 +65,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.Before;
@@ -284,7 +289,7 @@ public class TraCITest {
 	/**
 	 * Tests that the vehicle at step 2 is about 1.9m at beginning of
 	 * its departure lane.
-	 * Note: this may change if SUMO's internal mobiility model is changed.
+	 * Note: this may change if SUMO's internal mobility model is changed.
 	 * @throws IOException
 	 */	
 	@Test
@@ -300,6 +305,7 @@ public class TraCITest {
 	
 	/**
 	 * This test reads a vehicle's route and checks for its correctness.
+	 * (they all have the same route)
 	 * @throws IOException
 	 */
 	@Test
@@ -317,6 +323,11 @@ public class TraCITest {
 		assertEquals("rend",   it.next().getID());
 	}
 	
+	/**
+	 * This test increases the travel time of a road "perceived" by the first vehicle.
+	 * This will make the vehicle look for an alternative route.  	
+	 * @throws IOException
+	 */
 	@Test
 	public void testRerouting()
 			throws IOException {
@@ -344,6 +355,14 @@ public class TraCITest {
 		assertFalse(routeBefore.equals(routeAfter));
 	}
 
+	/**
+	 * Returns the first vehicle entered in the simulation. Since all vehicles
+	 * depart from the same road, and SUMO lets at most one vehicle to depart
+	 * from a given road at each step, the vehicle returned from this function
+	 * will always be the same.
+	 * 
+	 * @throws IOException
+	 */
 	public void getFirstVehicle() throws IOException {
 		Repository<Vehicle> repo = conn.getVehicleRepository();
 		while(repo.getAll().isEmpty())
@@ -352,6 +371,14 @@ public class TraCITest {
 		firstVehicle = repo.getAll().values().iterator().next();
 	}
 
+	/**
+	 * This test increases the travel time of a road, checks that the new travel
+	 * time is accepted by SUMO, and verifies that the first vehicle changed its
+	 * route. In contrast with {@link #testRerouting()}, the specified travel
+	 * time applies to all vehicles in the simulation.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testChangeGlobalTravelTime()
 			throws IOException {
@@ -383,6 +410,12 @@ public class TraCITest {
 		assertFalse(routeBefore.equals(routeAfter));
 	}
 	
+	/**
+	 * This test demonstrates the usage of the {@link Lane} object to get
+	 * geometric information.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testGetShape() throws IOException {
 		Lane lane = conn.getLaneRepository().getByID("beg_0");
@@ -400,6 +433,12 @@ public class TraCITest {
 		assertTrue(it.isDone());
 	}
 	
+	/**
+	 * This test demonstrates the usage of the {@link Lane} object to get
+	 * topological information.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testGetBelongingEdge() throws IOException {
 		Lane lane = conn.getLaneRepository().getByID("beg_0");
@@ -407,6 +446,20 @@ public class TraCITest {
 		assertEquals("beg", edge.getID());
 	}
 	
+	/**
+	 * This test demonstrates how the execution speed can be increased by the
+	 * usage of a {@link MultiQuery}. First, the simulation is advanced to
+	 * populate the roads. Then, the position of all vehicles is queried for a
+	 * given number of steps. The query is made in two methods: in the first
+	 * method, a network request is made for each vehicle; in the second method,
+	 * the queries for all vehicles are put into a MultiQuery, and only one
+	 * network request is made. This test verifies that the performance of the
+	 * second method is higher than the first. The difference can be up to 10x
+	 * on a Linux machine, less on a Windows machine.
+	 * 
+	 * @throws IllegalStateException
+	 * @throws IOException
+	 */
 	@Test
 //	@Ignore // its duration may be annoying; feel free to comment this
 	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
@@ -446,18 +499,22 @@ public class TraCITest {
 		assertTrue(elapsedMulti < elapsedSingle);
 	}
 	
+	/**
+	 * This test demonstrates the read of the network's physical bounds. 
+	 * @throws IOException
+	 */
 	@Test
 	public void testQueryBounds() throws IOException {
 		Rectangle2D bounds = conn.getSimulationData().queryNetBoundaries().get();
-//		assertEquals(0.0, bounds.getMinX(), DELTA);
-//		assertEquals(-1.65, bounds.getMinY(), DELTA);
-//		assertEquals(2500.0, bounds.getMaxX(), DELTA);
-//		assertEquals(498.35, bounds.getMaxY(), DELTA);
 		assertEquals(0.0, bounds.getMinX(), DELTA);
 		assertEquals(0.0, bounds.getMinY(), DELTA);
 		assertEquals(2500.0, bounds.getMaxX(), DELTA);
 		assertEquals(500.0, bounds.getMaxY(), DELTA);	}
 	
+	/**
+	 * Ensures that the set of roads in the network matches a predefined set. 
+	 * @throws IOException
+	 */
 	@Test
 	public void testQueryRoads() throws IOException, InterruptedException {
 		Set<String> expectedLaneIDs = new HashSet<String>();
@@ -486,6 +543,11 @@ public class TraCITest {
 		assertEquals(expectedLaneIDs, laneIDs);
 	}
 	
+	/**
+	 * This test verifies that all the vehicles entered in the simulation will
+	 * leave it sooner or later.
+	 * @throws IOException
+	 */
 	@Test
 //	@Ignore // its duration may be annoying; feel free to comment this
 	public void testWhoDepartsArrives() throws IOException {
@@ -527,6 +589,13 @@ public class TraCITest {
 			
 	}
 
+	/**
+	 * This test shows how to change a vehicle's destination road to "end",
+	 * which is just before the default "rend", then advances the simulation to
+	 * check that "rend" is never traversed by the vehicle until it exits.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testChangeTarget() throws IOException {
 		getFirstVehicle();
@@ -545,6 +614,12 @@ public class TraCITest {
 		}
 	}
 	
+	/**
+	 * This test checks ensures that changing the destination road also
+	 * changes the vehicle's current route list such that the last road is
+	 * the new destination road.
+	 * @throws IOException
+	 */
 	@Test
 	public void testChangeTargetAlsoAffectsRouteList() throws IOException {
 		getFirstVehicle();
@@ -556,6 +631,12 @@ public class TraCITest {
 		assertEquals("end", route.get(route.size()-1).getID());
 	}
 	
+	/**
+	 * This test tries to explicitly set a vehicle's route, and verifies that
+	 * SUMO accepts it.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testChangeRoute() throws IOException {
 		getFirstVehicle();
@@ -571,6 +652,12 @@ public class TraCITest {
 		assertEquals(newRoute, v.queryReadCurrentRoute().get());
 	}
 	
+	/**
+	 * This test demonstrates the usage of the {@link Link} object by testing
+	 * the links between a lane and the lanes a vehicle can go through.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testLaneLinks() throws IOException {
 		Lane begLane = conn.getLaneRepository().getByID("beg_0");
@@ -589,6 +676,12 @@ public class TraCITest {
 		assertTrue(intLinkIDs.contains(":beg_1_0"));
 	}
 
+	/**
+	 * This test ensures that a vehicle's X/Y position never goes outside the
+	 * road bounds.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testVehiclePositionIsInBounds() throws IOException {
 		getFirstVehicle();
@@ -602,6 +695,14 @@ public class TraCITest {
 		}
 	}
 	
+	/**
+	 * This test demonstrates that getting info from an invalid vehicle (e.g. an
+	 * exited vehicle) will cause an exception. It also shows that the vehicle
+	 * in {@link VehicleLifecycleObserver#vehicleArrived(Vehicle)} can't be
+	 * queried anymore.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testUsingInactiveVehicle() throws IOException {
 		getFirstVehicle();
@@ -629,12 +730,22 @@ public class TraCITest {
 		}
 	}
 	
+	/**
+	 * Checks for presence of a Point of Interest.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testPOIExistence() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		assertNotNull(poiRepo.getByID("0"));
 	}
 	
+	/**
+	 * Checks the correct reading of a POI's type.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -642,6 +753,11 @@ public class TraCITest {
 		assertEquals("TEST_TYPE", poi.getReadTypeQuery().get());
 	}
 	
+	/**
+	 * Checks the correct reading of a POI's color.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testPOIColor() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -650,6 +766,11 @@ public class TraCITest {
 		assertEquals(c, poi.getReadColorQuery().get());
 	}
 	
+	/**
+	 * Checks the correct reading of a POI's position.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testPOIPosition() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -660,6 +781,11 @@ public class TraCITest {
 		assertEquals(pos.getY(), poiPos.getY(), DELTA);
 	}
 	
+	/**
+	 * Checks the correct setting of a POI's type.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testSetPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -671,6 +797,11 @@ public class TraCITest {
 		assertEquals(newType, poi.getReadTypeQuery().get());
 	}
 	
+	/**
+	 * Checks the correct setting of a POI's position.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testSetPOIPosition() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -684,6 +815,11 @@ public class TraCITest {
 		assertEquals(newPos.getY(), pos.getY(), DELTA);
 	}
 	
+	/**
+	 * Checks the correct setting of a POI's color.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testSetPOIColor() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
@@ -695,12 +831,21 @@ public class TraCITest {
 		assertEquals(newColor, poi.getReadColorQuery().get());
 	}
 	
+	/**
+	 * Checks for presence of a Multi-entry/Multi-exit detector.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testMeMeExistence() throws IOException {
 		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
 		assertNotNull(memeRepo.getByID("e3_0"));
 	}
 	
+	/**
+	 * Checks for the correct behaviour of a MeMe detector.
+	 * @throws IOException
+	 */
 	@Test
 	public void testMeMeDetectorIsDetecting() throws IOException {
 		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
@@ -729,6 +874,11 @@ public class TraCITest {
 		assertEquals(38, (int)vehicleNum.get());
 	}
 	
+	/**
+	 * Checks for the correct adding of a new vehicle.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testAddVehicle() throws IOException {
 		conn.nextSimStep();
@@ -753,6 +903,11 @@ public class TraCITest {
 		assertTrue(conn.getVehicleRepository().getAll().containsKey(id));
 	}
 	
+	/**
+	 * Checks for the correct removal of a vehicle.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testRemoveVehicle() throws IOException {
 		getFirstVehicle();
