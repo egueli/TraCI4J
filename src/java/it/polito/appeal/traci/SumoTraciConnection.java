@@ -130,7 +130,8 @@ public class SumoTraciConnection {
 
 	
 	/**
-	 * Constructor for the object.
+	 * Creates an instance of this class that runs an own instance of SUMO.
+	 * The constructor won't run SUMO immediately; for that, call {@link #runServer()}.
 	 * 
 	 * @param configFile
 	 *            the file name of the SUMO XML configuration file
@@ -149,6 +150,18 @@ public class SumoTraciConnection {
 		this.configFile = configFile;
 	}
 	
+	/**
+	 * Creates an instance of this class and connects to a running instance of
+	 * SUMO.
+	 * 
+	 * @param addr
+	 *            the IP address of the machine where SUMO runs
+	 * @param port
+	 *            the TCP port SUMO is listening for commands (see --remote-port
+	 *            option)
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
 			InterruptedException {
 
