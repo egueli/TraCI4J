@@ -19,7 +19,9 @@ SumoTraciConnection type. This is the main class that runs a SUMO instance,
 establishes a connection with it and provides methods/objects to issue commands
 and retrieve information.
 
-Some usage examples can be found in the JUnit tests, in the test/ directory.
+Some basic usage examples can be found in the "examples" directory.
+
+The JUnit tests in the test/ directory can also be a good source of example code.
 
 For more information, see the Javadoc.
 
