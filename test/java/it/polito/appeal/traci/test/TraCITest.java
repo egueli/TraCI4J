@@ -119,7 +119,7 @@ public class TraCITest {
 	 */
 	public static SumoTraciConnection startSumoConn(String simConfigLocation) throws Exception {
 		try {
-			SumoTraciConnection newConn = new SumoTraciConnection(simConfigLocation, 0, false);
+			SumoTraciConnection newConn = new SumoTraciConnection(simConfigLocation, 0);
 			newConn.runServer();
 			return newConn;
 		}

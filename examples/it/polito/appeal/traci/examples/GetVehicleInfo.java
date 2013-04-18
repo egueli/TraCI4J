@@ -29,8 +29,7 @@ public class GetVehicleInfo {
 	public static void main(String[] args) {
 		SumoTraciConnection conn = new SumoTraciConnection(
 				"test/sumo_maps/box1l/test.sumo.cfg",  // config file
-				12345,                                 // random seed
-				false                                  // look for geolocalization info in the map
+				12345                                  // random seed
 				);
 		try {
 			conn.runServer();

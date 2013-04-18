@@ -139,16 +139,36 @@ public class SumoTraciConnection {
 	 *            the random seed for SUMO (passed with the --srand option); if
 	 *            different to -1, it overrides the value specified in the
 	 *            config file or, if absent, the system time
-	 * @param useGeoOffset
-	 *            if true, scans the network description file specified in the
-	 *            config file to search the latitude/longitude of a
-	 *            georeferenced map
 	 */
-	public SumoTraciConnection(String configFile, int randomSeed,
-			boolean useGeoOffset) {
+	public SumoTraciConnection(String configFile, int randomSeed) {
 		this.randomSeed = randomSeed;
 		this.configFile = configFile;
 	}
+
+	/**
+	 * Creates an instance of this class that runs an own instance of SUMO. The
+	 * constructor won't run SUMO immediately; for that, call
+	 * {@link #runServer()}.
+	 * 
+	 * @deprecated the useGeoOffset flag refers to an old hack that returned all
+	 *             locations with an offset that allowed them to be
+	 *             geo-referenced on a map. Since this offset was not available
+	 *             via TraCI, it was looked for in the .net.xml file. But the
+	 *             format of the network file is not documented and subject to
+	 *             changes over time.
+	 * @param configFile
+	 *            the file name of the SUMO XML configuration file
+	 * @param randomSeed
+	 *            the random seed for SUMO (passed with the --srand option); if
+	 *            different to -1, it overrides the value specified in the
+	 *            config file or, if absent, the system time
+	 */
+	@Deprecated
+	public SumoTraciConnection(String configFile, int randomSeed,
+			boolean useGeoOffset) {
+		this(configFile, randomSeed);
+	}
+
 	
 	/**
 	 * Creates an instance of this class and connects to a running instance of
