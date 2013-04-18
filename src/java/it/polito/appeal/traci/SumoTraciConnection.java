@@ -384,8 +384,8 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Closes the connection and quits the simulator and frees any stale
-	 * resource.
+	 * Closes the connection, quits the simulator and frees any stale
+	 * resources.
 	 * <p>
 	 * NOTE: this method must be called when any of the methods throw an
 	 * exception, to allow to free all resources.
@@ -401,7 +401,7 @@ public class SumoTraciConnection {
 		 * Unlike other command methods that instantiate a new TraCIQuery
 		 * instance in the method itself, for CloseQuery we must instantiate the
 		 * corresponding CloseQuery object before the effective execution, since
-		 * it may occur in a remote JiST server after the RMI connection is
+		 * it may occur in a remote RMI server after the RMI connection is
 		 * closed. This would make the loading of the CloseQuery class
 		 * impossible at this point.
 		 */
@@ -449,8 +449,8 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Advance the SUMO simulation by a step. The method will also call
-	 * {@link VehicleLifecycleObserver} instances for vehicle enter and exit.
+	 * Advance the SUMO simulation by a step. The method may also notify
+	 * {@link VehicleLifecycleObserver} instances.
 	 * 
 	 * @throws IOException
 	 *             if something wrong happened while sending the TraCI command.
@@ -574,50 +574,104 @@ public class SumoTraciConnection {
 		return currentSimStep;
 	}
 
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the active vehicles.
+	 */
 	public Repository<Vehicle> getVehicleRepository() {
 		return vehicleRepo;
 	}
 	
+	/**
+	 * 
+	 * @return an {@link AddVehicleQuery} that allows to add vehicles into the
+	 *         simulation.
+	 */
 	public AddVehicleQuery queryAddVehicle() {
 		return addVehicleQuery;
 	}
 	
+	/**
+	 * 
+	 * @return a {@link RemoveVehicleQuery} that allows to remove a vehicle into
+	 *         the simulation.
+	 */
 	public RemoveVehicleQuery queryRemoveVehicle() {
 		return removeVehicleQuery;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the edges the network is made
+	 *         of.
+	 */
 	public Repository<Edge> getEdgeRepository() {
 		return edgeRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link SimulationData} object that provides global info about
+	 *         the simulation.
+	 */
 	public SimulationData getSimulationData() {
 		return simData;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the lanes the network is made
+	 *         of.
+	 */
 	public Repository<Lane> getLaneRepository() {
 		return laneRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the POIs in the network.
+	 */
 	public Repository<POI> getPOIRepository() {
 		return poiRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the induction loops in the network.
+	 */
 	public Repository<InductionLoop> getInductionLoopRepository() {
 		return inductionLoopRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the traffic lights in the network.
+	 */
 	public Repository<TrafficLight> getTrafficLightRepository() {
 		return trafficLightRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the known vehicle types in the simulation.
+	 */
 	public Repository<VehicleType> getVehicleTypeRepository() {
 		return vehicleTypeRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the multi-entry/multi-exit
+	 *         detectors in the network.
+	 */
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
 	}
 	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the known routes in the simulation.
+	 */
 	public Repository<Route> getRouteRepository() {
 		return routeRepo;
 	}
@@ -643,10 +697,20 @@ public class SumoTraciConnection {
 		vehicleLifecycleObservers.remove(observer);
 	}
 	
+	/**
+	 * Registers a listener for any simulation step advancements.
+	 * 
+	 * @param listener
+	 */
 	public void addStepAdvanceListener(StepAdvanceListener listener) {
 		stepAdvanceListeners.add(listener);
 	}
 	
+	/**
+	 * Un-registers a listener for any simulation step advancements.
+	 * 
+	 * @param listener
+	 */
 	public void removeStepAdvanceListener(StepAdvanceListener listener) {
 		stepAdvanceListeners.remove(listener);
 	}

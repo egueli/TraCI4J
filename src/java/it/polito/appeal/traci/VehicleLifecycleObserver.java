@@ -20,8 +20,9 @@
 package it.polito.appeal.traci;
 
 /**
- * Interface for a class that wants to be notified when a vehicle enters or
- * exits a simulation.
+ * Interface for a class that wants to be notified about the life-cycle of a
+ * vehicle.
+ * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
@@ -47,7 +48,23 @@ public interface VehicleLifecycleObserver {
 	 */
 	void vehicleArrived(Vehicle vehicle);
 	
+	/**
+	 * Method called when a vehicle has begun a teleport. While a vehicle is
+	 * teleporting, some queries may not be available and may cause an error.
+	 * This method will be called during an invocation of
+	 * {@link SumoTraciConnection#nextSimStep()}.
+	 * 
+	 * @param id
+	 */
 	void vehicleTeleportStarting(Vehicle vehicle);
 	
+	/**
+	 * Method called when a vehicle has ended a teleport. While a vehicle is
+	 * teleporting, some queries may not be available and may cause an error.
+	 * This method will be called during an invocation of
+	 * {@link SumoTraciConnection#nextSimStep()}.
+	 * 
+	 * @param id
+	 */
 	void vehicleTeleportEnding(Vehicle vehicle);
 }
