@@ -321,7 +321,7 @@ public class SumoTraciConnection {
 		
 	}
 
-	public StringListQ newIDListQuery(final int command) {
+	private StringListQ newIDListQuery(final int command) {
 		return new StringListQ(dis, dos,
 				command, "", Constants.ID_LIST);
 	}
