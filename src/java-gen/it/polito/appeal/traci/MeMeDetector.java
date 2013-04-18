@@ -1,7 +1,7 @@
 
 
 /*   
-    Copyright (C) 2011 ApPeAL Group, Politecnico di Torino
+    Copyright (C) 2013 ApPeAL Group, Politecnico di Torino
 
     This file is part of TraCI4J.
 
