@@ -45,6 +45,9 @@ public class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
 
 	@Override
 	protected void writeParamsTo(Storage content) {
+		if (edge == null)
+			throw new NullPointerException("edge is not set");
+		
 		content.writeByte(Constants.TYPE_COMPOUND);
 		content.writeInt(2);
 		content.writeByte(Constants.TYPE_STRING);
