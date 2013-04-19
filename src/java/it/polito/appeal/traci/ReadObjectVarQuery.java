@@ -141,14 +141,20 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 
 	public static class PositionQ extends ReadObjectVarQuery<Point2D> {
 
+		private int positionType = Constants.POSITION_2D;
+		
 		PositionQ(DataInputStream dis, DataOutputStream dos, int commandID, String vehicleID, int varID) {
 			super(dis, dos, commandID, vehicleID, varID);
+		}
+		
+		public void setPositionType(int type) {
+			positionType = type;
 		}
 
 		@Override
 		protected Point2D readValue(Command resp) throws TraCIException {
 			Storage content = resp.content();
-			Utils.checkType(content, Constants.POSITION_2D);
+			Utils.checkType(content, positionType);
 			double x = content.readDouble();
 			double y = content.readDouble();
 			return new Point2D.Double(x, y);
