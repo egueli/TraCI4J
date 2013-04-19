@@ -28,7 +28,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeCompleteProgramQuery extends ChangeObjectVarQuery<Logic> {
 
-	public ChangeCompleteProgramQuery(DataInputStream dis,
+	ChangeCompleteProgramQuery(DataInputStream dis,
 			DataOutputStream dos, String objectID, int commandID, int variableID) {
 		super(dis, dos, commandID, objectID, variableID);
 	}

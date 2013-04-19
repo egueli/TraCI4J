@@ -35,7 +35,7 @@ public class ChangeGlobalTravelTimeQuery extends ChangeObjectStateQuery {
 	private int endTime;
 	private double travelTime;
 
-	public ChangeGlobalTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeGlobalTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
 			String edgeID) {
 		super(dis, dos, Constants.CMD_SET_EDGE_VARIABLE, edgeID, Constants.VAR_EDGE_TRAVELTIME);
 	}

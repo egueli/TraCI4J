@@ -37,7 +37,7 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 
 	private V value;
 	
-	public ChangeObjectVarQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeObjectVarQuery(DataInputStream dis, DataOutputStream dos,
 			int commandID, String objectID, int variableID) {
 		super(dis, dos, commandID, objectID, variableID);
 	}

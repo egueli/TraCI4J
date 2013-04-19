@@ -30,7 +30,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeRouteQuery extends ChangeObjectVarQuery<List<Edge>> {
 
-	public ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
 			String objectID) {
 		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
 	}

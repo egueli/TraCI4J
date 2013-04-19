@@ -31,7 +31,7 @@ public class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
 	private Edge edge;
 	private double travelTime;
 
-	public ChangeEdgeTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeEdgeTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
 			String objectID) {
 		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_EDGE_TRAVELTIME);
 	}
