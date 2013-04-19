@@ -114,8 +114,8 @@ public class Repository<V extends TraciObject<?>> {
 //		if (idListQuery.hasValue()) {
 //			List<String> set1 = idListQuery.get();
 //			Set<String> set2 = objectCache.keySet();
-//			System.out.println(set1);
-//			System.out.println(set2);
+//			log.info(set1);
+//			log.info(set2);
 //			return set2;
 //		}
 //		boolean test = idListQuery.hasValue();

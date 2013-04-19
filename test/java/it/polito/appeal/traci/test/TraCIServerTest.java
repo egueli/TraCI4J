@@ -39,6 +39,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.istack.internal.logging.Logger;
+
 /**
  * Here we verify some assumptions about the TraCI protocol and the behaviour of
  * SUMO.
@@ -62,6 +64,8 @@ public class TraCIServerTest {
 	private Socket socket;
 
 	private Process sumoProcess;
+	
+	private static final Logger log = Logger.getLogger(TraCIServerTest.class);
 	
 	@Before
 	public void setUp() throws UnknownHostException, IOException, InterruptedException {
@@ -115,13 +119,13 @@ public class TraCIServerTest {
 
 		
 		int msgLength = inStream.readInt();
-		System.out.println("message length = " + msgLength);
+		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength >= 21);
 
 		/*
 		byte[] all = new byte[msgLength - 4];
 		inStream.readFully(all);
-		System.out.println(Arrays.toString(all));
+		log.info(Arrays.toString(all));
 		fail();
 		*/
 		
@@ -136,7 +140,7 @@ public class TraCIServerTest {
 		assertEquals("status descr empty", 0, inStream.readInt());
 		
 		int respLen = inStream.readByte();
-		System.out.println("response length = " + respLen);
+		log.info("response length = " + respLen);
 		assertTrue("minimum response length", respLen > 5);
 		assertEquals("Response ID", Constants.CMD_GETVERSION, inStream.readByte());
 		assertEquals("API version", API_VERSION, inStream.readInt());
@@ -144,7 +148,7 @@ public class TraCIServerTest {
 		assertEquals(1 + 1 + 4 + 4 + nameLen, respLen);
 		byte[] name = new byte[nameLen];
 		inStream.readFully(name);
-		System.out.println("Version name: \"" + new String(name) + "\"");
+		log.info("Version name: \"" + new String(name) + "\"");
 	}
 
 	@Test
@@ -157,13 +161,13 @@ public class TraCIServerTest {
 
 		
 		int msgLength = inStream.readInt();
-		System.out.println("message length = " + msgLength);
+		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength > 21);
 
 		/*
 		byte[] all = new byte[msgLength - 4];
 		inStream.readFully(all);
-		System.out.println(Arrays.toString(all));
+		log.info(Arrays.toString(all));
 		fail();
 		*/
 
@@ -182,7 +186,7 @@ public class TraCIServerTest {
 		}
 		
 		int msgLength = inStream.readInt();
-		System.out.println("message length = " + msgLength);
+		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength > 255);
 
 		for (int i=0; i<REPETITIONS; i++) {
@@ -205,7 +209,7 @@ public class TraCIServerTest {
 		Command resp = pair.getResponse();
 		assertEquals(Constants.CMD_GETVERSION, resp.id());
 		assertEquals(API_VERSION, resp.content().readInt());
-		System.out.println(resp.content().readStringASCII());
+		log.info(resp.content().readStringASCII());
 	}
 	
 	@Test

@@ -71,6 +71,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.sun.istack.internal.logging.Logger;
+
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the basic
  * features of the library.
@@ -90,6 +92,8 @@ import org.junit.Test;
  */
 public class TraCITest {
 
+	private static final Logger log = Logger.getLogger(TraCITest.class);
+	
 	protected static final double DELTA = 1e-6;
 	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
 	protected SumoTraciConnection conn;
@@ -130,9 +134,7 @@ public class TraCITest {
 	}
 
 	public static void printSeparator() {
-		System.out.println();
-		System.out.println("=======================================");
-		System.out.println();
+		log.info("=======================================");
 	}
 
 	@After
@@ -216,7 +218,7 @@ public class TraCITest {
 			conn.nextSimStep();
 			int t = conn.getCurrentSimStep();
 			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
-			System.out.println(t + "\t" + vehicles.keySet());
+			log.info(t + "\t" + vehicles.keySet());
 			assertTrue(vehicles.size() > 0);
 		}
 	}
@@ -238,7 +240,7 @@ public class TraCITest {
 		for (int i=0; i<10; i++) {
 			conn.nextSimStep();
 			Double speedNow = readSpeedQuery.get();
-			System.out.println(speedNow);
+			log.info(speedNow.toString());
 			assertTrue(Math.abs(speedFirst - speedNow) > DELTA);
 		}
 	}
@@ -338,7 +340,7 @@ public class TraCITest {
 		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
 		
 		List<Edge> routeBefore = routeQuery.get();
-		System.out.println("Route before:         " + routeBefore);
+		log.info("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
 		Edge edge = conn.getEdgeRepository().getByID(edgeID);
@@ -350,7 +352,7 @@ public class TraCITest {
 		firstVehicle.queryReroute().run();
 		
 		List<Edge> routeAfter = routeQuery.get();
-		System.out.println("Route after:          " + routeAfter);
+		log.info("Route after:          " + routeAfter);
 		
 		assertFalse(routeBefore.equals(routeAfter));
 	}
@@ -387,7 +389,7 @@ public class TraCITest {
 		
 		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
 		List<Edge> routeBefore = routeQuery.get();
-		System.out.println("Route before:         " + routeBefore);
+		log.info("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
 		Edge edge = conn.getEdgeRepository().getByID(edgeID);
@@ -405,7 +407,7 @@ public class TraCITest {
 		firstVehicle.queryReroute().run();
 
 		List<Edge> routeAfter = routeQuery.get();
-		System.out.println("Route after:          " + routeAfter);
+		log.info("Route after:          " + routeAfter);
 
 		assertFalse(routeBefore.equals(routeAfter));
 	}
@@ -478,7 +480,7 @@ public class TraCITest {
 			conn.nextSimStep();
 		}
 		long elapsedSingle = System.currentTimeMillis() - start;
-		System.out.println("Individual queries: " + elapsedSingle + " ms");
+		log.info("Individual queries: " + elapsedSingle + " ms");
 		
 		conn.nextSimStep(); // to clear already read values
 		
@@ -494,7 +496,7 @@ public class TraCITest {
 			conn.nextSimStep();
 		}
 		long elapsedMulti = System.currentTimeMillis() - start;
-		System.out.println("MultiQuery queries: " + elapsedMulti + " ms");
+		log.info("MultiQuery queries: " + elapsedMulti + " ms");
 		
 		assertTrue(elapsedMulti < elapsedSingle);
 	}
@@ -584,7 +586,7 @@ public class TraCITest {
 		
 		while(!conn.isClosed()) {
 			conn.nextSimStep();
-			System.out.println(conn.getCurrentSimStep());
+			log.info("step " + conn.getCurrentSimStep());
 		}
 			
 	}
@@ -717,7 +719,7 @@ public class TraCITest {
 			public void vehicleArrived(Vehicle vehicle) {
 				if (vehicle.equals(firstVehicle)) {
 					try {
-						System.out.println(firstVehicle.queryReadPosition().get());
+						log.info("pos: " + firstVehicle.queryReadPosition().get());
 						fail("it should throw an exception");
 					} catch (IOException e) {
 					}
@@ -866,7 +868,7 @@ public class TraCITest {
 		}
 		
 		batch.run();
-//		System.out.println(""
+//		log.info(""
 //				+ ":   " + meanSpeed.get() 
 //				+ "    " + vehicleNum.get()
 //				+ "    " + vehicles.get());

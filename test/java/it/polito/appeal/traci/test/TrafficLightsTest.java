@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,7 @@ public class TrafficLightsTest {
 	private Repository<TrafficLight> repo;
 	private SumoTraciConnection conn;
 
+	private static final Logger log = Logger.getLogger(TrafficLightsTest.class);
 	
 	@Before
 	public void setUp() throws Exception {
@@ -249,7 +251,7 @@ public class TrafficLightsTest {
 		for (int p = 0; p < PHASES.length; p++) {
 			TLState tlState = query.get();
 			final LightState[] states = tlState.lightStates;
-			System.out.println("state at t=" + conn.getCurrentSimStep() + "\n" 
+			log.info("state at t=" + conn.getCurrentSimStep() + "\n" 
 					+ "  expected " + Arrays.toString(PHASES[p]) + "\n"
 					+ "  actual   " + Arrays.toString(states));
 			assertArrayEquals("state at t=" + conn.getCurrentSimStep(), PHASES[p], states);
