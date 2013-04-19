@@ -31,7 +31,7 @@ import java.awt.geom.Rectangle2D;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class BoundingBox extends Rectangle2D {
+public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	private final Rectangle2D.Double rect;
 	
@@ -49,8 +49,10 @@ public class BoundingBox extends Rectangle2D {
 		rect = new Rectangle2D.Double(llX, llY, urX - llX, urY - llY);
 	}
 	
-	public void writeTo(Storage out) {
-		out.writeByte(Constants.TYPE_BOUNDINGBOX);
+	@Override
+	public void writeTo(Storage out, boolean withTypeID) {
+		if (withTypeID)
+			out.writeByte(Constants.TYPE_BOUNDINGBOX);
 		out.writeDouble(rect.x);
 		out.writeDouble(rect.y);
 		out.writeDouble(rect.x + rect.width);
