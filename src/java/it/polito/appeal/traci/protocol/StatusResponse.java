@@ -66,7 +66,7 @@ public class StatusResponse {
 		return description;
 	}
 	
-	public void writeTo(Storage out) throws IOException {
+	public void writeTo(Storage out) {
 		out.writeByte(0);
 		out.writeInt(5+1+1+4+description.length());
 		out.writeByte(id);
