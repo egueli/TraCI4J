@@ -89,7 +89,7 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 			double x;
 			double y;
 			if (srcLonLat) {
-				srcType = Constants.POSITION_NONE;
+				srcType = Constants.POSITION_LAT_LON;
 				// TraCI wants lat-long, which is vertical-horizontal
 				x = cartesianPos.getY();
 				y = cartesianPos.getX();
@@ -100,7 +100,7 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 				y = cartesianPos.getY();
 			}
 						
-			int destType = destLonLat ? Constants.POSITION_NONE : Constants.POSITION_2D;
+			int destType = destLonLat ? Constants.POSITION_LAT_LON : Constants.POSITION_2D;
 			
 			req.content().writeUnsignedByte(srcType);
 			req.content().writeDouble(x);			
@@ -115,8 +115,8 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 			req.content().writeDouble(roadmapPos.pos);
 			req.content().writeUnsignedByte(roadmapPos.laneID);
 			req.content().writeUnsignedByte(Constants.TYPE_UBYTE);
-			req.content().writeUnsignedByte(Constants.POSITION_NONE);
-			setPositionType(Constants.POSITION_NONE);
+			req.content().writeUnsignedByte(Constants.POSITION_LAT_LON);
+			setPositionType(Constants.POSITION_LAT_LON);
 		}
 		
 		

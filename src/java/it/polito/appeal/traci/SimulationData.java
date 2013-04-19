@@ -30,8 +30,7 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 	enum Variable {
 		CURRENT_SIM_TIME (Constants.VAR_TIME_STEP),
 		NET_BOUNDARIES (Constants.VAR_NET_BOUNDING_BOX),
-		POSITION_CONVERSION (0x82) // from http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Simulation_Value_Retrieval#Command_0x82:_Position_Conversion
-		                           // Constants is not updated and I can't find the creator, rebuildConstants_java.py
+		POSITION_CONVERSION (Constants.POSITION_CONVERSION)
 		;
 		public final int id;
 		private Variable(int id) {
