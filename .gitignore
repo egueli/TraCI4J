@@ -3,3 +3,6 @@ junit*.properties
 junit/
 
 *~
+
+# can be un-ignored when Javadoc is complete enough
+doc/
