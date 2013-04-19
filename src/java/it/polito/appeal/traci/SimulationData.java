@@ -29,7 +29,9 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 
 	enum Variable {
 		CURRENT_SIM_TIME (Constants.VAR_TIME_STEP),
-		NET_BOUNDARIES (Constants.VAR_NET_BOUNDING_BOX)
+		NET_BOUNDARIES (Constants.VAR_NET_BOUNDING_BOX),
+		POSITION_CONVERSION (0x82) // from http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Simulation_Value_Retrieval#Command_0x82:_Position_Conversion
+		                           // Constants is not updated and I can't find the creator, rebuildConstants_java.py
 		;
 		public final int id;
 		private Variable(int id) {
@@ -51,6 +53,12 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 				new ReadObjectVarQuery.BoundingBoxQ(dis, dos,
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.NET_BOUNDARIES.id));
+		
+		addReadQuery(Variable.POSITION_CONVERSION,
+				new PositionConversionQuery(dis, dos,
+						Constants.CMD_GET_SIM_VARIABLE, "",
+						Variable.POSITION_CONVERSION.id));
+
 	}
 
 	public ReadObjectVarQuery<Integer> queryCurrentSimTime() {
@@ -70,6 +78,10 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 		return (ReadObjectVarQuery.BoundingBoxQ) getReadQuery(Variable.NET_BOUNDARIES);
 	}
 
+	public PositionConversionQuery queryPositionConversion() {
+		return (PositionConversionQuery) getReadQuery(Variable.POSITION_CONVERSION);
+	}
+	
 	@Override
 	public void nextStep(double step) {
 		queryCurrentSimTime().setObsolete();

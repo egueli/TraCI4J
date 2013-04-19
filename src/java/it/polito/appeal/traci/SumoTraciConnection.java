@@ -744,6 +744,14 @@ public class SumoTraciConnection {
 	}
 
 	/**
+	 * @return the {@link PositionConversionQuery} object that allows converting
+	 *         between position types.
+	 */
+	public PositionConversionQuery queryPositionConversion() {
+		return simData.queryPositionConversion();
+	}
+	
+	/**
 	 * If set to true, the roadmap position of all vehicle is read at every
 	 * simulation step. This will increase performance, since the query for all
 	 * vehicles is made in a single TraCI query at the next sim step.
