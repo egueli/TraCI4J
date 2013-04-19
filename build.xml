@@ -122,9 +122,9 @@
         	noindex="false" 
         	nonavbar="false" 
         	notree="false" 
-        	packagenames="it.polito.appeal.traci.*,de.uniluebeck.itm.tcpip" 
+        	packagenames="it.polito.appeal.traci.*" 
         	source="1.6" 
-	    	sourcepath="src" 
+	    	sourcepath="src/java" 
 	    	splitindex="true" 
 	    	use="true" 
 	    	version="true">
