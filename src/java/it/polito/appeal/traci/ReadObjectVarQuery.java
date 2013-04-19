@@ -63,7 +63,7 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	List<Command> getRequests() {
 		Command cmd = new Command(commandID);
 		Storage content = cmd.content();
-		content.writeByte(varID);
+		content.writeUnsignedByte(varID);
 		content.writeStringASCII(objectID);
 		return Collections.singletonList(cmd);
 	}
