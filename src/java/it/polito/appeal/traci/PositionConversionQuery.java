@@ -39,7 +39,7 @@ import java.util.List;
  * object. 
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Simulation_Value_Retrieval#Command_0x82:_Position_Conversion">Position Conversion</a> command
+ * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Simulation_Value_Retrieval#Command_0x82:_Position_Conversion">Position Conversion</a>
  * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Protocol#Position_Representations">Position Representations</a>
  */
 public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {

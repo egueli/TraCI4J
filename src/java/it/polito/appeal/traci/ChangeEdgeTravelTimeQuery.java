@@ -26,6 +26,13 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for changing the travel time of an edge as seen by a vehicle.
+ * 
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
 
 	private Edge edge;
@@ -46,10 +53,18 @@ public class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
 		content.writeDouble(travelTime);
 	}
 
+	/**
+	 * Sets the edge to change travel time. 
+	 * @param edge
+	 */
 	public void setEdge(Edge edge) {
 		this.edge = edge;
 	}
 
+	/**
+	 * Set the new travel time of the specified edge. 
+	 * @param travelTime
+	 */
 	public void setTravelTime(double travelTime) {
 		this.travelTime = travelTime;
 	}

@@ -36,8 +36,16 @@ import de.uniluebeck.itm.tcpip.Storage;
  * Represents a query that changes the state of the simulation in some way.
  * <p>
  * It can be executed immediately using the {@link #run()} method, otherwise it
- * can be added to a {@link MultiQuery} together with other queries to increse
+ * can be added to a {@link MultiQuery} together with other queries to increase
  * performance.
+ * <p>
+ * If a subclass needs parameters, these can be entered via setter methods, so that
+ * the general usage is like this:
+ * <ol>
+ * <li>get a query from {@link SumoTraciConnection} or a {@link TraciObject} subclass</li>
+ * <li>set the query's data</li>
+ * <li>run the query</li>
+ * </ol>
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 

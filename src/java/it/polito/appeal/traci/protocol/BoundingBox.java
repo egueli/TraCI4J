@@ -31,10 +31,25 @@ import java.awt.geom.Rectangle2D;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a bounding box in the SUMO world.
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Protocol.html#Boundary_Box_.28ubyte_identifier:_0x05.29">TraCI docs</a> 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	private final Rectangle2D.Double rect;
 	
+	/**
+	 * Constructor from a {@link Storage} object.
+	 * 
+	 * @param storage
+	 * @param verifyType
+	 *            checks the first byte for the correct type ID. If not, throws
+	 *            a {@link TraCIException}.
+	 * @throws TraCIException
+	 */
 	public BoundingBox(Storage storage, boolean verifyType) throws TraCIException {
 		if (verifyType) {
 			if (storage.readByte() != Constants.TYPE_BOUNDINGBOX)

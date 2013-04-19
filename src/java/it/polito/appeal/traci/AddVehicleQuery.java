@@ -27,6 +27,14 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for adding a new vehicle in the simulation.
+ * <p>
+ * For the moment, the new vehicle must follow an already known route.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class AddVehicleQuery extends ChangeStateQuery {
 
 	private String id;
@@ -43,6 +51,17 @@ public class AddVehicleQuery extends ChangeStateQuery {
 		this.vehicles = vehicles;
 	}
 
+	/**
+	 * Sets the parameters for the new vehicle.
+	 * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI doc</a>
+	 * @param id
+	 * @param vehicleType
+	 * @param route
+	 * @param lane
+	 * @param insertionPosition
+	 * @param insertionSpeed
+	 * @throws IOException
+	 */
 	public void setVehicleData(
 			String id, 
 			VehicleType vehicleType, 

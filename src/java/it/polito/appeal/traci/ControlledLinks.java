@@ -27,11 +27,11 @@ public class ControlledLinks {
 		}
 
 	}
+	
 	/**
-	 * Returns an array describing the controlled links of a TLS.
+	 * @return an array describing the controlled links of a TLS.
 	 * The first index points to a signal; the second index points to a link
 	 * controlled by that signal.
-	 * @return
 	 */
 	public ControlledLink[][] getLinks() {
 		return links;

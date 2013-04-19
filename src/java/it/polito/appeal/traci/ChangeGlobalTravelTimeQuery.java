@@ -29,6 +29,14 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for changing a travel time of an edge. The change can be temporary, i.e.
+ * last for a limited time interval.
+ * 
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Edge_State.html">TraCI docs</a>
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ChangeGlobalTravelTimeQuery extends ChangeObjectStateQuery {
 
 	private int beginTime;
