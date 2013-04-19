@@ -74,20 +74,13 @@ public class PositionConvertionTest {
 		TraCITest.stopSumoConn(conn);
 	}
 
-	@Ignore
 	@Test
-	public void testConvertRoadmapBeginToXY() throws IOException {
+	public void testConvertRoadmapBeginToLonLat() throws IOException {
 		PositionConversionQuery conv = conn.queryPositionConversion();
-		conv.setPositionToConvert(new RoadmapPosition(EDGE_NAME, 0, LANE_NUM), false);
+		conv.setPositionToConvert(new RoadmapPosition(EDGE_NAME, 0, LANE_NUM));
 		Point2D out = conv.get();
-		assertEquals(out.getX(), LOCATION_LOCAL.getX(), 1e-5);
-		assertEquals(out.getY(), LOCATION_LOCAL.getY(), 1e-5);
-	}
-
-	@Ignore
-	@Test
-	public void testConvertRoadmapBeginToLonLat() {
-		fail();
+		assertEquals(LOCATION_GEO.getX(), out.getX(), 1e-5);
+		assertEquals(LOCATION_GEO.getY(), out.getY(), 1e-5);
 	}
 
 

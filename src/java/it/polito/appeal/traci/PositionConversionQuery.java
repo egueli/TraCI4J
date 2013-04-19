@@ -64,13 +64,12 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 		destLonLat = outputLonLat;
 	}
 
-	public void setPositionToConvert(RoadmapPosition pos, boolean outputLonLat) {
-		if (destLonLat != outputLonLat || cartesianPos != null || pos.equals(roadmapPos))
+	public void setPositionToConvert(RoadmapPosition pos) {
+		if (cartesianPos != null || pos.equals(roadmapPos))
 			setObsolete();
 		
 		cartesianPos = null;
 		roadmapPos = pos;
-		destLonLat = outputLonLat;
 	}
 
 	@Override
