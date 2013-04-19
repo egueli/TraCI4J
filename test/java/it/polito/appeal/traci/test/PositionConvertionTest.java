@@ -19,29 +19,13 @@
 
 package it.polito.appeal.traci.test;
 
-import static org.junit.Assert.*;
-import it.polito.appeal.traci.ChangeLightsStateQuery;
-import it.polito.appeal.traci.ControlledLink;
-import it.polito.appeal.traci.ControlledLinks;
-import it.polito.appeal.traci.Lane;
-import it.polito.appeal.traci.LightState;
-import it.polito.appeal.traci.Logic;
-import it.polito.appeal.traci.Phase;
+import static org.junit.Assert.assertEquals;
 import it.polito.appeal.traci.PositionConversionQuery;
-import it.polito.appeal.traci.Program;
-import it.polito.appeal.traci.ReadObjectVarQuery;
-import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
-import it.polito.appeal.traci.TLState;
-import it.polito.appeal.traci.TrafficLight;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
 
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
