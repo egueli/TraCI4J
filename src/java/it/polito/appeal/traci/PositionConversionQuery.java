@@ -111,10 +111,13 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 			setPositionType(destType);
 		}
 		else {
+			req.content().writeUnsignedByte(Constants.POSITION_ROADMAP);
 			req.content().writeStringUTF8(roadmapPos.edgeID);
 			req.content().writeDouble(roadmapPos.pos);
 			req.content().writeUnsignedByte(roadmapPos.laneID);
-			req.content().writeByte(Constants.POSITION_ROADMAP);
+			req.content().writeUnsignedByte(Constants.TYPE_UBYTE);
+			req.content().writeUnsignedByte(Constants.POSITION_NONE);
+			setPositionType(Constants.POSITION_NONE);
 		}
 		
 		
