@@ -362,22 +362,37 @@ implements StepAdvanceListener
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ChangeEdgeTravelTimeQuery} relative to this query.
+	 */
 	public ChangeEdgeTravelTimeQuery querySetEdgeTravelTime() {
 		return csqvar_SetEdgeTravelTime;
 	}
 	
+	/**
+	 * @return the instance of {@link RerouteQuery} relative to this query.
+	 */
 	public RerouteQuery queryReroute() {
 		return csqvar_Reroute;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeTargetQuery} relative to this query.
+	 */
 	public ChangeTargetQuery queryChangeTarget() {
 		return csqvar_ChangeTarget;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeMaxSpeedQuery} relative to this query.
+	 */
 	public ChangeMaxSpeedQuery queryChangeMaxSpeed() {
 		return csqvar_ChangeMaxSpeed;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeRouteQuery} relative to this query.
+	 */
 	public ChangeRouteQuery queryChangeRoute() {
 		return csqvar_ChangeRoute;
 	}

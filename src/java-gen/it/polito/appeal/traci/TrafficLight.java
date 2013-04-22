@@ -247,22 +247,37 @@ implements StepAdvanceListener
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ChangeLightsStateQuery} relative to this query.
+	 */
 	public ChangeLightsStateQuery queryChangeLightsState() {
 		return csqvar_ChangeLightsState;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeObjectVarQuery.ChangeIntegerQ} relative to this query.
+	 */
 	public ChangeObjectVarQuery.ChangeIntegerQ queryChangePhaseIndex() {
 		return csqvar_ChangePhaseIndex;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeObjectVarQuery.ChangeStringQ} relative to this query.
+	 */
 	public ChangeObjectVarQuery.ChangeStringQ queryChangeProgram() {
 		return csqvar_ChangeProgram;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeObjectVarQuery.ChangeIntegerQ} relative to this query.
+	 */
 	public ChangeObjectVarQuery.ChangeIntegerQ queryChangePhaseDuration() {
 		return csqvar_ChangePhaseDuration;
 	}
 	
+	/**
+	 * @return the instance of {@link ChangeCompleteProgramQuery} relative to this query.
+	 */
 	public ChangeCompleteProgramQuery queryChangeCompleteProgramDefinition() {
 		return csqvar_ChangeCompleteProgramDefinition;
 	}

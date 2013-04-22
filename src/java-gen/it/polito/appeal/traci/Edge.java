@@ -233,6 +233,9 @@ implements StepAdvanceListener
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ChangeGlobalTravelTimeQuery} relative to this query.
+	 */
 	public ChangeGlobalTravelTimeQuery queryChangeTravelTime() {
 		return csqvar_ChangeTravelTime;
 	}

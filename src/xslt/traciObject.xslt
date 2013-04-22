@@ -146,6 +146,9 @@ implements StepAdvanceListener
 	<!--  QUERY SETTERS -->
 	
 	<xsl:for-each select="changeStateQueries/changeStateQuery">
+	/**
+	 * @return the instance of {@link <xsl:value-of select="query"/>} relative to this query.
+	 */
 	public <xsl:value-of select="query" /> query<xsl:value-of select="name"/>() {
 		return csqvar_<xsl:value-of select="name"/>;
 	}
