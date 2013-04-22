@@ -24,6 +24,13 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Specialization of a {@link ChangeStateQuery} that changes a given variable
+ * of a TraCI object.
+ *  
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public abstract class ChangeObjectStateQuery extends ChangeStateQuery {
 
 	private final String objectID;

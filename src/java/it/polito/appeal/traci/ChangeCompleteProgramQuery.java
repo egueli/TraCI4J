@@ -27,7 +27,7 @@ import java.io.DataOutputStream;
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
- * Query for completely setting the the program of a TLS.
+ * Query for completely setting the the program of a TLS, specified via a {@link Logic} instance.
  * 
  * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Traffic_Lights_State.html">TraCI docs</a>
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;

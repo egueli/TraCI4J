@@ -33,7 +33,7 @@ import de.uniluebeck.itm.tcpip.Storage;
  * For the moment, the new vehicle must follow an already known route.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- *
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
  */
 public class AddVehicleQuery extends ChangeStateQuery {
 

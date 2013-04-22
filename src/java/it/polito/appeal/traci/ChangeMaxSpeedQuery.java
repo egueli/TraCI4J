@@ -25,6 +25,12 @@ import java.io.DataOutputStream;
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeDoubleQ;
 import it.polito.appeal.traci.protocol.Constants;
 
+/**
+ * Query for changing a vehicle's maximum speed.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+ */
 public class ChangeMaxSpeedQuery extends ChangeDoubleQ {
 
 	ChangeMaxSpeedQuery(DataInputStream dis, DataOutputStream dos,

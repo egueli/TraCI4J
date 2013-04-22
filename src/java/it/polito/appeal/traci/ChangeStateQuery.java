@@ -35,9 +35,9 @@ import de.uniluebeck.itm.tcpip.Storage;
 /**
  * Represents a query that changes the state of the simulation in some way.
  * <p>
- * It can be executed immediately using the {@link #run()} method, otherwise it
- * can be added to a {@link MultiQuery} together with other queries to increase
- * performance.
+ * It can be executed immediately using the {@link #run()} method, or it
+ * can be added to a {@link MultiQuery} together with other queries to make a single
+ * request to SUMO and increase performance.
  * <p>
  * If a subclass needs parameters, these can be entered via setter methods, so that
  * the general usage is like this:

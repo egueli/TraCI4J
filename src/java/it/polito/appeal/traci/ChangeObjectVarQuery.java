@@ -42,10 +42,17 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 		super(dis, dos, commandID, objectID, variableID);
 	}
 
+	/**
+	 * @return the new value to set to this object's variable.
+	 */
 	public V getValue() {
 		return value;
 	}
 
+	/**
+	 * Sets the new value to set to this object's variable.
+	 * @param value
+	 */
 	public void setValue(V value) {
 		this.value = value;
 	}
@@ -61,8 +68,14 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	protected abstract void writeValueTo(V val, Storage content);
 	
 	
+	/**
+	 * Specialization of {@link ChangeObjectVarQuery} for a {@link String} variable.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 *
+	 */
 	public static class ChangeStringQ extends ChangeObjectVarQuery<String> {
-		public ChangeStringQ(DataInputStream dis, DataOutputStream dos,
+		ChangeStringQ(DataInputStream dis, DataOutputStream dos,
 				String objectID, int commandID, int variableID) {
 			super(dis, dos, commandID, objectID, variableID);
 		}
@@ -74,9 +87,15 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ChangeObjectVarQuery} for an {@link Integer} variable.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 *
+	 */
 	public static class ChangeIntegerQ extends ChangeObjectVarQuery<Integer> {
 
-		public ChangeIntegerQ(DataInputStream dis, DataOutputStream dos,
+		ChangeIntegerQ(DataInputStream dis, DataOutputStream dos,
 				String objectID, int commandID, int variableID) {
 			super(dis, dos, commandID, objectID, variableID);
 		}
@@ -88,9 +107,15 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ChangeObjectVarQuery} for a {@link Double} variable.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 *
+	 */
 	public static class ChangeDoubleQ extends ChangeObjectVarQuery<Double> {
 
-		public ChangeDoubleQ(DataInputStream dis, DataOutputStream dos,
+		ChangeDoubleQ(DataInputStream dis, DataOutputStream dos,
 				int commandID, String objectID, int variableID) {
 			super(dis, dos, commandID, objectID, variableID);
 		}

@@ -26,6 +26,12 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for changing the current traffic lights state throught a {@link TLState} object.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ChangeLightsStateQuery extends ChangeObjectVarQuery<TLState> {
 	ChangeLightsStateQuery(DataInputStream dis, DataOutputStream dos,
 			String objectID) {
