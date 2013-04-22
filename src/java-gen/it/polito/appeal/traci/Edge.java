@@ -169,41 +169,65 @@ implements StepAdvanceListener
 	
 	
 	
+	/**
+	 * @return the instance of {@link ReadGlobalTravelTimeQuery} relative to this query.
+	 */
 	public ReadGlobalTravelTimeQuery queryReadGlobalTravelTime() {
 		return (ReadGlobalTravelTimeQuery) getReadQuery(Variable.TRAVEL_TIME);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCO2Emission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCOEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadHCEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadPMXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNOXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadFuelConsumption() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}

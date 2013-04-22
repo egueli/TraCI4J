@@ -79,6 +79,9 @@ implements StepAdvanceListener
 	
 	
 	
+	/**
+	 * @return the instance of {@link RouteQuery} relative to this query.
+	 */
 	public RouteQuery queryReadRoute() {
 		return (RouteQuery) getReadQuery(Variable.ROUTE);
 	}

@@ -128,6 +128,15 @@ implements StepAdvanceListener
 			<xsl:otherwise><xsl:value-of select="query"/></xsl:otherwise>		
 		</xsl:choose>
 	</xsl:variable>
+	<xsl:variable name="javadocLinkReturnType">
+		<xsl:choose>
+			<xsl:when test="returnType!=''">ReadObjectVarQuery</xsl:when>
+			<xsl:otherwise><xsl:value-of select="query"/></xsl:otherwise>		
+		</xsl:choose>
+	</xsl:variable>
+	/**
+	 * @return the instance of {@link <xsl:value-of select="$javadocLinkReturnType"/>} relative to this query.
+	 */
 	public <xsl:value-of select="$getterReturnType"/> query<xsl:value-of select="name" />() {
 		return (<xsl:value-of select="query"/>) getReadQuery(Variable.<xsl:value-of select="enum"/>);
 	}

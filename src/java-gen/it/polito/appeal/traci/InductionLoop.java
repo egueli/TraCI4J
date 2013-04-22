@@ -123,26 +123,41 @@ implements StepAdvanceListener
 	
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<Lane> queryReadLane() {
 		return (ReadObjectVarQuery.LaneQ) getReadQuery(Variable.LANE);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPositionInLane() {
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<Integer> queryReadLastStepVehicleNumber() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.VEHICLE_NUMBER);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<Double> queryReadLastStepMeanSpeed() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MEAN_SPEED);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.util.Set<Vehicle>> queryReadLastStepVehicles() {
 		return (VehicleSetQuery) getReadQuery(Variable.LAST_STEP_VEHICLES);
 	}

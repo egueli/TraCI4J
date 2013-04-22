@@ -183,41 +183,65 @@ implements StepAdvanceListener
 	
 	
 	
+	/**
+	 * @return the instance of {@link ReadTLStateQuery} relative to this query.
+	 */
 	public ReadTLStateQuery queryReadState() {
 		return (ReadTLStateQuery) getReadQuery(Variable.STATE);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Integer> queryReadDefaultCurrentPhaseDuration() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.DEFAULT_CURRENT_PHASE_DURATION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link LaneListQuery} relative to this query.
+	 */
 	public LaneListQuery queryReadControlledLanes() {
 		return (LaneListQuery) getReadQuery(Variable.CONTROLLED_LANES);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadControlledLinksQuery} relative to this query.
+	 */
 	public ReadControlledLinksQuery queryReadControlledLinks() {
 		return (ReadControlledLinksQuery) getReadQuery(Variable.CONTROLLED_LINKS);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery.IntegerQ} relative to this query.
+	 */
 	public ReadObjectVarQuery.IntegerQ queryReadCurrentPhase() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.CURRENT_PHASE);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery.StringQ} relative to this query.
+	 */
 	public ReadObjectVarQuery.StringQ queryReadCurrentProgram() {
 		return (ReadObjectVarQuery.StringQ) getReadQuery(Variable.CURRENT_PROGRAM);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadCompleteDefinitionQuery} relative to this query.
+	 */
 	public ReadCompleteDefinitionQuery queryReadCompleteDefinition() {
 		return (ReadCompleteDefinitionQuery) getReadQuery(Variable.COMPLETE_DEFINITION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery.IntegerQ} relative to this query.
+	 */
 	public ReadObjectVarQuery.IntegerQ queryReadAssumedNextSwitchTime() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME);
 	}

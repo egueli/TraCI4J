@@ -266,61 +266,97 @@ implements StepAdvanceListener
 	
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadSpeed() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.SPEED);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPosition() {
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadLanePosition() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LANE_POSITION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.util.List<Edge>> queryReadCurrentRoute() {
 		return (RouteQuery) getReadQuery(Variable.CURRENT_ROUTE);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<Edge> queryReadCurrentEdge() {
 		return (ReadObjectVarQuery.EdgeQ) getReadQuery(Variable.CURRENT_EDGE);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCO2Emission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCOEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadHCEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadPMXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNOXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadFuelConsumption() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION);
 	}
 	
 	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}
