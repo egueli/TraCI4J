@@ -75,8 +75,9 @@ public class AddRouteQuery extends ChangeStateQuery {
 		content.writeUnsignedByte(Constants.ADD);
 		
 		content.writeStringASCII(id);
-		
 		edges.writeTo(content, true);
+		
+		routes.getQuery().setObsolete();
 	}
 	
 }
