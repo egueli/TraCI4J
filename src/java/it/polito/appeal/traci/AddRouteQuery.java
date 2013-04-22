@@ -20,17 +20,17 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.StringList;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
- * Query for adding a new vehicle in the simulation.
- * <p>
- * For the moment, the new vehicle must follow an already known route.
+ * Query for adding a new route in the simulation.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
@@ -38,49 +38,36 @@ import de.uniluebeck.itm.tcpip.Storage;
 public class AddRouteQuery extends ChangeStateQuery {
 
 	private String id;
-	private VehicleType vehicleType;
-	private Route route;
-	private int lane;
-	private double insertionPosition;
-	private double insertionSpeed;
-	private final Repository<Vehicle> vehicles;
+	private StringList edges;
+	private final Repository<Route> routes;
 
 	AddRouteQuery(DataInputStream dis, DataOutputStream dos,
-			Repository<Vehicle> vehicles) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE);
-		this.vehicles = vehicles;
+			Repository<Route> routes) {
+		super(dis, dos, Constants.CMD_SET_ROUTE_VARIABLE);
+		this.routes = routes;
 	}
 
 	/**
-	 * Sets the parameters for the new vehicle.
-	 * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI doc</a>
+	 * Sets the parameters for the new route.
+	 * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Route_State.html">TraCI docs</a>
 	 * @param id
-	 * @param vehicleType
-	 * @param route
-	 * @param lane
-	 * @param insertionPosition
-	 * @param insertionSpeed
+	 * @param edges
 	 * @throws IOException
 	 */
 	public void setVehicleData(
-			String id, 
-			VehicleType vehicleType, 
-			Route route,
-			int lane,
-			double insertionPosition, 
-			double insertionSpeed) 
+			String id,
+			List<Edge> edges) 
 	throws IOException {
 		
-		if (vehicles.getByID(id) != null)
-			throw new IllegalArgumentException("vehicle already exists");
+		if (routes.getByID(id) != null)
+			throw new IllegalArgumentException("route already exists");
 		
 		this.id = id;
-		this.vehicleType = vehicleType;
-		this.route = route;
-		this.lane = lane;
-		this.insertionPosition = insertionPosition;
-		this.insertionSpeed = insertionSpeed;
 		
+		this.edges = new StringList();
+		for (Edge edge : edges) {
+			this.edges.add(edge.getID());
+		}
 	}
 	
 	@Override
@@ -91,23 +78,7 @@ public class AddRouteQuery extends ChangeStateQuery {
 		content.writeUnsignedByte(Constants.TYPE_COMPOUND);
 		content.writeInt(6);
 		
-		content.writeUnsignedByte(Constants.TYPE_STRING);
-		content.writeStringASCII(vehicleType.getID());
-		
-		content.writeUnsignedByte(Constants.TYPE_STRING);
-		content.writeStringASCII(route.getID());
-
-		content.writeUnsignedByte(Constants.TYPE_INTEGER);
-		content.writeInt(0); // departure time - TODO add departure times in the future
-		
-		content.writeUnsignedByte(Constants.TYPE_DOUBLE);
-		content.writeDouble(insertionPosition);
-
-		content.writeUnsignedByte(Constants.TYPE_DOUBLE);
-		content.writeDouble(insertionSpeed);
-		
-		content.writeUnsignedByte(Constants.TYPE_BYTE);
-		content.writeByte(lane);
+		edges.writeTo(content, true);
 	}
 	
 }
