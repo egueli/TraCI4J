@@ -130,7 +130,7 @@ implements StepAdvanceListener
 		};
 		
 		csqvar_ChangeType = new ChangeObjectVarQuery.ChangeStringQ(dis, dos, id
-		, it.polito.appeal.traci.protocol.Constants.CMD_SET_TL_VARIABLE, it.polito.appeal.traci.protocol.Constants.VAR_TYPE)
+		, it.polito.appeal.traci.protocol.Constants.CMD_SET_POI_VARIABLE, it.polito.appeal.traci.protocol.Constants.VAR_TYPE)
 		{
 			@Override
 			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
