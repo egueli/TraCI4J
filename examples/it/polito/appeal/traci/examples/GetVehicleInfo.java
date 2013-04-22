@@ -24,8 +24,20 @@ import it.polito.appeal.traci.Vehicle;
 
 import java.util.Collection;
 
+/**
+ * This code runs an instance of SUMO, queries the map bounds and does ten
+ * simulation steps. For each step, it prints which and how many vehicles are
+ * active.
+ * <p>
+ * The specified configuration file is relative to the TraCI4J package's base
+ * directory.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public class GetVehicleInfo {
 
+	/** main method */
 	public static void main(String[] args) {
 		SumoTraciConnection conn = new SumoTraciConnection(
 				"test/sumo_maps/box1l/test.sumo.cfg",  // config file

@@ -23,6 +23,11 @@ import it.polito.appeal.traci.TraCIException.UnexpectedDatatype;
 import it.polito.appeal.traci.protocol.Constants;
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a TLS program.
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Traffic_Lights.html#Loading_new_TLS-Programs">SUMO documentation</a>
+ */
 public class Logic {
 	private final String subID;
 	private final int currentPhaseIndex;
@@ -45,17 +50,40 @@ public class Logic {
 			phases[i] = new Phase(content);
 		}
 	}
+	
+	/**
+	 * Creates a new TLS program
+	 * @param subID the program's string ID
+	 * @param currentPhaseIndex the index in the phases array to begin from
+	 * @param phases the ordered list of traffic light phases over time (see {@link Phase})
+	 */
 	public Logic(String subID, int currentPhaseIndex, Phase[] phases) {
 		this.subID = subID;
 		this.currentPhaseIndex = currentPhaseIndex;
 		this.phases = phases;
 	}
+	
+	/**
+	 * 
+	 * @return the program's string ID
+	 */
 	public String getSubID() {
 		return subID;
 	}
+	
+	/**
+	 * 
+	 * @return the current phase index
+	 * @see #getPhases()
+	 */
 	public int getCurrentPhaseIndex() {
 		return currentPhaseIndex;
 	}
+	
+	/**
+	 * 
+	 * @return the ordered list of traffic light phases over time (see {@link Phase}) 
+	 */
 	public Phase[] getPhases() {
 		return phases;
 	}

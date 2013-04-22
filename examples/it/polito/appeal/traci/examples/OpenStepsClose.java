@@ -26,8 +26,15 @@ import java.util.Collection;
 
 import org.apache.log4j.BasicConfigurator;
 
+/**
+ * This code picks a vehicle from the active ones and queries its current route.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public class OpenStepsClose {
 
+	/** main method */
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		

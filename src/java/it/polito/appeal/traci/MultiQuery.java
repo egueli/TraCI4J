@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * Represents a set of {@link Query}s to run as a whole, i.e. within a single
+ * Represents a list of {@link Query}s to run as a whole, i.e. within a single
  * SUMO request and response message. This may significantly reduce the
  * execution time, because the TCP overhead is distributed along all the queries 
  * (JUnit tests show a performance increase of ~20x in an Intel T7300 dual
@@ -60,14 +60,30 @@ public class MultiQuery {
 		this.dis = dis;
 	}
 	
+	/**
+	 * Adds a query to be run.
+	 * @param query
+	 * @see List#add(Object)
+	 */
 	public void add(Query query) {
 		queries.add(query);
 	}
 	
+	/**
+	 * Removes a query from the list.
+	 * @param query
+	 * @return <code>true</code> if this list contained the specified query
+	 * @see List#remove(Object)
+	 */
 	public boolean remove(Query query) {
 		return queries.remove(query);
 	}
 	
+	/**
+	 * Executes all the queries in the list.
+	 * 
+	 * @throws IOException
+	 */
 	public void run() throws IOException {
 		if (log.isDebugEnabled()) {
 			log.debug("Running a batch of " + queries.size() + " queries");
