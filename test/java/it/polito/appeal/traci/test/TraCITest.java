@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import it.polito.appeal.traci.AddRouteQuery;
 import it.polito.appeal.traci.AddVehicleQuery;
 import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
@@ -919,6 +920,31 @@ public class TraCITest {
 		conn.nextSimStep();
 		assertNull(conn.getVehicleRepository().getByID(firstVehicle.getID()));
 	}
+	
+	/**
+	 * Checks for the correct adding of a new route.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testAddRoute() throws IOException {
+		conn.nextSimStep();
+
+		final String id = "A_NEW_ROUTE";
+		
+		AddRouteQuery arq = conn.queryAddRoute();
+		List<Edge> edges = new ArrayList<Edge>();
+		edges.add(conn.getEdgeRepository().getByID("beg"));
+		edges.add(conn.getEdgeRepository().getByID("beg2left"));
+		edges.add(conn.getEdgeRepository().getByID("left"));
+		edges.add(conn.getEdgeRepository().getByID("left2end"));
+		edges.add(conn.getEdgeRepository().getByID("end"));
+		arq.setVehicleData(id, edges);
+		arq.run();
+		
+		assertTrue(conn.getRouteRepository().getAll().containsKey(id));
+	}
+
 	
 	// TODO add induction loop tests
 }
