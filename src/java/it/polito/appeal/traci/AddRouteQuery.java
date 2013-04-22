@@ -75,8 +75,6 @@ public class AddRouteQuery extends ChangeStateQuery {
 		content.writeUnsignedByte(Constants.ADD);
 		
 		content.writeStringASCII(id);
-		content.writeUnsignedByte(Constants.TYPE_COMPOUND);
-		content.writeInt(6);
 		
 		edges.writeTo(content, true);
 	}
