@@ -16,6 +16,13 @@
 		is capital. Must be equal to this document's file name. -->
 	<name>Vehicle</name>
 
+	<javadoc>
+	Representation of a vehicle in the SUMO environment.
+	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Definition_of_Vehicles,_Vehicle_Types,_and_Routes.html#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
+	</javadoc>
+
+
 	<!-- Lists all the other repositories that are needed by the queries -->
 	<repos>
 		<repo>Edge</repo>

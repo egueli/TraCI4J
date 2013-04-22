@@ -30,6 +30,13 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+
+	Representation of a class of vehicles in the SUMO environment.
+	@see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Definition_of_Vehicles,_Vehicle_Types,_and_Routes.html#Vehicle_Types">SUMO documentation</a>
+	@author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	
+*/
 public class VehicleType 
 extends TraciObject<VehicleType.Variable>
 implements StepAdvanceListener

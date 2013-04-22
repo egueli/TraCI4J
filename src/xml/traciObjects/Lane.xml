@@ -12,6 +12,12 @@
 <traciClass>
 	<name>Lane</name>
 
+	<javadoc>
+	Representation of a lane in the SUMO environment.
+	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Networks/SUMO_Road_Networks.html#Edges_and_Lanes"&gt;SUMO documentation&lt;/a&gt;
+	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
+	</javadoc>
+
 	<repos>
 	<repo>Edge</repo><repo>Lane</repo></repos>
 	

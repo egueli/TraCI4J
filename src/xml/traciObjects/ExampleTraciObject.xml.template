@@ -16,6 +16,13 @@
 		is capital. Must be equal to this document's file name. -->
 	<name>ExampleTraciObject</name>
 
+	<!-- The javadoc of the class that will be generated. -->
+	<javadoc>
+	Put your object description here.
+	@author John Doe &amp;lt;john.doe@company.com&amp;gt;
+	</javadoc>
+
+
 	<!-- Lists all the other repositories that are needed by the queries -->
 	<repos>
 		<repo>Repository1</repo>

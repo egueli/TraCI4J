@@ -30,6 +30,13 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+
+	Representation of a Multi-Entry Multi-Exit detector (E3) in the SUMO environment.
+	@see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Output/Multi-Entry_Multi-Exit_Detectors_(E3).html">SUMO documentation</a>
+	@author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	
+*/
 public class MeMeDetector 
 extends TraciObject<MeMeDetector.Variable>
 implements StepAdvanceListener

@@ -30,6 +30,13 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+
+	Representation of a lane in the SUMO environment.
+	@see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Networks/SUMO_Road_Networks.html#Edges_and_Lanes">SUMO documentation</a>
+	@author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	
+*/
 public class Lane 
 extends TraciObject<Lane.Variable>
 implements StepAdvanceListener

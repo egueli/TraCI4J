@@ -30,6 +30,13 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+
+	Representation of a traffic light in the SUMO environment.
+	@see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Traffic_Lights.html">SUMO documentation</a>
+	@author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	
+*/
 public class TrafficLight 
 extends TraciObject<TrafficLight.Variable>
 implements StepAdvanceListener

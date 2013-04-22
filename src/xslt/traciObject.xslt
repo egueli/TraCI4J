@@ -48,6 +48,9 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+<xsl:value-of select="javadoc"/>
+*/
 public class <xsl:value-of select="name"/> 
 extends TraciObject&lt;<xsl:value-of select="name"/>.Variable&gt;
 implements StepAdvanceListener

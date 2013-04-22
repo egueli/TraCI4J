@@ -30,6 +30,13 @@ package it.polito.appeal.traci;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+
+	Representation of an induction loop in the SUMO environment.
+	@see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Output/Induction_Loops_Detectors_(E1).html">SUMO documentation</a>
+	@author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	
+*/
 public class InductionLoop 
 extends TraciObject<InductionLoop.Variable>
 implements StepAdvanceListener

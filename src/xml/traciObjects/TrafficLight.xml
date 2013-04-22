@@ -11,7 +11,13 @@
 
 <traciClass>
 	<name>TrafficLight</name>
-
+	
+	<javadoc>
+	Representation of a traffic light in the SUMO environment.
+	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Traffic_Lights.html"&gt;SUMO documentation&lt;/a&gt;
+	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
+	</javadoc>
+	
 	<repos>
 		<repo>Lane</repo>
 	</repos>
