@@ -33,11 +33,42 @@ extends TraciObject<InductionLoop.Variable>
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 */	
 	public static enum Variable {
+		
+		/** 
+		 * Query "ReadLane"
+		 * @see {@link #queryReadLane}
+		 */
 		LANE,
+		
+		/** 
+		 * Query "ReadPositionInLane"
+		 * @see {@link #queryReadPositionInLane}
+		 */
 		POSITION,
+		
+		/** 
+		 * Query "ReadLastStepVehicleNumber"
+		 * @see {@link #queryReadLastStepVehicleNumber}
+		 */
 		VEHICLE_NUMBER,
+		
+		/** 
+		 * Query "ReadLastStepMeanSpeed"
+		 * @see {@link #queryReadLastStepMeanSpeed}
+		 */
 		MEAN_SPEED,
+		
+		/** 
+		 * Query "ReadLastStepVehicles"
+		 * @see {@link #queryReadLastStepVehicles}
+		 */
 		LAST_STEP_VEHICLES,
 		
 	}

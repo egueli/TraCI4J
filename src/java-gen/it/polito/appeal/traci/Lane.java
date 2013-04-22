@@ -33,20 +33,96 @@ extends TraciObject<Lane.Variable>
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 */	
 	public static enum Variable {
+		
+		/** 
+		 * Query "ReadShape"
+		 * @see {@link #queryReadShape}
+		 */
 		SHAPE,
+		
+		/** 
+		 * Query "ReadLength"
+		 * @see {@link #queryReadLength}
+		 */
 		LENGTH,
+		
+		/** 
+		 * Query "ReadLastStepOccupancy"
+		 * @see {@link #queryReadLastStepOccupancy}
+		 */
 		LAST_STEP_OCCUPANCY,
+		
+		/** 
+		 * Query "ReadMaxSpeed"
+		 * @see {@link #queryReadMaxSpeed}
+		 */
 		MAX_SPEED,
+		
+		/** 
+		 * Query "ReadParentEdge"
+		 * @see {@link #queryReadParentEdge}
+		 */
 		PARENT_EDGE,
+		
+		/** 
+		 * Query "ReadLinks"
+		 * @see {@link #queryReadLinks}
+		 */
 		LINKS,
+		
+		/** 
+		 * Query "ReadLastStepVehicleNumber"
+		 * @see {@link #queryReadLastStepVehicleNumber}
+		 */
 		LAST_STEP_VEHICLE_NUMBER,
+		
+		/** 
+		 * Query "ReadCO2Emission"
+		 * @see {@link #queryReadCO2Emission}
+		 */
 		CO2_EMISSION,
+		
+		/** 
+		 * Query "ReadCOEmission"
+		 * @see {@link #queryReadCOEmission}
+		 */
 		CO_EMISSION,
+		
+		/** 
+		 * Query "ReadHCEmission"
+		 * @see {@link #queryReadHCEmission}
+		 */
 		HC_EMISSION,
+		
+		/** 
+		 * Query "ReadPMXEmission"
+		 * @see {@link #queryReadPMXEmission}
+		 */
 		PMX_EMISSION,
+		
+		/** 
+		 * Query "ReadNOXEmission"
+		 * @see {@link #queryReadNOXEmission}
+		 */
 		NOX_EMISSION,
+		
+		/** 
+		 * Query "ReadFuelConsumption"
+		 * @see {@link #queryReadFuelConsumption}
+		 */
 		FUEL_CONSUMPTION,
+		
+		/** 
+		 * Query "ReadNoiseEmission"
+		 * @see {@link #queryReadNoiseEmission}
+		 */
 		NOISE_EMISSION,
 		
 	}

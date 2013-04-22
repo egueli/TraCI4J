@@ -33,18 +33,84 @@ extends TraciObject<Vehicle.Variable>
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 */	
 	public static enum Variable {
+		
+		/** 
+		 * Query "ReadSpeed"
+		 * @see {@link #queryReadSpeed}
+		 */
 		SPEED,
+		
+		/** 
+		 * Query "ReadPosition"
+		 * @see {@link #queryReadPosition}
+		 */
 		POSITION,
+		
+		/** 
+		 * Query "ReadLanePosition"
+		 * @see {@link #queryReadLanePosition}
+		 */
 		LANE_POSITION,
+		
+		/** 
+		 * Query "ReadCurrentRoute"
+		 * @see {@link #queryReadCurrentRoute}
+		 */
 		CURRENT_ROUTE,
+		
+		/** 
+		 * Query "ReadCurrentEdge"
+		 * @see {@link #queryReadCurrentEdge}
+		 */
 		CURRENT_EDGE,
+		
+		/** 
+		 * Query "ReadCO2Emission"
+		 * @see {@link #queryReadCO2Emission}
+		 */
 		CO2_EMISSION,
+		
+		/** 
+		 * Query "ReadCOEmission"
+		 * @see {@link #queryReadCOEmission}
+		 */
 		CO_EMISSION,
+		
+		/** 
+		 * Query "ReadHCEmission"
+		 * @see {@link #queryReadHCEmission}
+		 */
 		HC_EMISSION,
+		
+		/** 
+		 * Query "ReadPMXEmission"
+		 * @see {@link #queryReadPMXEmission}
+		 */
 		PMX_EMISSION,
+		
+		/** 
+		 * Query "ReadNOXEmission"
+		 * @see {@link #queryReadNOXEmission}
+		 */
 		NOX_EMISSION,
+		
+		/** 
+		 * Query "ReadFuelConsumption"
+		 * @see {@link #queryReadFuelConsumption}
+		 */
 		FUEL_CONSUMPTION,
+		
+		/** 
+		 * Query "ReadNoiseEmission"
+		 * @see {@link #queryReadNoiseEmission}
+		 */
 		NOISE_EMISSION,
 		
 	}

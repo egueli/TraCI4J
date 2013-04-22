@@ -33,14 +33,60 @@ extends TraciObject<TrafficLight.Variable>
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 */	
 	public static enum Variable {
+		
+		/** 
+		 * Query "ReadState"
+		 * @see {@link #queryReadState}
+		 */
 		STATE,
+		
+		/** 
+		 * Query "ReadDefaultCurrentPhaseDuration"
+		 * @see {@link #queryReadDefaultCurrentPhaseDuration}
+		 */
 		DEFAULT_CURRENT_PHASE_DURATION,
+		
+		/** 
+		 * Query "ReadControlledLanes"
+		 * @see {@link #queryReadControlledLanes}
+		 */
 		CONTROLLED_LANES,
+		
+		/** 
+		 * Query "ReadControlledLinks"
+		 * @see {@link #queryReadControlledLinks}
+		 */
 		CONTROLLED_LINKS,
+		
+		/** 
+		 * Query "ReadCurrentPhase"
+		 * @see {@link #queryReadCurrentPhase}
+		 */
 		CURRENT_PHASE,
+		
+		/** 
+		 * Query "ReadCurrentProgram"
+		 * @see {@link #queryReadCurrentProgram}
+		 */
 		CURRENT_PROGRAM,
+		
+		/** 
+		 * Query "ReadCompleteDefinition"
+		 * @see {@link #queryReadCompleteDefinition}
+		 */
 		COMPLETE_DEFINITION,
+		
+		/** 
+		 * Query "ReadAssumedNextSwitchTime"
+		 * @see {@link #queryReadAssumedNextSwitchTime}
+		 */
 		ASSUMED_NEXT_SWITCH_TIME,
 		
 	}

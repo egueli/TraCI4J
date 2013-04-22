@@ -33,7 +33,18 @@ extends TraciObject<Route.Variable>
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 */	
 	public static enum Variable {
+		
+		/** 
+		 * Query "ReadRoute"
+		 * @see {@link #queryReadRoute}
+		 */
 		ROUTE,
 		
 	}

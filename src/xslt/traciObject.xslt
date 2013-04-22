@@ -51,8 +51,18 @@ extends TraciObject&lt;<xsl:value-of select="name"/>.Variable&gt;
 implements StepAdvanceListener
 {
 
+	/**
+	 * Enumerates all the read queries. Each value can be used as an argument
+	 * for {@link TraciObject#getReadQuery(Enum)}.
+	 * 
+	 * @author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
+	 */	
 	public static enum Variable {
 		<xsl:for-each select="readQueries/readQuery">
+		/** 
+		 * Query "<xsl:value-of select="name"/>"
+		 * @see {@link #query<xsl:value-of select="name"/>}
+		 */
 		<xsl:value-of select="enum"/>,
 		</xsl:for-each>
 	}
