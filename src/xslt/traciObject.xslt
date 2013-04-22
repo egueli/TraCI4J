@@ -122,14 +122,13 @@ implements StepAdvanceListener
 	<!-- QUERY GETTERS -->
 	
 	<xsl:for-each select="readQueries/readQuery">
-	<xsl:choose>
-		<xsl:when test="returnType!=''">
-	public ReadObjectVarQuery&lt;<xsl:value-of select="returnType"/>&gt; query<xsl:value-of select="name" />() {
-		</xsl:when>
-		<xsl:otherwise>
-	public <xsl:value-of select="query"/> query<xsl:value-of select="name" />() {
-		</xsl:otherwise>
-	</xsl:choose>  
+	<xsl:variable name="getterReturnType">
+		<xsl:choose>
+			<xsl:when test="returnType!=''">ReadObjectVarQuery&lt;<xsl:value-of select="returnType"/>&gt;</xsl:when>
+			<xsl:otherwise><xsl:value-of select="query"/></xsl:otherwise>		
+		</xsl:choose>
+	</xsl:variable>
+	public <xsl:value-of select="$getterReturnType"/> query<xsl:value-of select="name" />() {
 		return (<xsl:value-of select="query"/>) getReadQuery(Variable.<xsl:value-of select="enum"/>);
 	}
 	

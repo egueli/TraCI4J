@@ -78,7 +78,6 @@ implements StepAdvanceListener
 	
 	
 	public ReadObjectVarQuery<Double> queryReadGlobalTravelTime() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LENGTH);
 	}
 	

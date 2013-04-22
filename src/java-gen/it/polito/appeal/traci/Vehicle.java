@@ -267,73 +267,61 @@ implements StepAdvanceListener
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadSpeed() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.SPEED);
 	}
 	
 	
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPosition() {
-		  
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadLanePosition() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LANE_POSITION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.util.List<Edge>> queryReadCurrentRoute() {
-		  
 		return (RouteQuery) getReadQuery(Variable.CURRENT_ROUTE);
 	}
 	
 	
 	public ReadObjectVarQuery<Edge> queryReadCurrentEdge() {
-		  
 		return (ReadObjectVarQuery.EdgeQ) getReadQuery(Variable.CURRENT_EDGE);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadCO2Emission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadCOEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadHCEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadPMXEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadNOXEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadFuelConsumption() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}
 	

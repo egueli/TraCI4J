@@ -184,49 +184,41 @@ implements StepAdvanceListener
 	
 	
 	public ReadTLStateQuery queryReadState() {
-		  
 		return (ReadTLStateQuery) getReadQuery(Variable.STATE);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Integer> queryReadDefaultCurrentPhaseDuration() {
-		  
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.DEFAULT_CURRENT_PHASE_DURATION);
 	}
 	
 	
 	public LaneListQuery queryReadControlledLanes() {
-		  
 		return (LaneListQuery) getReadQuery(Variable.CONTROLLED_LANES);
 	}
 	
 	
 	public ReadControlledLinksQuery queryReadControlledLinks() {
-		  
 		return (ReadControlledLinksQuery) getReadQuery(Variable.CONTROLLED_LINKS);
 	}
 	
 	
 	public ReadObjectVarQuery.IntegerQ queryReadCurrentPhase() {
-		  
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.CURRENT_PHASE);
 	}
 	
 	
 	public ReadObjectVarQuery.StringQ queryReadCurrentProgram() {
-		  
 		return (ReadObjectVarQuery.StringQ) getReadQuery(Variable.CURRENT_PROGRAM);
 	}
 	
 	
 	public ReadCompleteDefinitionQuery queryReadCompleteDefinition() {
-		  
 		return (ReadCompleteDefinitionQuery) getReadQuery(Variable.COMPLETE_DEFINITION);
 	}
 	
 	
 	public ReadObjectVarQuery.IntegerQ queryReadAssumedNextSwitchTime() {
-		  
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.ASSUMED_NEXT_SWITCH_TIME);
 	}
 	

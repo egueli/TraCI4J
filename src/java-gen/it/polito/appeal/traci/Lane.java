@@ -217,85 +217,71 @@ implements StepAdvanceListener
 	
 	
 	public ReadObjectVarQuery<java.awt.geom.Path2D> queryReadShape() {
-		  
 		return (ReadShapeQuery) getReadQuery(Variable.SHAPE);
 	}
 	
 	
 	public ReadObjectVarQuery<Double> queryReadLength() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LENGTH);
 	}
 	
 	
 	public ReadObjectVarQuery<Double> queryReadLastStepOccupancy() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LAST_STEP_OCCUPANCY);
 	}
 	
 	
 	public ReadObjectVarQuery<Double> queryReadMaxSpeed() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MAX_SPEED);
 	}
 	
 	
 	public ReadObjectVarQuery<Edge> queryReadParentEdge() {
-		  
 		return (ReadObjectVarQuery.EdgeQ) getReadQuery(Variable.PARENT_EDGE);
 	}
 	
 	
 	public ReadObjectVarQuery<java.util.List<Link>> queryReadLinks() {
-		  
 		return (ReadLinksQuery) getReadQuery(Variable.LINKS);
 	}
 	
 	
 	public ReadObjectVarQuery<Integer> queryReadLastStepVehicleNumber() {
-		  
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.LAST_STEP_VEHICLE_NUMBER);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadCO2Emission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadCOEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadHCEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadPMXEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadNOXEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadFuelConsumption() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION);
 	}
 	
 	
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}
 	

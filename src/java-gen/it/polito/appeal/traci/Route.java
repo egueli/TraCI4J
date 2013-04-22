@@ -80,7 +80,6 @@ implements StepAdvanceListener
 	
 	
 	public RouteQuery queryReadRoute() {
-		  
 		return (RouteQuery) getReadQuery(Variable.ROUTE);
 	}
 	

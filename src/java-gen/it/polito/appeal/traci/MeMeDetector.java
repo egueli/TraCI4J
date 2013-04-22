@@ -104,19 +104,16 @@ implements StepAdvanceListener
 	
 	
 	public ReadObjectVarQuery<Integer> queryReadLastStepVehicleNumber() {
-		  
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.VEHICLE_NUMBER);
 	}
 	
 	
 	public ReadObjectVarQuery<Double> queryReadLastStepMeanSpeed() {
-		  
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MEAN_SPEED);
 	}
 	
 	
 	public ReadObjectVarQuery<java.util.Set<Vehicle>> queryReadLastStepVehicles() {
-		  
 		return (VehicleSetQuery) getReadQuery(Variable.VEHICLES);
 	}
 	
