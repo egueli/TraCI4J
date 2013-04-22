@@ -45,50 +45,6 @@ public class POI extends TraciObject<POI.Variable> {
 	 */
 	
 	/**
-	 * This query allows to change the position of a POI.
-	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
-	 */
-	public static class ChangePositionQuery extends ChangeObjectVarQuery<Point2D> {
-		private ChangePositionQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_POSITION);
-		}
-
-		/**
-		 * After writing params, flushes the cache of {@link POI#changePositionQuery}.
-		 */
-		@Override
-		protected void writeValueTo(Point2D position, Storage content) {
-			content.writeByte(Constants.POSITION_2D);
-			content.writeDouble(position.getX());
-			content.writeDouble(position.getY());
-		}
-	}
-	
-	/**
-	 * This query allows to change the color of a POI.
-	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
-	 */
-	public static class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
-		private ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
-				String objectID) {
-			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
-		}
-
-		/**
-		 * After writing params, flushes the cache of {@link POI#changeColorQuery}.
-		 */
-		@Override
-		protected void writeValueTo(Color color, Storage content) {
-			content.writeByte(Constants.TYPE_COLOR);
-			content.writeUnsignedByte(color.getRed());
-			content.writeUnsignedByte(color.getGreen());
-			content.writeUnsignedByte(color.getBlue());
-			content.writeUnsignedByte(color.getAlpha());
-		}
-	}
-
-	/**
 	 * This enum lists all the variables that can be read.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 */
@@ -99,9 +55,9 @@ public class POI extends TraciObject<POI.Variable> {
 	}
 	
 	/** the "change position" query instance */
-	private final ChangePositionQuery changePositionQuery;
+	final ChangePositionQuery changePositionQuery;
 	/** the "change color" query instance */
-	private final ChangeColorQuery changeColorQuery;
+	final ChangeColorQuery changeColorQuery;
 	/** the "change type" query instance */
 	private final ChangeStringQ changeTypeQuery;
 	
