@@ -753,7 +753,7 @@ public class TraCITest {
 	public void testPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		assertEquals("TEST_TYPE", poi.getReadTypeQuery().get());
+		assertEquals("TEST_TYPE", poi.queryReadType().get());
 	}
 	
 	/**
@@ -766,7 +766,7 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		Color c = new Color(255, 128, 0);
-		assertEquals(c, poi.getReadColorQuery().get());
+		assertEquals(c, poi.queryReadColor().get());
 	}
 	
 	/**
@@ -779,7 +779,7 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		Point2D pos = new Point2D.Double(100, 50);
-		Point2D poiPos = poi.getReadPositionQuery().get();
+		Point2D poiPos = poi.queryReadPosition().get();
 		assertEquals(pos.getX(), poiPos.getX(), DELTA);
 		assertEquals(pos.getY(), poiPos.getY(), DELTA);
 	}
@@ -793,11 +793,11 @@ public class TraCITest {
 	public void testSetPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		ChangeStringQ q = poi.getChangeTypeQuery();
+		ChangeStringQ q = poi.queryChangeType();
 		final String newType = "NEW_TYPE";
 		q.setValue(newType);
 		q.run();
-		assertEquals(newType, poi.getReadTypeQuery().get());
+		assertEquals(newType, poi.queryReadType().get());
 	}
 	
 	/**
@@ -810,10 +810,10 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		final Point2D newPos = new Point2D.Double(0, 0);
-		ChangePositionQuery q = poi.getChangePositionQuery();
+		ChangePositionQuery q = poi.queryChangePosition();
 		q.setValue(newPos);
 		q.run();
-		final Point2D pos = poi.getReadPositionQuery().get();
+		final Point2D pos = poi.queryReadPosition().get();
 		assertEquals(newPos.getX(), pos.getX(), DELTA);
 		assertEquals(newPos.getY(), pos.getY(), DELTA);
 	}
@@ -828,10 +828,10 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		final Color newColor = Color.cyan;
-		ChangeColorQuery q = poi.getChangeColorQuery();
+		ChangeColorQuery q = poi.queryChangeColor();
 		q.setValue(newColor);
 		q.run();
-		assertEquals(newColor, poi.getReadColorQuery().get());
+		assertEquals(newColor, poi.queryReadColor().get());
 	}
 	
 	/**
