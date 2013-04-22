@@ -12,8 +12,6 @@
 <traciClass>
 	<name>TrafficLight</name>
 
-	<dynamicSet>true</dynamicSet>
-
 	<repos>
 		<repo>Lane</repo>
 	</repos>

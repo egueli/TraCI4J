@@ -12,8 +12,6 @@
 <traciClass>
 	<name>MeMeDetector</name>
 
-	<dynamicSet>false</dynamicSet>
-
 	<repos>
 	<repo>Vehicle</repo></repos>
 	

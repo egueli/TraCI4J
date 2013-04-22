@@ -12,8 +12,6 @@
 <traciClass>
 	<name>InductionLoop</name>
 
-	<dynamicSet>false</dynamicSet>
-
 	<repos>
 	<repo>Lane</repo><repo>Vehicle</repo></repos>
 	

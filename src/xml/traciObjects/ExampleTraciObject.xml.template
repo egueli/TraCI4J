@@ -16,10 +16,6 @@
 		is capital. Must be equal to this document's file name. -->
 	<name>ExampleTraciObject</name>
 
-	<!-- If true, the object set may change at each simulation step, therefore 
-		the corresponding cache must be always cleared (or not used at all) -->
-	<dynamicSet>true</dynamicSet>
-
 	<!-- Lists all the other repositories that are needed by the queries -->
 	<repos>
 		<repo>Repository1</repo>

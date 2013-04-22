@@ -12,8 +12,6 @@
 <traciClass>
 	<name>Lane</name>
 
-	<dynamicSet>false</dynamicSet>
-
 	<repos>
 	<repo>Edge</repo><repo>Lane</repo></repos>
 	

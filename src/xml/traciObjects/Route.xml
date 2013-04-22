@@ -12,8 +12,6 @@
 <traciClass>
 	<name>Route</name>
 
-	<dynamicSet>false</dynamicSet>
-
 	<repos>
 	<repo>Edge</repo></repos>
 	

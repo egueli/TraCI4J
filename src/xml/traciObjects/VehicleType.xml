@@ -12,8 +12,6 @@
 <traciClass>
 	<name>VehicleType</name>
 
-	<dynamicSet>false</dynamicSet>
-
 	<repos>
 	</repos>
 	
