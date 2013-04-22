@@ -46,7 +46,8 @@ public class ResponseMessage {
 		Constants.CMD_SET_POI_VARIABLE,
 		Constants.CMD_SET_POLYGON_VARIABLE,
 		Constants.CMD_SET_EDGE_VARIABLE,
-		Constants.CMD_SET_GUI_VARIABLE
+		Constants.CMD_SET_GUI_VARIABLE,
+		Constants.CMD_SET_ROUTE_VARIABLE,
 	};
 	
 	private List<ResponseContainer> pairs = new ArrayList<ResponseContainer>();
