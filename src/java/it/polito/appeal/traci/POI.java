@@ -48,7 +48,7 @@ public class POI extends TraciObject<POI.Variable> {
 	 * This query allows to change the position of a POI.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 */
-	public class ChangePositionQuery extends ChangeObjectVarQuery<Point2D> {
+	public static class ChangePositionQuery extends ChangeObjectVarQuery<Point2D> {
 		private ChangePositionQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_POSITION);
@@ -62,8 +62,6 @@ public class POI extends TraciObject<POI.Variable> {
 			content.writeByte(Constants.POSITION_2D);
 			content.writeDouble(position.getX());
 			content.writeDouble(position.getY());
-
-			getReadPositionQuery().setObsolete();
 		}
 	}
 	
@@ -71,7 +69,7 @@ public class POI extends TraciObject<POI.Variable> {
 	 * This query allows to change the color of a POI.
 	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
 	 */
-	public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
+	public static class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
 		private ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
 				String objectID) {
 			super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
@@ -87,7 +85,6 @@ public class POI extends TraciObject<POI.Variable> {
 			content.writeUnsignedByte(color.getGreen());
 			content.writeUnsignedByte(color.getBlue());
 			content.writeUnsignedByte(color.getAlpha());
-			getReadColorQuery().setObsolete();
 		}
 	}
 
