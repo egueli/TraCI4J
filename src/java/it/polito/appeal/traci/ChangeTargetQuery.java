@@ -26,9 +26,15 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for changing a vehicle's target edge (i.e. its destination).
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+ */
 public class ChangeTargetQuery extends ChangeObjectVarQuery<Edge> {
 
-	public ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeTargetQuery(DataInputStream dis, DataOutputStream dos,
 			String objectID) {
 		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGETARGET);
 	}

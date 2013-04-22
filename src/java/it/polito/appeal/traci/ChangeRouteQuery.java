@@ -28,6 +28,13 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for changing a vehicle's route.
+ * 
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ChangeRouteQuery extends ChangeObjectVarQuery<List<Edge>> {
 
 	ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
