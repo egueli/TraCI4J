@@ -149,7 +149,11 @@ public class Repository<V extends TraciObject<?>> {
 		return Collections.unmodifiableMap(objectCache);
 	}
 
-	public Query getQuery() {
+	/**
+	 * 
+	 * @return the {@link StringListQ} query associated to this repository.
+	 */
+	public StringListQ getQuery() {
 		return idListQuery;
 	}
 	
