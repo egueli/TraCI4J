@@ -21,6 +21,7 @@ import java.util.ListIterator;
  */
 
 
+@SuppressWarnings("javadoc")
 public class Storage {
 	private List<Byte> storageList;
 	private int position;

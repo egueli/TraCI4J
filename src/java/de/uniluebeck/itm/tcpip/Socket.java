@@ -10,6 +10,7 @@ import java.util.*;
  * - changed visibility of attributes to protected
  */
 
+@SuppressWarnings("javadoc")
 public class Socket {
 	protected		int		port;
 	protected		String	host;
