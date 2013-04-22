@@ -26,6 +26,15 @@ import java.util.Iterator;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Represents a link controlled by a traffic light.
+ * <p>
+ * A link is identified by an incoming lane, an outgoing lane and
+ * the internal lane in the junction that connects them.
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Traffic_Lights_Value_Retrieval.html#Structure_of_compound_object_controlled_links">TraCI docs</a>
+ *
+ */
 public class ControlledLink {
 	private final Lane incomingLane;
 	private final Lane acrossLane;
