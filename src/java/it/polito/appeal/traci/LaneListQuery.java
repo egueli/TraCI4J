@@ -24,6 +24,12 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Query for obtaining an ordered list of {@link Lane}s.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class LaneListQuery extends ObjectCollectionQuery<Lane, List<Lane>> {
 	LaneListQuery(DataInputStream dis, DataOutputStream dos, int commandID,
 			String objectID, int varID, Repository<Lane> repository) {

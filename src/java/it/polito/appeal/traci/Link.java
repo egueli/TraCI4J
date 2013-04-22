@@ -26,6 +26,12 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Describes a link between a given lane and another lane in a junction.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Lane_Value_Retrieval.html">TraCI docs</a>
+ */
 public class Link {
 	private final Lane nextInternalLane;
 	private final Lane nextNonInternalLane;
@@ -56,27 +62,58 @@ public class Link {
 		length = content.readDouble();
 	}
 	
+	/**
+	 * @return the internal lane in the junction
+	 */
 	public Lane getNextInternalLane() {
 		return nextInternalLane;
 	}
+	
+	/**
+	 * @return the outgoing lane that this link connects to
+	 */
 	public Lane getNextNonInternalLane() {
 		return nextNonInternalLane;
 	}
+	
+	/**
+	 * @return <code>true</code> if this links has priority over other links in the junction
+	 */
 	public boolean hasPriority() {
 		return hasPriority;
 	}
+	
+	/**
+	 * @return an unknown value
+	 */
 	public boolean isOpened() {
 		return isOpened;
 	}
+	
+	/**
+	 * @return an unknown value
+	 */
 	public boolean hasApproachingFoe() {
 		return hasApproachingFoe;
 	}
+	
+	/**
+	 * @return always an empty string (not implemented by SUMO)
+	 */
 	public String getCurrentState() {
 		return currentState;
 	}
+	
+	/**
+	 * @return always an empty string (not implemented by SUMO)
+	 */
 	public String getDirection() {
 		return direction;
 	}
+
+	/**
+	 * @return the length of the link, or 0 if using internal lanes
+	 */
 	public double getLength() {
 		return length;
 	}

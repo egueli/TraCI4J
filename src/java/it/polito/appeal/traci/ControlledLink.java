@@ -49,14 +49,23 @@ public class ControlledLink {
 		acrossLane = laneRepo.getByID(listIt.next());
 	}
 
+	/**
+	 * @return the lane from which the vehicles come from
+	 */
 	public Lane getIncomingLane() {
 		return incomingLane;
 	}
 
+	/**
+	 * @return the internal lane of the junction that the vehicles will traverse
+	 */
 	public Lane getAcrossLane() {
 		return acrossLane;
 	}
 
+	/**
+	 * @return the lane the vehicles will exit through
+	 */
 	public Lane getOutgoingLane() {
 		return outgoingLane;
 	}
