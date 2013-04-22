@@ -111,6 +111,7 @@ public class SumoTraciConnection {
 	
 	private AddVehicleQuery addVehicleQuery;
 	private RemoveVehicleQuery removeVehicleQuery;
+	private AddRouteQuery addRouteQuery;
 	
 	private Repository.Edges edgeRepo;
 	private Repository.Lanes laneRepo;
@@ -334,6 +335,8 @@ public class SumoTraciConnection {
 		
 		routeRepo = new Repository.Routes(dis, dos, edgeRepo, 
 				newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
+		
+		addRouteQuery = new AddRouteQuery(dis, dos, routeRepo);
 		
 		/*
 		 * TODO add initializers for remaining repositories
@@ -687,6 +690,16 @@ public class SumoTraciConnection {
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
 	}
+	
+	/**
+	 * 
+	 * @return an {@link AddVehicleQuery} that allows to add vehicles into the
+	 *         simulation.
+	 */
+	public AddRouteQuery queryAddRoute() {
+		return addRouteQuery;
+	}
+
 	
 	/**
 	 * 
