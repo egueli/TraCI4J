@@ -241,7 +241,7 @@ public class Repository<V extends TraciObject<?>> {
 			super(new ObjectFactory<POI>() {
 				@Override
 				public POI newObject(String objectID) {
-					return new POI(objectID, dis, dos);
+					return new POI(dis, dos, objectID);
 				}
 			}, idListQuery);
 		}
