@@ -17,10 +17,12 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package it.polito.appeal.traci;
+package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
+import it.polito.appeal.traci.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +30,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class UtilsTest {
 
 	Set<String> before = new HashSet<String>();
