@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class PositionConvertionTest {
 
 	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/polito/test.sumo.cfg";

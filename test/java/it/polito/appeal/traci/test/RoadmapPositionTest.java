@@ -24,6 +24,7 @@ import it.polito.appeal.traci.protocol.RoadmapPosition;
 import org.junit.Test;
 
 
+@SuppressWarnings("javadoc")
 public class RoadmapPositionTest {
 	@Test
 	public void testEqualsHashcode() {

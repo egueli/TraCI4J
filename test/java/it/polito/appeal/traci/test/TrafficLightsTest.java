@@ -46,6 +46,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class TrafficLightsTest {
 
 	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/cross3ltl/test.sumo.cfg";

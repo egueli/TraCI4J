@@ -21,6 +21,7 @@ package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("javadoc")
 public class EqualsHashcodeTester {
 	public static <T> void testReflexive(T x) {
 		assertTrue("x.equals(x)", x.equals(x));

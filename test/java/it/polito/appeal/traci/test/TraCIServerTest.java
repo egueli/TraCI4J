@@ -48,6 +48,7 @@ import com.sun.istack.internal.logging.Logger;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
+@SuppressWarnings("javadoc")
 public class TraCIServerTest {
 	
 	private static final int API_VERSION = 5;
@@ -57,7 +58,7 @@ public class TraCIServerTest {
 	 */
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
-	public static final int TRACI_PORT = 15000;
+	private static final int TRACI_PORT = 15000;
 	
 	private DataInputStream inStream;
 	private DataOutputStream outStream;

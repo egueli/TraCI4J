@@ -91,6 +91,7 @@ import com.sun.istack.internal.logging.Logger;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
  */
+@SuppressWarnings("javadoc")
 public class TraCITest {
 
 	private static final Logger log = Logger.getLogger(TraCITest.class);
