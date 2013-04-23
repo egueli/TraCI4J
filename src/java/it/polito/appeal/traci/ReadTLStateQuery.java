@@ -25,6 +25,13 @@ import it.polito.appeal.traci.protocol.Constants;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+ * Query for reading a TLS state.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Traffic_Lights_Value_Retrieval.html">TraCI docs</a>
+ *
+ */
 public class ReadTLStateQuery extends ReadObjectVarQuery<TLState> {
 
 	ReadTLStateQuery(DataInputStream dis, DataOutputStream dos,

@@ -27,6 +27,12 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A query for reading an ordered list of {@link Edge}s that make a route.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
 
 	RouteQuery(final DataInputStream dis, final DataOutputStream dos, int commandID, String vehicleID, int varID, Repository<Edge> repo) {

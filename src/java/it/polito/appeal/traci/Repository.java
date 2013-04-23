@@ -136,6 +136,11 @@ public class Repository<V extends TraciObject<?>> {
 		return Collections.unmodifiableSet(idSet);
 	}
 	
+	/**
+	 * @return a mapping between the known SUMO object IDs and the corresponding
+	 *         repository objects
+	 * @throws IOException
+	 */
 	public Map<String, V> getAll() throws IOException {
 		getIDs(); // used only for its collateral effects
 		return Collections.unmodifiableMap(objectCache);

@@ -27,6 +27,12 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for removing a vehicle from the simulation.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+ */
 public class RemoveVehicleQuery extends ChangeStateQuery {
 	
 	private Vehicle vehicleID;
@@ -47,16 +53,25 @@ public class RemoveVehicleQuery extends ChangeStateQuery {
 
 	}
 	
+	/**
+	 * Set the removal parameters.
+	 * 
+	 * @param vehicle the vehicle to remove
+	 * @param reason the reason of removal (see TraCI docs for a list)
+	 * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Change_Vehicle_State.html">TraCI docs</a>
+	 * @throws IOException
+	 * 
+	 */
 	public void setVehicleData(
-			Vehicle id, 
+			Vehicle vehicle, 
 			int reason 
 			) 
 	throws IOException {
 		
-		if (id == null)
+		if (vehicle == null)
 			throw new IllegalArgumentException("Invalid vehicle");
 		
-		this.vehicleID = id;
+		this.vehicleID = vehicle;
 		this.reason = reason;
 				
 	}

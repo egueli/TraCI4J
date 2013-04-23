@@ -26,6 +26,12 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for issuing a vehicle reroute.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class RerouteQuery extends ChangeObjectStateQuery {
 
 	RerouteQuery(DataInputStream dis, DataOutputStream dos,

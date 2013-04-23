@@ -19,6 +19,17 @@
 
 package it.polito.appeal.traci;
 
+/**
+ * Interface for an object that can be notified when the simulation advances by one step.
+ *  
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public interface StepAdvanceListener {
+	
+	/**
+	 * Callback for step advancement.
+	 * @param step the new simulation time, in seconds
+	 */
 	void nextStep(double step);
 }

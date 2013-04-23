@@ -25,6 +25,15 @@ import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+ * Representation of the simulation-level data object, that encloses some
+ * information about the whole simulation.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a
+ *      href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Simulation_Value_Retrieval.html">TraCI
+ *      docs</a>
+ */
 public class SimulationData extends TraciObject<SimulationData.Variable> implements StepAdvanceListener {
 
 	enum Variable {
