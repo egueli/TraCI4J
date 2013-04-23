@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+@SuppressWarnings("javadoc")
 public class CommandTest {
 
 	private static final int AN_INTEGER = 0x12345678;

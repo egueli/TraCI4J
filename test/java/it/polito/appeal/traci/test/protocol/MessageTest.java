@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class MessageTest {
 
 	@Test
