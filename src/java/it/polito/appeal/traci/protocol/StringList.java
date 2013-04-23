@@ -29,7 +29,7 @@ import java.util.ListIterator;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class StringList implements List<String> {
+public class StringList implements List<String>, WriteableToStorage {
 	private final List<String> list;
 	
 	public StringList() {
@@ -53,6 +53,7 @@ public class StringList implements List<String> {
 		}
 	}
 	
+	@Override
 	public void writeTo(Storage out, boolean writeTypeID) {
 		if (writeTypeID)
 			out.writeByte(Constants.TYPE_STRINGLIST);

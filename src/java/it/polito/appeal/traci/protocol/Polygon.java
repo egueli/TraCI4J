@@ -25,7 +25,7 @@ import java.awt.geom.Path2D;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-public class Polygon {
+public class Polygon implements WriteableToStorage {
 
 	private final Path2D shape;
 	
@@ -53,8 +53,9 @@ public class Polygon {
 	public Path2D getShape() {
 		return shape;
 	}
-	
-	public void writeTo(Storage out) {
+
+	@Override
+	public void writeTo(Storage storage, boolean withTypeID) {
 		throw new UnsupportedOperationException("to be done");
 	}
 }
