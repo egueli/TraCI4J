@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci;
 
@@ -24,7 +24,7 @@ package it.polito.appeal.traci;
  * vehicle.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- *
+ * 
  */
 public interface VehicleLifecycleObserver {
 
@@ -34,7 +34,8 @@ public interface VehicleLifecycleObserver {
 	 * {@link SumoTraciConnection#nextSimStep()} and after any other
 	 * {@link #vehicleArrived(Vehicle)} in the same simulation step.
 	 * 
-	 * @param id
+	 * @param vehicle
+	 *            the vehicle that just entered
 	 */
 	void vehicleDeparted(Vehicle vehicle);
 
@@ -44,27 +45,32 @@ public interface VehicleLifecycleObserver {
 	 * {@link SumoTraciConnection#nextSimStep()} and before any other
 	 * {@link #vehicleDeparted(Vehicle)} in the same simulation step.
 	 * 
-	 * @param id
+	 * @param vehicle
+	 *            the vehicle that just left the simulation. Note: no queries
+	 *            can be executed with this vehicle anymore
 	 */
 	void vehicleArrived(Vehicle vehicle);
-	
+
 	/**
 	 * Method called when a vehicle has begun a teleport. While a vehicle is
 	 * teleporting, some queries may not be available and may cause an error.
 	 * This method will be called during an invocation of
 	 * {@link SumoTraciConnection#nextSimStep()}.
 	 * 
-	 * @param id
+	 * @param vehicle
+	 *            the vehicle that just begun teleporting. Note: queries
+	 *            executed before teleport end may lead to inconsistent results
 	 */
 	void vehicleTeleportStarting(Vehicle vehicle);
-	
+
 	/**
 	 * Method called when a vehicle has ended a teleport. While a vehicle is
 	 * teleporting, some queries may not be available and may cause an error.
 	 * This method will be called during an invocation of
 	 * {@link SumoTraciConnection#nextSimStep()}.
 	 * 
-	 * @param id
+	 * @param vehicle
+	 *            the vehicle that just ended teleporting
 	 */
 	void vehicleTeleportEnding(Vehicle vehicle);
 }

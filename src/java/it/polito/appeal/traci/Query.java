@@ -28,18 +28,13 @@ import java.util.List;
 /**
  * This class represents a generic TraCI query, i.e. one or more requests and
  * one or more responses.
- * <p>
- * This class does not contain code to send/receive the query itself to/from
- * SUMO: either a subclass or an external class can do that.
- * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
  */
 public abstract class Query {
 
 	/**
-	 * Returns a list of {@link Command} needed to make the request.
-	 * @return
+	 * @return a list of {@link Command} needed to make the request.
 	 */
 	abstract List<Command> getRequests();
 
