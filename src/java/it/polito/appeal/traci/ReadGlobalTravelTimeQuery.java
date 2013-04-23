@@ -29,6 +29,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.List;
 
+/**
+ * Query for obtaining the travel time of a given edge in a specific SUMO simulation time.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public class ReadGlobalTravelTimeQuery extends ReadObjectVarQuery.DoubleQ {
 
 	private int time = -1;
@@ -38,6 +44,12 @@ public class ReadGlobalTravelTimeQuery extends ReadObjectVarQuery.DoubleQ {
 		super(dis, dos, commandID, objectID, varID);
 	}
 	
+	/**
+	 * The returned value of this query can be specific to a given simulation
+	 * time. This method allows to set the simulation time for the value that
+	 * will be returned. 
+	 * @param time
+	 */
 	public void setTime(int time) {
 		/*
 		 * if the time is modified, forget the old value

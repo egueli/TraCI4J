@@ -26,6 +26,12 @@ import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for reading the complete program of a TLS.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Traffic_Lights_Value_Retrieval.html">TraCI docs</a>
+ */
 public class ReadCompleteDefinitionQuery extends ReadObjectVarQuery<Program> {
 	ReadCompleteDefinitionQuery(DataInputStream dis,
 			DataOutputStream dos, int commandID, String objectID, int varID) {

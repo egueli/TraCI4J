@@ -30,6 +30,13 @@ import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for obtaining the {@link Link}s connected to the end of a given 
+ * {@link Lane}.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class ReadLinksQuery extends ReadObjectVarQuery<List<Link>> {
 
 	private Repository<Lane> laneRepo;

@@ -28,6 +28,12 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Query for obtaining the controlled links in a TLS.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Traffic_Lights_Value_Retrieval.html">TraCI docs</a>
+ */
 public class ReadControlledLinksQuery extends ReadObjectVarQuery<ControlledLinks> {
 
 	private final Repository<Lane> laneRepo;

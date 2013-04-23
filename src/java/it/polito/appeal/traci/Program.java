@@ -23,6 +23,15 @@ import it.polito.appeal.traci.TraCIException.UnexpectedDatatype;
 import it.polito.appeal.traci.protocol.Constants;
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * A TLS program represents one or more {@link Logic}s.
+ * <p>
+ * Currently, SUMO supports only one program per logic.
+ * 
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class Program {
 	private final Logic[] logics;
 	Program(Storage content) throws UnexpectedDatatype {
@@ -35,6 +44,11 @@ public class Program {
 			logics[i] = new Logic(content);
 		}
 	}
+	
+	/**
+	 * 
+	 * @return a 1-element array with the current TLS program.
+	 */
 	public Logic[] getLogics() {
 		return logics;
 	}

@@ -40,6 +40,10 @@ import de.uniluebeck.itm.tcpip.Storage;
 /**
  * Represents a {@link ValueReadQuery} that reads a variable of a specific
  * SUMO object.
+ * <p>
+ * The subclass can have methods that specify further parameters for the query before it
+ * is run. Since a query instance can be re-used, the subclass implementation should take care of
+ * calling {@link #setObsolete()} whenever any parameter is changed.  
  * 
  * @see ValueReadQuery
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
@@ -89,6 +93,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 * class, should be declared in the corresponding TraciObject class.
 	 */
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is an
+	 * {@link Integer}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class IntegerQ extends ReadObjectVarQuery<Integer> {
 
 		IntegerQ(DataInputStream dis, DataOutputStream dos, int commandID,
@@ -106,6 +117,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		
 	}
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is an
+	 * {@link Double}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class DoubleQ extends ReadObjectVarQuery<Double> {
 
 		DoubleQ(DataInputStream dis, DataOutputStream dos, int commandID, String objectID, int varID) {
@@ -120,6 +138,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is an
+	 * {@link Color}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class ColorQ extends ReadObjectVarQuery<Color> {
 
 		ColorQ(DataInputStream dis, DataOutputStream dos, int commandID,
@@ -139,6 +164,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link Point2D}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class PositionQ extends ReadObjectVarQuery<Point2D> {
 
 		private int positionType = Constants.POSITION_2D;
@@ -174,6 +206,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link String}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class StringQ extends ReadObjectVarQuery<String> {
 		
 		StringQ(DataInputStream dis, DataOutputStream dos, int commandID, String objectID, int varID) {
@@ -187,6 +226,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link List} of {@link String}s.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class StringListQ extends ReadObjectVarQuery<List<String>> {
 
 		StringListQ(DataInputStream dis, DataOutputStream dos, int commandID,
@@ -201,6 +247,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link Rectangle2D}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class BoundingBoxQ extends ReadObjectVarQuery<Rectangle2D> {
 
 		BoundingBoxQ(DataInputStream dis, DataOutputStream dos, int commandID, String vehicleID, int varID) {
@@ -214,6 +267,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link TraciObject}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class TraciObjectQ<V extends TraciObject<?>> extends ReadObjectVarQuery<V> {
 
 		private final Repository<V> repo;
@@ -237,6 +297,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is an
+	 * {@link Edge}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class EdgeQ extends TraciObjectQ<Edge> {
 		EdgeQ(DataInputStream dis, DataOutputStream dos, int commandID,
 				String objectID, int varID, Repository<Edge> repo) {
@@ -244,6 +311,13 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 		}
 	}
 	
+	/**
+	 * Specialization of {@link ReadObjectVarQuery} whose value type is a
+	 * {@link Lane}.
+	 * 
+	 * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+	 * 
+	 */
 	public static class LaneQ extends TraciObjectQ<Lane> {
 		LaneQ(DataInputStream dis, DataOutputStream dos, int commandID,
 				String objectID, int varID, Repository<Lane> repo) {

@@ -26,6 +26,13 @@ import java.awt.geom.Path2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+/**
+ * Specialization of {@link ReadObjectVarQuery} whose value type is a
+ * {@link Path2D}.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * 
+ */
 public class ReadShapeQuery extends ReadObjectVarQuery<Path2D> {
 
 	ReadShapeQuery(DataInputStream dis, DataOutputStream dos,

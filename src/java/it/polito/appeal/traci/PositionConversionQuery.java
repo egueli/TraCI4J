@@ -57,6 +57,16 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 		super(dis, dos, commandID, objectID, varID);
 	}
 	
+	/**
+	 * Set the data for a 2D position conversion.
+	 * 
+	 * @param pos
+	 *            the position, either in local cartesian coordinates or
+	 *            longitude/latitude
+	 * @param outputLonLat
+	 *            <code>true</code> if the coordinates should be converted to
+	 *            latitude/longitude
+	 */
 	public void setPositionToConvert(Point2D pos, boolean outputLonLat) {
 		if (destLonLat != outputLonLat || roadmapPos != null || pos.equals(cartesianPos))
 			setObsolete();
@@ -67,6 +77,13 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 		destLonLat = outputLonLat;
 	}
 
+	/**
+	 * Set the data for a conversion from roadmap position to local. The result will
+	 * be in longitude/latitude format.
+	 * 
+	 * @param pos
+	 *            the roadmap position
+	 */
 	public void setPositionToConvert(RoadmapPosition pos) {
 		if (cartesianPos != null || pos.equals(roadmapPos))
 			setObsolete();
