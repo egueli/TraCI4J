@@ -65,7 +65,7 @@ public class Repository<V extends TraciObject<?>> {
 	 * objects when requested the first time
 	 * @param idListQuery a reference to a query of list of IDs.
 	 */
-	public Repository(ObjectFactory<V> factory, StringListQ idListQuery) {
+	Repository(ObjectFactory<V> factory, StringListQ idListQuery) {
 		this.factory = factory;
 		this.idListQuery = idListQuery;
 	}
@@ -79,15 +79,8 @@ public class Repository<V extends TraciObject<?>> {
 	}
 	
 	/**
-	 * Returns the TraCI object associated to the given ID.
-	 * <p>
-	 * First, a query is made to ensure that the ID is valid: if doesn't exist,
-	 * <code>null</code> is returned and the corresponding cached object, if
-	 * present, is deleted. Then, checks if the repository already
-	 * holds an object with the given ID; if so, it returns
-	 * that one, otherwise, it asks the {@link ObjectFactory} passed to the
-	 * constructor to build a fresh one. That object is cached for future
-	 * requests.
+	 * Synchronizes the local set of objects with SUMO's counterparts and
+	 * returns the TraCI object associated to the given ID.
 	 * 
 	 * @param id
 	 * @return the requested object, or <code>null</code> if such object does
@@ -101,9 +94,8 @@ public class Repository<V extends TraciObject<?>> {
 	}
 	
 	/**
-	 * Returns a {@link Set} made of all the string IDs of the objects
+	 * @return a {@link Set} made of all the string IDs of the objects
 	 * represented by this repository.
-	 * @return
 	 * @throws IOException
 	 */
 	public Set<String> getIDs() throws IOException {

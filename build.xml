@@ -112,7 +112,7 @@
 	
     <target name="javadoc">
         <javadoc 
-        	access="package" 
+        	access="public" 
         	author="true" 
         	classpathref="TraCI4J.classpath" 
         	destdir="doc" 

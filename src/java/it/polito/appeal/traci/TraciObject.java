@@ -29,28 +29,13 @@ import java.util.Map;
  * and may have one or more {@link ReadObjectVarQuery}es that refer to
  * corresponding variables that can be read. Queries for those variables can be
  * obtained via {@link #getReadQuery(Enum)} or {@link #getAllReadQueries()}.
- * 
  * <p>
- * A subclass should have the following elements:
- * <ul>
- * <li>
- * an enum that lists all the read variables, and that is also the generic type
- * E specified</li>
- * <li>a constructor that calls {@link #addReadQuery(Enum, ReadObjectVarQuery)}
- * for each variable, passing a newly created {@link ReadObjectVarQuery}
- * instance. To avoid duplicated data, that instance should be used nowhere else.</li>
- * </ul>
- * Optionally, a subclass may have there elements:
- * <li>a getter method for each query (named in the form of <code>getReadXXXXQuery()</code>),
- * where XXXX is the variable name. Each getter uses {@link #getReadQuery(Enum)}
- * and casts it to the variable-specific read query, e.g. 
- * ReadObjectVarQuery&lt;Double&gt;.</li>
- * <li>a getter method for each query (named in the form of <code>getXXXXQuery()</code>) that changes the state of the object.
- * If possible, such queries may be instantiated at construction time to increase performance.  
- * </ul>
+ * If a subclass has at least one read query, it will have an own {@link Enum} 
+ * (either nested or in a separate file) that lists all its read queries.
+ * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
- * @param <E> an enum type that lists all the readable variables
+ * @param <E> the enum type that lists all the read queries
  */
 public abstract class TraciObject<E extends Enum<E>> {
 	private final String id;
@@ -60,10 +45,31 @@ public abstract class TraciObject<E extends Enum<E>> {
 	/**
 	 * Constructor for the SUMO object.
 	 * <p>
+	 * If the subclass has one or more read queries, its constructor must call
+	 * {@link #addReadQuery(Enum, ReadObjectVarQuery)} for each query,
+	 * passing an instance of {@link ReadObjectVarQuery}. To avoid
+	 * duplicated data, that instance should be used nowhere else.
+	 * <p>
+	 * Optionally, a subclass may have these elements:
+	 * <ul>
+	 * <li>a getter method for each query (named in the form of
+	 * <code>queryReadXXXX()</code>), where XXXX is the variable name. Each
+	 * getter may use {@link #getReadQuery(Enum)} and casts it to the
+	 * variable-specific read query, e.g. ReadObjectVarQuery&lt;Double&gt;.</li>
+	 * <li>a getter method for each query (named in the form of
+	 * <code>queryXXXX()</code>) that changes the state of the object. If
+	 * possible, such queries may be instantiated at construction time to
+	 * increase performance.
+	 * </ul>
+	 * 
+	 * <p>
 	 * It is advised that the subclass constructor has package visibility as
 	 * well as this one.
-	 * @param id the string ID of the object, retrieved from SUMO
-	 * @param enumClass the class type of the variable list enum
+	 * 
+	 * @param id
+	 *            the string ID of the object, retrieved from SUMO
+	 * @param enumClass
+	 *            the class type of the variable list enum
 	 */
 	protected TraciObject(String id, Class<E> enumClass) {
 		this.id = id;
