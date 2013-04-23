@@ -27,6 +27,12 @@ import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.StatusResponse;
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Some utility functions.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class Utils {
 	static void checkType(Storage content, int typeID) throws TraCIException.UnexpectedDatatype {
 		int b = content.readUnsignedByte();

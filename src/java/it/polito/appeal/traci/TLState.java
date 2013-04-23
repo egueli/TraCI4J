@@ -3,19 +3,28 @@ package it.polito.appeal.traci;
 import java.util.Arrays;
 
 /**
- * Represents the state of a traffic light, i.e. the status of each light.
+ * Represents the istantaneous state of a TLS, i.e. the status of each light in
+ * the TLS.
+ * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- *
+ * 
  */
 public class TLState {
-	public final LightState[] lightStates;
 	/**
-	 * Constructs a {@link TLState} from a string description of a phase
-	 * (one letter for each signal).
-	 * @param phase the description of a phase. It must contain only the
-	 * following characters: rRyYgGO
-	 * @throws IllegalArgumentException if the phase contains invalid
-	 * characters
+	 * The ordered list of traffic light states.
+	 */
+	
+	public final LightState[] lightStates;
+	
+	/**
+	 * Constructs a new instance from a string description of a phase (one
+	 * letter for each signal).
+	 * 
+	 * @param phase
+	 *            the description of a phase. It must contain only the following
+	 *            characters: rRyYgGO
+	 * @throws IllegalArgumentException
+	 *             if the phase contains invalid characters
 	 */
 	public TLState(String phase) {
 		final int len = phase.length();
@@ -28,6 +37,12 @@ public class TLState {
 			lightStates[i] = ls;
 		}
 	}
+	
+	/**
+	 * Constructs an instance through an array of traffic light states.
+	 * 
+	 * @param lightStates
+	 */
 	public TLState(LightState[] lightStates) {
 		this.lightStates = lightStates;
 	}

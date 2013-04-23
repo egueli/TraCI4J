@@ -24,6 +24,12 @@ import java.io.DataOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Query for obtaining a set of {@link Vehicle}s.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class VehicleSetQuery extends ObjectCollectionQuery<Vehicle, Set<Vehicle>> {
 	VehicleSetQuery(DataInputStream dis, DataOutputStream dos,
 			int commandID, String objectID,	int varID, Repository<Vehicle> repository) {
