@@ -147,8 +147,21 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 			super(dis, dos, commandID, vehicleID, varID);
 		}
 		
+		/**
+		 * Sets the position type.
+		 * 
+		 * @param type
+		 *            the position type. It can be {@link Constants#POSITION_2D}
+		 *            or {@link Constants#POSITION_LAT_LON}
+		 */
 		public void setPositionType(int type) {
-			positionType = type;
+			if (type == Constants.POSITION_2D || type == Constants.POSITION_LAT_LON) {
+				if (type != positionType)
+					setObsolete();
+				positionType = type;
+			}
+			else
+				throw new IllegalArgumentException("invalid position type");
 		}
 
 		@Override
