@@ -18,7 +18,7 @@ public class StreamLogger implements Runnable {
 	private final String prefix;
 	private final Logger logger;
 	
-	public StreamLogger(InputStream stream, String prefix, Logger logger) {
+	StreamLogger(InputStream stream, String prefix, Logger logger) {
 		this.stream = stream;
 		this.prefix = prefix;
 		this.logger = logger;

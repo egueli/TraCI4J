@@ -33,7 +33,7 @@ public class RemoveVehicleQuery extends ChangeStateQuery {
 	private int reason;
 //	private int commandID;
 
-	public RemoveVehicleQuery(DataInputStream dis, DataOutputStream dos) {
+	RemoveVehicleQuery(DataInputStream dis, DataOutputStream dos) {
 		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE);
 //		this.commandID = commandID;
 	}

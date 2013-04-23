@@ -28,7 +28,7 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 public class RerouteQuery extends ChangeObjectStateQuery {
 
-	public RerouteQuery(DataInputStream dis, DataOutputStream dos,
+	RerouteQuery(DataInputStream dis, DataOutputStream dos,
 			String objectID) {
 		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_REROUTE_TRAVELTIME);
 	}
