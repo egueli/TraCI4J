@@ -60,6 +60,10 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 
 	}
 
+	/**
+	 * 
+	 * @return a query for obtaining the current simulation time
+	 */
 	public ReadObjectVarQuery<Integer> queryCurrentSimTime() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.CURRENT_SIM_TIME);
 	}
@@ -71,12 +75,16 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 	 * To read absolute borders, iterate over all lanes and calculate the
 	 * common bounding box.
 	 * 
-	 * @return
+	 * @return the bounding box of the road network
 	 */
 	public ReadObjectVarQuery<Rectangle2D> queryNetBoundaries() {
 		return (ReadObjectVarQuery.BoundingBoxQ) getReadQuery(Variable.NET_BOUNDARIES);
 	}
 
+	/**
+	 * 
+	 * @return a query to do position conversion
+	 */
 	public PositionConversionQuery queryPositionConversion() {
 		return (PositionConversionQuery) getReadQuery(Variable.POSITION_CONVERSION);
 	}

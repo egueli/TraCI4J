@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 /**
  * Represents a list of {@link Query}s to run as a whole, i.e. within a single
  * SUMO request and response message. This may significantly reduce the
- * execution time, because the TCP overhead is distributed along all the queries 
+ * execution time, because the TCP overhead is distributed among all the queries 
  * (JUnit tests show a performance increase of ~20x in an Intel T7300 dual
  * core CPU with Linux 2.6.38).
  * <p>

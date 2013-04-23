@@ -36,7 +36,10 @@ import java.util.List;
  * <p>
  * This query can output only a 2D position, i.e. either local X/Y coordinates or
  * Longitude-Latitude coordinates. For both systems, the result is always a {@link Point2D}
- * object. 
+ * object.
+ * <p>
+ * Although this class is a subclass of {@link ReadObjectVarQuery}, the related value is not
+ * really a simulation-related value, but the result of the conversion. 
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * @see <a href="http://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI/Simulation_Value_Retrieval#Command_0x82:_Position_Conversion">Position Conversion</a>

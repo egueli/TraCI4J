@@ -749,8 +749,7 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Creates a {@link MultiQuery} bound to this server connection.
-	 * @return
+	 * @return a new instance of {@link MultiQuery} bound to this server connection.
 	 */
 	public MultiQuery makeMultiQuery() {
 		return new MultiQuery(dos, dis);
@@ -779,11 +778,10 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Returns the geo-coordinates (as longitude-latitude) of the network.
+	 * @return the geo-coordinates (as longitude-latitude) of the network.
 	 * @deprecated since the mechanism to obtain this data must be rewritten
 	 * from scratch after changes in the XML network file format; it's better
 	 * to obtain this data directly from TraCI, that is currently not supported
-	 * @return
 	 */
 	@Deprecated
 	public Point2D getGeoOffset() {

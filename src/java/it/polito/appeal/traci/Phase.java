@@ -23,6 +23,13 @@ import it.polito.appeal.traci.TraCIException.UnexpectedDatatype;
 import it.polito.appeal.traci.protocol.Constants;
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * A single traffic light phase, i.e. a given combination of light states
+ * for a specific amount of time.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class Phase {
 	private final int duration;
 	private final TLState state;
@@ -36,13 +43,30 @@ public class Phase {
 		Utils.checkType(content, Constants.TYPE_STRING);
 		state = new TLState(content.readStringASCII());
 	}
+	
+	/**
+	 * Constructs an instance via a duration in seconds and a
+	 * {@link TLState} object.
+	 * @param duration
+	 * @param state
+	 */
 	public Phase(final int duration, final TLState state) {
 		this.duration = duration;
 		this.state = state;
 	}
+	
+	/**
+	 * 
+	 * @return the duration of this phase
+	 */
 	public int getDuration() {
 		return duration;
 	}
+	
+	/**
+	 * 
+	 * @return the combination of light states
+	 */
 	public TLState getState() {
 		return state;
 	}

@@ -25,17 +25,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * Represents a query to retrieve a value. This class is able to
- * communicate directly with SUMO to run the query.
+ * Represents a query to retrieve a value from the simulation through the TraCI
+ * protocol. This class is able to communicate directly with SUMO to run the
+ * query.
  * <p>
- * Calling the {@link #get()} method runs the query immediately: the query's
- * requests are sent to SUMO; responses from SUMO are received and processed.
- * The returned value is cached internally and any subsequent calls to
- * {@link #get()} will return that value and avoid another dialog with SUMO,
- * unless the subclass calls {@link #setObsolete()};
+ * Each instance is bound to a specific TraCI connection.
  * <p>
- * Please note that using the immediate execution can be slow; to increase
- * performance, it is recommended to use a {@link MultiQuery}.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
@@ -53,7 +48,11 @@ public abstract class ValueReadQuery<V> extends Query {
 		this.dos = dos;
 	}
 	
-	protected void setObsolete() {
+	/**
+	 * Clears the cached value. The next invocation of {@link #get()} will
+	 * make an explicit request to SUMO.
+	 */
+	public void setObsolete() {
 		value = null;
 	}
 
@@ -62,10 +61,11 @@ public abstract class ValueReadQuery<V> extends Query {
 	}
 	
 	/**
-	 * If the output value of this query is available, returns that value,
-	 * otherwise makes an immediate request to SUMO.
-	 *  
-	 * @return
+	 * Queries SUMO for the given value via TraCI, and keeps a cached copy of it. Subsequent
+	 * calls to this method will return the cached valued, unless {@link #setObsolete()}
+	 * is called.
+	 *   
+	 * @return the information from the SUMO environment
 	 * @throws IOException
 	 */
 	public V get() throws IOException {
@@ -81,6 +81,9 @@ public abstract class ValueReadQuery<V> extends Query {
 		}
 	}
 	
+	/**
+	 * @return <code>true</code> if the result is cached
+	 */
 	public boolean hasValue() {
 		return value != null;
 	}

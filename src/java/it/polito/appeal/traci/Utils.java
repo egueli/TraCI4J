@@ -56,14 +56,11 @@ public class Utils {
 	}
 
 	/**
-	 * Given two sets "before" and "after", returns which element were added to
-	 * the first one to get to the second one.
-	 * Please note that adding the returned items to the "before" set does not
-	 * result in a set that is equal to the "after" set.
 	 * @param <T>
 	 * @param before
 	 * @param after
-	 * @return
+	 * @return the elements that are present in the "after" set but not in the
+	 *         "before" set.
 	 */
 	public static <T> Set<T> getAddedItems(Set<T> before, Set<T> after) {
 		Set<T> out = new HashSet<T>(after);
@@ -72,14 +69,11 @@ public class Utils {
 	}
 	
 	/**
-	 * Given two sets "before" and "after", returns which elements were removed to
-	 * the first one to get to the second one.
-	 * Please note that removing the returned items to the "before" set does not
-	 * result in a set that is equal to the "after" set.
 	 * @param <T>
 	 * @param before
 	 * @param after
-	 * @return
+	 * @return the elements that are present in the "before" set but not in the
+	 *         "after" set.
 	 */
 	public static <T> Set<T> getRemovedItems(Set<T> before, Set<T> after) {
 		return getAddedItems(after, before);

@@ -88,26 +88,23 @@ public abstract class TraciObject<E extends Enum<E>> {
 	}
 	
 	/**
-	 * Returns the string ID of the SUMO 
-	 * @return
+	 * @return the string ID of the SUMO object this instance refers to.
 	 */
 	public String getID() {
 		return id;
 	}
 	
 	/**
-	 * Returns a "read variable" query for the corresponding variable.
 	 * @param variable
-	 * @return
+	 * @return a "read variable" query for the corresponding variable.
 	 */
 	public ReadObjectVarQuery<?> getReadQuery(E variable) {
 		return readQueries.get(variable);
 	}
 	
 	/**
-	 * Returns a map of all the available read variables, along with their
-	 * query. 
-	 * @return
+	 * @return a map of all the available read variables, along with their
+	 *         query object.
 	 */
 	public Map<E, ReadObjectVarQuery<?>> getAllReadQueries() {
 		return Collections.unmodifiableMap(readQueries);
