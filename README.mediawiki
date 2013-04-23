@@ -1,0 +1,146 @@
+== What is TraCI4J ==
+
+TraCI4J is a Java library for interfacing [http://sumo.sourceforge.net SUMO] (Simulation of Urban MObility) with a Java program to control and/or watch a traffic simulation via SUMO's [https://sourceforge.net/apps/mediawiki/sumo/index.php?title=TraCI TraCI] interface.
+
+It is developed by members at [http://omero.polito.it/appeal/home.html ApPeAL] (Applied Pervasive Architectures Lab) at [http://www.polito.it Politecnico di Torino].
+
+=== What can TraCI4J do ===
+
+The library can act as a complete front-end for a SUMO instance. The simulation can be started, stopped and advanced step by step.
+
+The SUMO instance che be run by the library itself or can be already running. Since the TraCI communication is done via TCP, the existing SUMO instance can be in the same machine or in another host.
+
+While the simulation is running, many informations can be retrieved, both static (e.g. the road network topology) and dynamic (e.g. position and speed of vehicles). A set of TraCI4J classes match the corresponding [http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI.html#TraCI_Commands TraCI objects], each with methods that allow for value reading and state changing.
+
+
+== Development status ==
+
+The library is currently in '''alpha''' development stage. Some of the TraCI features are available as TraCI4J classes and work as expected (although more testing is needed), while some others still need to be written.
+
+
+== How to get it ==
+
+You can download TraCI4J right here with the tools provided via GitHub.
+
+There are no binaries: the library is available as source code in an [http://www.eclipse.org Eclipse] project. Import it in your workspace and Eclipse will try to automatically build it.
+
+The library can also be built outside Eclipse via Ant. The default target in the build.xml file will try to compile all code to .class files.
+
+== How to get feedback ==
+
+You can use the [https://lists.sourceforge.net/lists/listinfo/traci4j-user tracu4j-user mailing list] to ask for information to the authors and/or other users.
+
+Bug reports and feature requests can be posted in the Issues tab.
+
+== How to use it ==
+
+=== Prerequisites ===
+
+* A working SUMO installation (0.16.0 or higher)
+* Be familiar with SUMO, i.e. know its basic principles, how to set up the input files, how to run it...
+* A SUMO file set (a config file, a net description file and a routes file at least)
+* A Java SE 1.6 virtual machine
+
+=== Usage examples ===
+
+In order to run, all examples need the PATH environment variable to point to your SUMO bin directory. 
+
+Otherwise, the JVM should be run with the system property '''it.polito.appeal.traci.sumo_exe''' set to the full path of the SUMO executable.
+
+Here is an example command line for Windows:
+  java "-Dit.polito.appeal.traci.sumo_exe=C:\Program Files\sumo-0.16.0\bin\sumo.exe" -cp [your-class-path] [your-class-name]
+
+And here's one for Linux:
+  java "-Dit.polito.appeal.traci.sumo_exe=/usr/local/bin/sumo" -cp [your-class-path] [your-class-name]
+
+==== Running the simulation ====
+
+This code runs an instance of SUMO, queries the map bounds and does ten simulation steps. For each step, it prints which and how many vehicles are active.
+
+The specified configuration file is relative to the TraCI4J package's base directory.
+
+  import it.polito.appeal.traci.SumoTraciConnection;
+  import java.util.Set;
+  public class OpenStepsClose {
+    public static void main(String[] args) {
+      SumoTraciConnection conn = new SumoTraciConnection(
+          "test/sumo_maps/box1l/test.sumo.cfg",  // config file
+          12345,                                 // random seed
+          false                                  // look for geolocalization info in the map
+          );
+      try {
+        conn.runServer();
+      
+        System.out.println("Map bounds are: " + conn.queryBounds());
+      
+        for (int i = 0; i < 10; i++) {
+          int time = conn.getCurrentSimStep();
+          Set<String> vehicles = conn.getActiveVehicles();
+        
+          System.out.println("At time step " + time + ", there are "
+              + vehicles.size() + " vehicles: " + vehicles);
+        
+          conn.nextSimStep();
+        }
+        
+        conn.close();
+      }
+      catch(Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+==== Getting vehicle info ====
+
+This code picks a vehicle from the active ones and queries its current route.
+
+  import it.polito.appeal.traci.SumoTraciConnection;
+  import it.polito.appeal.traci.Vehicle;
+  
+  import java.util.Set;
+  
+  public class GetVehicleInfo {
+  
+    public static void main(String[] args) {
+      SumoTraciConnection conn = new SumoTraciConnection(
+          "test/sumo_maps/box1l/test.sumo.cfg",  // config file
+          12345,                                 // random seed
+          false                                  // look for geolocalization info in the map
+          );
+      try {
+        conn.runServer();
+      
+        // the first two steps of this simulation have no vehicles.
+        conn.nextSimStep();
+        conn.nextSimStep();
+      
+        Set<String> vehicles = conn.getActiveVehicles();
+        
+        String aVehicleID = vehicles.iterator().next();
+        Vehicle aVehicle = conn.getVehicle(aVehicleID);
+      
+        System.out.println("Vehicle " + aVehicleID
+            + " will traverse these edges: "
+            + aVehicle.getCurrentRoute());
+      
+        conn.close();
+      }
+      catch(Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+
+== Disclaimer ==
+
+TraCI4J is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+TraCI4J is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+[http://www.gnu.org/licenses/#GPL GNU General Public License] for more details.
