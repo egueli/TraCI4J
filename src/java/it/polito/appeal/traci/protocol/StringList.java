@@ -29,17 +29,37 @@ import java.util.ListIterator;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Representation of a list of {@link String} can be serialized and de-serialized
+ * to/from a {@link Storage}.
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class StringList implements List<String>, WriteableToStorage {
 	private final List<String> list;
 	
+	/**
+	 * Constructor with an empty list.
+	 */
 	public StringList() {
 		list = new ArrayList<String>();
 	}
 	
+	/**
+	 * Constructor that uses an external list as reference.
+	 * @param list
+	 */
 	public StringList(List<String> list) {
 		this.list = list;
 	}
 	
+	/**
+	 * Constructor that de-serializes contents from a {@link Storage}.
+	 * 
+	 * @param storage
+	 * @param verifyType
+	 * @throws TraCIException
+	 */
 	public StringList(Storage storage, boolean verifyType) throws TraCIException {
 		if (verifyType) {
 			if (storage.readByte() != Constants.TYPE_STRINGLIST)

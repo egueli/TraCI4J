@@ -25,10 +25,22 @@ import java.awt.geom.Path2D;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Representation of a polygon in the SUMO environment.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Shapes.html">SUMO documentation</a>
+ */
 public class Polygon implements WriteableToStorage {
 
 	private final Path2D shape;
 	
+	/**
+	 * De-serializes a polygon from a {@link Storage}. 
+	 * @param packet
+	 * @param verifyType
+	 * @throws TraCIException
+	 */
 	public Polygon(Storage packet, boolean verifyType) throws TraCIException {
 		super();
 		if (verifyType) {
@@ -50,6 +62,10 @@ public class Polygon implements WriteableToStorage {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return the shape that describes this polygon
+	 */
 	public Path2D getShape() {
 		return shape;
 	}

@@ -19,11 +19,30 @@
 
 package it.polito.appeal.traci.protocol;
 
+/**
+ * Representation of a position inside a road, identified by the edge ID, the
+ * lane index and position in meters from the beginning of the road.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class RoadmapPosition {
+	/** the ID of the edge. */
 	public final String edgeID;
+	
+	/** the driving distance in meters from the edge's begin point */
 	public final double pos;
+	
+	/** the lane index, starting from zero */
 	public final int laneID;
 	
+	/**
+	 * Constructor from a given edge ID, distance from begin and lane index.
+	 * 
+	 * @param edgeID
+	 * @param pos
+	 * @param laneID
+	 */
 	public RoadmapPosition(String edgeID, double pos, int laneID) {
 		this.edgeID = edgeID;
 		this.pos = pos;

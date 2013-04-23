@@ -118,6 +118,10 @@ public class ResponseMessage {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return the list of received responses
+	 */
 	public List<ResponseContainer> responses() {
 		return Collections.unmodifiableList(pairs);
 	}

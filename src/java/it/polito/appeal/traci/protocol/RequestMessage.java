@@ -109,6 +109,10 @@ public class RequestMessage {
 		os.write(buf);
 	}
 
+	/**
+	 * 
+	 * @return the list of commands that will be sent
+	 */
 	public List<Command> commands() {
 		return Collections.unmodifiableList(commands);
 	}

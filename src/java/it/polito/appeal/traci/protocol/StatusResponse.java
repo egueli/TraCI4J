@@ -23,21 +23,45 @@ import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
+/**
+ * Representation of a status response, that describes the outcome of a command.
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class StatusResponse {
 	private final int id;
 	private final int result;
 	private final String description;
 	
+	/**
+	 * Constructor for a successful outcome without a description.
+	 * 
+	 * @param id
+	 */
 	public StatusResponse(int id) {
 		this(id, Constants.RTYPE_OK, "");
 	}
 	
+	/**
+	 * Constructor for an outcome with a description.
+	 * 
+	 * @param id
+	 * @param result
+	 * @param description
+	 */
 	public StatusResponse(int id, int result, String description) {
 		this.id = id;
 		this.result = result;
 		this.description = description;
 	}
 	
+	/**
+	 * Constructor from de-serialization.
+	 * 
+	 * @param packet
+	 * @throws IOException
+	 */
 	public StatusResponse(Storage packet) throws IOException {
 		int len = packet.readByte();
 		if (len == 0)
@@ -48,12 +72,16 @@ public class StatusResponse {
 		description = packet.readStringASCII();
 	}
 
+	/**
+	 * 
+	 * @return the command ID that this response refers to
+	 */
 	public int id() {
 		return id;
 	}
 	
 	/**
-	 * @return the result
+	 * @return the outcome description
 	 */
 	public int result() {
 		return result;
@@ -66,6 +94,10 @@ public class StatusResponse {
 		return description;
 	}
 	
+	/**
+	 * Serializes this object to the given {@link Storage}.
+	 * @param out
+	 */
 	public void writeTo(Storage out) {
 		out.writeByte(0);
 		out.writeInt(5+1+1+4+description.length());
