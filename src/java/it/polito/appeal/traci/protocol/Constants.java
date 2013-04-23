@@ -556,6 +556,7 @@ public class Constants {
 
 	/** current person number (get: vehicle) */
 	public static final int VAR_PERSON_NUMBER = 0x67;
+	@SuppressWarnings("javadoc")
 	public static final int VAR_BUS_STOP_WAITING = 0x67;
 
 	/** current time step (get: simulation) */
