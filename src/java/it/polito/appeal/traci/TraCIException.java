@@ -44,10 +44,4 @@ public class TraCIException extends IOException {
 		}
 	}
 
-	public static class UnexpectedResponse extends UnexpectedData {
-		public UnexpectedResponse(int expected, int got) {
-			super("response", expected, got);
-		}
-	}
-
 }
