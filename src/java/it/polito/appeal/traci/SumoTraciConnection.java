@@ -131,6 +131,7 @@ public class SumoTraciConnection {
 	 *            different to -1, it overrides the value specified in the
 	 *            config file or, if absent, the system time
 	 */
+	@Deprecated
 	public SumoTraciConnection(String configFile, int randomSeed) {
 		sumoRunner = new SumoRunner(randomSeed, configFile);
 	}
