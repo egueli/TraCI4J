@@ -28,6 +28,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
+/**
+ * Handles the execution and termination of the SUMO executable, given a simulation
+ * configuration file name.
+ * <p>
+ * If the file name is an HTTP URL, this class will download all the required files
+ * from the specified URL before starting the server. 
+ * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
+ *
+ */
 public class SumoRunner {
 	
 	private static final Logger log = Logger.getLogger(SumoRunner.class);
