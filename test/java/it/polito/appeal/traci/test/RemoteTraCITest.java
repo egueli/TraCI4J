@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import it.polito.appeal.traci.SumoRunner;
 import it.polito.appeal.traci.SumoTraciConnection;
 
 import org.apache.log4j.BasicConfigurator;
@@ -46,7 +47,7 @@ public class RemoteTraCITest {
 	
 	@Before
 	public void setUp() throws IOException, InterruptedException {
-		String exe = System.getProperty(SumoTraciConnection.SUMO_EXE_PROPERTY);
+		String exe = System.getProperty(SumoRunner.SUMO_EXE_PROPERTY);
 		if (exe == null) {
 			exe = "sumo";
 		}
