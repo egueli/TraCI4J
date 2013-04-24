@@ -42,7 +42,6 @@ public class SumoRunner {
 
 	private String configFile;
 	private boolean withGUI;
-	private int randomSeed;
 
 
 	private List<String> args = new ArrayList<String>();
@@ -51,8 +50,12 @@ public class SumoRunner {
 	private SumoHttpRetriever httpRetriever;
 
 	
+	@Deprecated
 	public SumoRunner(int randomSeed, String configFile) {
-		this.randomSeed = randomSeed;
+		this(configFile, false);
+		addOption("seed", Integer.toString(randomSeed));
+	}
+	
 	/**
 	 * Creates an instance of this class using default executable locations.
 	 * 
@@ -147,11 +150,6 @@ public class SumoRunner {
 		args.add("--remote-port");
 		args.add(Integer.toString(remotePort));
 		
-		if (randomSeed != -1) {
-			args.add("--seed");
-			args.add(Integer.toString(randomSeed));
-		}
-
 		if (log.isDebugEnabled())
 			log.debug("Executing SUMO with cmdline " + args);
 
