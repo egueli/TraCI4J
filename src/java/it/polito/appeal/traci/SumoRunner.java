@@ -41,6 +41,7 @@ public class SumoRunner {
 	private Process sumoProcess;
 
 	private String configFile;
+	private boolean withGUI;
 	private int randomSeed;
 
 
@@ -52,7 +53,23 @@ public class SumoRunner {
 	
 	public SumoRunner(int randomSeed, String configFile) {
 		this.randomSeed = randomSeed;
+	/**
+	 * Creates an instance of this class using default executable locations.
+	 * 
+	 * @param configFile
+	 *            the simulation configuration file (usually ends with
+	 *            <code>.sumo.cfg</code>)
+	 * @param withGUI
+	 *            if <code>true</code>, executes the SUMO GUI version (
+	 *            <code>sumo-gui</code>). The options <code>--start</code> and
+	 *            <code>--quit-on-end</code> are set to 1 in order to avoid any
+	 *            user interaction.
+	 */
+	public SumoRunner(String configFile, boolean withGUI) {
 		this.configFile = configFile;
+		this.withGUI = withGUI;
+		addOption("start", "1");
+		addOption("quit-on-end", "1");
 	}
 
 
@@ -121,7 +138,7 @@ public class SumoRunner {
 	private void runSUMO(int remotePort) throws IOException {
 		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
-			sumoEXE = "sumo";
+			sumoEXE = withGUI ? "sumo-gui" : "sumo";
 
 		args.add(0, sumoEXE);
 		
