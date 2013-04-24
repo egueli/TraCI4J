@@ -76,27 +76,17 @@ import org.xml.sax.SAXException;
  */
 public class SumoTraciConnection {
 
-	/**
-	 * The system property name to get the executable path and name to run.
-	 */
-	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
-
 	private static final Logger log = Logger.getLogger(SumoTraciConnection.class);
 
-	private String configFile;
-	private int randomSeed;
 	private Socket socket;
 	
+	private SumoRunner sumoRunner;
+	
 	private int currentSimStep;
-	private Process sumoProcess;
 	
 	private static final int CONNECT_RETRIES = 9;
 
 	private CloseQuery closeQuery;
-
-	private SumoHttpRetriever httpRetriever;
-
-	private List<String> args = new ArrayList<String>();
 	
 	private DataInputStream dis;
 	private DataOutputStream dos;
@@ -142,8 +132,7 @@ public class SumoTraciConnection {
 	 *            config file or, if absent, the system time
 	 */
 	public SumoTraciConnection(String configFile, int randomSeed) {
-		this.randomSeed = randomSeed;
-		this.configFile = configFile;
+		sumoRunner = new SumoRunner(randomSeed, configFile);
 	}
 
 	/**
@@ -186,45 +175,11 @@ public class SumoTraciConnection {
 	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
 			InterruptedException {
 
-		tryConnect(addr, port, null);
+		tryConnect(addr, port);
 		postConnect();
 	}
 
-	/**
-	 * Adds a custom option to the SUMO command line before executing it.
-	 * 
-	 * @param option
-	 *            the option name, in long form (e.g. &quot;no-warnings&quot;
-	 *            instead of &quot;W&quot;) and without initial dashes
-	 * @param value
-	 *            the option value, or <code>null</code> if the option has no
-	 *            value
-	 */
-	public void addOption(String option, String value) {
-		args.add("--" + option);
-		if (value != null)
-			args.add(value);
-	}
-	
-	/**
-	 * Runs a SUMO instance and tries to connect at it.
-	 * 
-	 * @throws IOException
-	 *             if something wrong occurs while starting SUMO or connecting
-	 *             at it.
-	 * @throws InterruptedException 
-	 */
-	public void runServer() throws IOException, InterruptedException {
-		retrieveFromURLs();		
-		
-		int port = findAvailablePort();
 
-		runSUMO(port);
-
-		tryConnect(InetAddress.getLocalHost(), port, sumoProcess);
-		postConnect();
-
-	}
 	
 	/**
 	 * Tries to connect to the TraCI server reachable at the given address and
@@ -235,12 +190,12 @@ public class SumoTraciConnection {
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
-	private void tryConnect(InetAddress addr, int port, Process process) throws IOException, InterruptedException {
+	private void tryConnect(InetAddress addr, int port) throws IOException, InterruptedException {
 		int waitTime = 500; // milliseconds
 		for (int i = 0; i < CONNECT_RETRIES; i++) {
-			if (process != null) {
+			if (sumoRunner != null) {
 				try {
-					int retVal = process.exitValue();
+					int retVal = sumoRunner.getSumoExitValue();
 					throw new IOException(
 							"SUMO process terminated unexpectedly with value "
 							+ retVal);
@@ -349,62 +304,26 @@ public class SumoTraciConnection {
 				command, "", Constants.ID_LIST);
 	}
 
-	private void retrieveFromURLs() throws IOException {
-		if (configFile.startsWith("http://")) {
-			
-			httpRetriever = new SumoHttpRetriever(configFile);
+	
+	/**
+	 * Runs a SUMO instance and tries to connect at it.
+	 * 
+	 * @throws IOException
+	 *             if something wrong occurs while starting SUMO or connecting
+	 *             at it.
+	 * @throws InterruptedException 
+	 */
+	public void runServer() throws IOException, InterruptedException {
+		if (sumoRunner != null) {
+			int port = sumoRunner.runServer();
+			tryConnect(InetAddress.getLocalHost(), port);
+			postConnect();
 
-			log.info("Downloading config file from " + configFile);
-			try {
-				httpRetriever.fetchAndParse();
-			} catch (SAXException e) {
-				throw new IOException(e);
-			}
-			
-			configFile = httpRetriever.getConfigFileName();
 		}
-			
+		else
+			throw new IllegalStateException("don't know how to run a SUMO instance");
 	}
 
-	private void runSUMO(int remotePort) throws IOException {
-		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
-		if (sumoEXE == null)
-			sumoEXE = "sumo";
-
-		args.add(0, sumoEXE);
-		
-		args.add("-c");
-		args.add(configFile);
-		args.add("--remote-port");
-		args.add(Integer.toString(remotePort));
-		
-		if (randomSeed != -1) {
-			args.add("--seed");
-			args.add(Integer.toString(randomSeed));
-		}
-
-		if (log.isDebugEnabled())
-			log.debug("Executing SUMO with cmdline " + args);
-
-		String[] argsArray = new String[args.size()];
-		args.toArray(argsArray);
-		sumoProcess = Runtime.getRuntime().exec(argsArray);
-
-		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
-		// + 1);
-
-		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO-err:", log);
-		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO-out:", log);
-		new Thread(errStreamLogger, "StreamLogger-SUMO-err").start();
-		new Thread(outStreamLogger, "StreamLogger-SUMO-out").start();
-	}
-
-	private int findAvailablePort() throws IOException {
-		ServerSocket testSock = new ServerSocket(0);
-		int port = testSock.getLocalPort();
-		testSock.close();
-		return port;
-	}
 
 	/**
 	 * Closes the connection, quits the simulator and frees any stale
@@ -436,13 +355,9 @@ public class SumoTraciConnection {
 			socket = null;
 		}
 		
-		if (sumoProcess != null) {
-			sumoProcess.waitFor();
-			sumoProcess = null;
-		}
+		if (sumoRunner != null)
+			sumoRunner.close();
 		
-		if (httpRetriever != null)
-			httpRetriever.close();
 	}
 	
 	/**
