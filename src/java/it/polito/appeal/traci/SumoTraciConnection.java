@@ -756,8 +756,8 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * @return the {@link PositionConversionQuery} object that allows converting
-	 *         between position types.
+	 * @return a new instance of {@link PositionConversionQuery} that allows
+	 *         converting between position types.
 	 */
 	public PositionConversionQuery queryPositionConversion() {
 		return simData.queryPositionConversion();

@@ -20,9 +20,12 @@
 package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.assertEquals;
+import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.PositionConversionQuery;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
+
+import static org.junit.Assert.*;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -86,5 +89,29 @@ public class PositionConvertionTest {
 		Point2D out = conv.get();
 		assertEquals(LOCATION_LOCAL.getX(), out.getX(), 1e-5);
 		assertEquals(LOCATION_LOCAL.getY(), out.getY(), 1e-5);
+	}
+	
+	@Test
+	public void testMultiConvert() throws IOException {
+		MultiQuery mq = conn.makeMultiQuery();
+		
+		PositionConversionQuery conv1 = conn.queryPositionConversion();
+		conv1.setPositionToConvert(LOCATION_LOCAL, true);
+		mq.add(conv1);
+
+		PositionConversionQuery conv2 = conn.queryPositionConversion();
+		Point2D loc2 = new Point2D.Double(LOCATION_LOCAL.getX() + 5, LOCATION_LOCAL.getY() + 5);
+		conv2.setPositionToConvert(loc2, false);
+		mq.add(conv2);
+		
+		Point2D out1 = conv1.get();
+		Point2D out2 = conv2.get();
+
+		
+		assertFalse(out2.getX() + " should be different than " + out1.getX(), Math.abs(out2.getX() - out1.getX()) < 1e-5);
+		assertFalse(out2.getY() + " should be different than " + out1.getY(), Math.abs(out2.getY() - out1.getY()) < 1e-5);
+
+		
+				
 	}
 }

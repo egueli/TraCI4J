@@ -36,10 +36,13 @@ import java.io.DataOutputStream;
  */
 public class SimulationData extends TraciObject<SimulationData.Variable> implements StepAdvanceListener {
 
+	private final DataInputStream dis;
+	private final DataOutputStream dos;
+	
+	
 	enum Variable {
 		CURRENT_SIM_TIME (Constants.VAR_TIME_STEP),
 		NET_BOUNDARIES (Constants.VAR_NET_BOUNDING_BOX),
-		POSITION_CONVERSION (Constants.POSITION_CONVERSION)
 		;
 		public final int id;
 		private Variable(int id) {
@@ -62,10 +65,9 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.NET_BOUNDARIES.id));
 		
-		addReadQuery(Variable.POSITION_CONVERSION,
-				new PositionConversionQuery(dis, dos,
-						Constants.CMD_GET_SIM_VARIABLE, "",
-						Variable.POSITION_CONVERSION.id));
+		this.dis = dis;
+		this.dos = dos;
+		
 
 	}
 
@@ -91,11 +93,18 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 	}
 
 	/**
+	 * Returns a query to do position conversion. Unlike other query getters,
+	 * this method returns a new {@link PositionConversionQuery} instance every
+	 * time it is called. This allows to do many point conversions at once in a
+	 * MultiQuery.
 	 * 
 	 * @return a query to do position conversion
 	 */
 	public PositionConversionQuery queryPositionConversion() {
-		return (PositionConversionQuery) getReadQuery(Variable.POSITION_CONVERSION);
+		return new PositionConversionQuery(dis, dos,
+				Constants.CMD_GET_SIM_VARIABLE, "",
+				Constants.POSITION_CONVERSION);
+
 	}
 	
 	@Override
