@@ -104,11 +104,14 @@ public class PositionConvertionTest {
 		conv2.setPositionToConvert(loc2, false);
 		mq.add(conv2);
 		
+		mq.run();
+		
 		Point2D out1 = conv1.get();
 		Point2D out2 = conv2.get();
 
-		
-		assertFalse(out2.getX() + " should be different than " + out1.getX(), Math.abs(out2.getX() - out1.getX()) < 1e-5);
+    assertEquals(LOCATION_GEO.getX(), out1.getX(), 1e-5);
+    assertEquals(LOCATION_GEO.getY(), out1.getY(), 1e-5);
+    assertFalse(out2.getX() + " should be different than " + out1.getX(), Math.abs(out2.getX() - out1.getX()) < 1e-5);
 		assertFalse(out2.getY() + " should be different than " + out1.getY(), Math.abs(out2.getY() - out1.getY()) < 1e-5);
 
 		
