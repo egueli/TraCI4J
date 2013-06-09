@@ -72,7 +72,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sun.istack.internal.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the basic
