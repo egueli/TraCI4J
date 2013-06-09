@@ -39,7 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.istack.internal.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * Here we verify some assumptions about the TraCI protocol and the behaviour of
