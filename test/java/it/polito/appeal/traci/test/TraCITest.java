@@ -955,7 +955,7 @@ public class TraCITest {
 		 */
 		getFirstVehicle();
 		
-		assertThat(firstVehicle.queryReadLaneIndex().get(), equalTo(0));
+		assertThat(firstVehicle.queryReadCurrentLaneIndex().get(), equalTo(0));
 	}
 	
 
@@ -963,7 +963,7 @@ public class TraCITest {
 	public void testGetLaneID() throws IOException {
 		getFirstVehicle();
 		
-		assertThat(firstVehicle.queryReadLaneID().get().getID(), equalTo("beg_0"));
+		assertThat(firstVehicle.queryReadCurrentLane().get().getID(), equalTo("beg_0"));
 	}
 	
 	

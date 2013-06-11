@@ -69,14 +69,14 @@ implements StepAdvanceListener
 		LANE_POSITION,
 		
 		/** 
-		 * Query "ReadLaneIndex"
-		 * @see {@link #queryReadLaneIndex}
+		 * Query "ReadCurrentLaneIndex"
+		 * @see {@link #queryReadCurrentLaneIndex}
 		 */
 		LANE_INDEX,
 		
 		/** 
-		 * Query "ReadLaneID"
-		 * @see {@link #queryReadLaneID}
+		 * Query "ReadCurrentLane"
+		 * @see {@link #queryReadCurrentLane}
 		 */
 		LANE_ID,
 		
@@ -401,7 +401,7 @@ implements StepAdvanceListener
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
-	public ReadObjectVarQuery<java.lang.Integer> queryReadLaneIndex() {
+	public ReadObjectVarQuery<java.lang.Integer> queryReadCurrentLaneIndex() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.LANE_INDEX);
 	}
 	
@@ -409,7 +409,7 @@ implements StepAdvanceListener
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
-	public ReadObjectVarQuery<Lane> queryReadLaneID() {
+	public ReadObjectVarQuery<Lane> queryReadCurrentLane() {
 		return (ReadObjectVarQuery.LaneQ) getReadQuery(Variable.LANE_ID);
 	}
 	

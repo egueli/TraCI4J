@@ -81,7 +81,7 @@
 			<dynamic>true</dynamic>
 		</readQuery>
 		<readQuery>
-			<name>ReadLaneIndex</name>
+			<name>ReadCurrentLaneIndex</name>
 			<enum>LANE_INDEX</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_INDEX</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
@@ -89,7 +89,7 @@
 			<dynamic>true</dynamic>
 		</readQuery>
 		<readQuery>
-			<name>ReadLaneID</name>
+			<name>ReadCurrentLane</name>
 			<enum>LANE_ID</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_ID</const>
 			<query>ReadObjectVarQuery.LaneQ</query>
