@@ -946,6 +946,26 @@ public class TraCITest {
 		assertTrue(conn.getRouteRepository().getAll().containsKey(id));
 	}
 
+	@Test
+	public void testGetLaneIndex() throws IOException {
+		/*
+		 * NOTE: it's too easy to check for the lane index in a one-lane
+		 * road. This should be tested in a simulation scenario with
+		 * more lanes per road.
+		 */
+		getFirstVehicle();
+		
+		assertThat(firstVehicle.queryReadLaneIndex().get(), equalTo(0));
+	}
+	
+
+	@Test
+	public void testGetLaneID() throws IOException {
+		getFirstVehicle();
+		
+		assertThat(firstVehicle.queryReadLaneID().get().getID(), equalTo("beg_0"));
+	}
+	
 	
 	// TODO add induction loop tests
 }

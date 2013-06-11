@@ -69,6 +69,18 @@ implements StepAdvanceListener
 		LANE_POSITION,
 		
 		/** 
+		 * Query "ReadLaneIndex"
+		 * @see {@link #queryReadLaneIndex}
+		 */
+		LANE_INDEX,
+		
+		/** 
+		 * Query "ReadLaneID"
+		 * @see {@link #queryReadLaneID}
+		 */
+		LANE_ID,
+		
+		/** 
 		 * Query "ReadCurrentRoute"
 		 * @see {@link #queryReadCurrentRoute}
 		 */
@@ -169,6 +181,23 @@ implements StepAdvanceListener
 				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE, 
 				id, 
 				it.polito.appeal.traci.protocol.Constants.VAR_LANEPOSITION
+				
+				));
+		
+		addReadQuery(Variable.LANE_INDEX, 
+				new ReadObjectVarQuery.IntegerQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_LANE_INDEX
+				
+				));
+		
+		addReadQuery(Variable.LANE_ID, 
+				new ReadObjectVarQuery.LaneQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_LANE_ID
+				, repoLane
 				
 				));
 		
@@ -319,6 +348,10 @@ implements StepAdvanceListener
 		
 		getReadQuery(Variable.LANE_POSITION).setObsolete();
 		
+		getReadQuery(Variable.LANE_INDEX).setObsolete();
+		
+		getReadQuery(Variable.LANE_ID).setObsolete();
+		
 		getReadQuery(Variable.CURRENT_EDGE).setObsolete();
 		
 		getReadQuery(Variable.CO2_EMISSION).setObsolete();
@@ -362,6 +395,22 @@ implements StepAdvanceListener
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadLanePosition() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LANE_POSITION);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<java.lang.Integer> queryReadLaneIndex() {
+		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.LANE_INDEX);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<Lane> queryReadLaneID() {
+		return (ReadObjectVarQuery.LaneQ) getReadQuery(Variable.LANE_ID);
 	}
 	
 	

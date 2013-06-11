@@ -81,6 +81,22 @@
 			<dynamic>true</dynamic>
 		</readQuery>
 		<readQuery>
+			<name>ReadLaneIndex</name>
+			<enum>LANE_INDEX</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_INDEX</const>
+			<query>ReadObjectVarQuery.IntegerQ</query>
+			<returnType>java.lang.Integer</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadLaneID</name>
+			<enum>LANE_ID</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_ID</const>
+			<query>ReadObjectVarQuery.LaneQ</query>
+			<returnType>Lane</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
 			<name>ReadCurrentRoute</name>
 			<enum>CURRENT_ROUTE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_EDGES</const>
