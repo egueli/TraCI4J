@@ -468,7 +468,7 @@ public class SumoTraciConnection {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 	
-		throw new UnsupportedOperationException("to be done");
+		return getSimulationData().queryNetBoundaries().get();
 	}
 
 	/**
