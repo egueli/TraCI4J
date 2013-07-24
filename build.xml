@@ -133,10 +133,16 @@
     </target>
 
 	<target name="deploy">
-        <jar destfile="traci4j.jar"
+        <jar destfile="traci4j-1.6.jar"
         	duplicate="fail"
         	update="yes">
             <fileset dir="bin"/>
 	    </jar>
+		<jar destfile="traci4j-1.6-sources.jar"
+			duplicate="fail"
+	    	update="yes">
+	        <fileset dir="src/java"/>
+			<fileset dir="src/java-gen" />
+		</jar>
     </target>
 </project>

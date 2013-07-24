@@ -141,11 +141,15 @@ implements StepAdvanceListener
 	
 	private final RerouteQuery csqvar_Reroute;
 	
+	private final ChangeLaneIndexQuery csqvar_ChangeLaneIndex;
+	
 	private final ChangeTargetQuery csqvar_ChangeTarget;
 	
 	private final ChangeMaxSpeedQuery csqvar_ChangeMaxSpeed;
 	
 	private final ChangeRouteQuery csqvar_ChangeRoute;
+	
+	private final ChangeSpeedQuery csqvar_ChangeSpeed;
 	Vehicle (
 		DataInputStream dis,
 		DataOutputStream dos, 
@@ -297,6 +301,19 @@ implements StepAdvanceListener
 			}
 		};
 		
+		csqvar_ChangeLaneIndex = new ChangeLaneIndexQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadCurrentLaneIndex().setObsolete();
+				
+			}
+		};
+		
 		csqvar_ChangeTarget = new ChangeTargetQuery(dis, dos, id
 		)
 		{
@@ -330,6 +347,19 @@ implements StepAdvanceListener
 				super.pickResponses(responseIterator);
 				
 				queryReadCurrentRoute().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeSpeed = new ChangeSpeedQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadSpeed().setObsolete();
 				
 			}
 		};
@@ -501,6 +531,13 @@ implements StepAdvanceListener
 	}
 	
 	/**
+	 * @return the instance of {@link ChangeLaneIndexQuery} relative to this query.
+	 */
+	public ChangeLaneIndexQuery queryChangeLaneIndex() {
+		return csqvar_ChangeLaneIndex;
+	}
+	
+	/**
 	 * @return the instance of {@link ChangeTargetQuery} relative to this query.
 	 */
 	public ChangeTargetQuery queryChangeTarget() {
@@ -519,6 +556,13 @@ implements StepAdvanceListener
 	 */
 	public ChangeRouteQuery queryChangeRoute() {
 		return csqvar_ChangeRoute;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeSpeedQuery} relative to this query.
+	 */
+	public ChangeSpeedQuery queryChangeSpeed() {
+		return csqvar_ChangeSpeed;
 	}
 	
 }

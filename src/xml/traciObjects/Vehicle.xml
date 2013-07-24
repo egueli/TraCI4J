@@ -169,7 +169,8 @@
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>	
+			
 	</readQueries>
 
 	<!-- List of all "change state" queries, i.e. those that change the state 
@@ -194,6 +195,15 @@
 			</affects>
 		</changeStateQuery>
 		
+		
+		<changeStateQuery>
+			<name>ChangeLaneIndex</name>
+			<query>ChangeLaneIndexQuery</query>
+			<affects>
+				<affect>ReadCurrentLaneIndex</affect>
+			</affects>
+		</changeStateQuery>
+		
 		<changeStateQuery>
 			<name>ChangeTarget</name>
 			<query>ChangeTargetQuery</query>
@@ -207,13 +217,24 @@
 			<query>ChangeMaxSpeedQuery</query>
 			<affects>
 			</affects>
-		</changeStateQuery><changeStateQuery>
+		</changeStateQuery>
+		
+		<changeStateQuery>
 			<name>ChangeRoute</name>
 			<query>ChangeRouteQuery</query>
 			<affects>
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeSpeed</name>
+			<query>ChangeSpeedQuery</query>
+			<affects>
+				<affect>ReadSpeed</affect>
+			</affects>
+		</changeStateQuery>
+		
 		
 	</changeStateQueries>
 
