@@ -19,34 +19,29 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.protocol.Constants;
-
-import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import de.uniluebeck.itm.tcpip.Storage;
+import it.polito.appeal.traci.protocol.Constants;
 
-/**
- * This query allows to change the color of a POI.
- * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- */
-public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
-	ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
-			String objectID) {
-//		super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_COLOR);
+public class ChangeLaneIndexQuery extends ChangeObjectVarQuery<LaneIndexQueryParameter> {
+	ChangeLaneIndexQuery(DataInputStream dis, DataOutputStream dos, String objectID ) {
+		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGELANE);
 	}
 
-	/**
-	 * After writing params, flushes the cache of {@link POI#changeColorQuery}.
-	 */
 	@Override
-	protected void writeValueTo(Color color, Storage content) {
-		content.writeByte(Constants.TYPE_COLOR);
-		content.writeUnsignedByte(color.getRed());
-		content.writeUnsignedByte(color.getGreen());
-		content.writeUnsignedByte(color.getBlue());
-		content.writeUnsignedByte(color.getAlpha());
+	protected void writeValueTo(LaneIndexQueryParameter buffer, Storage content) {
+		
+		content.writeByte(Constants.TYPE_COMPOUND);
+		content.writeInt(2);
+		content.writeByte(Constants.TYPE_BYTE);
+		content.writeByte(buffer.getLaneIndex());	// lane index
+		content.writeByte(Constants.TYPE_INTEGER);
+		content.writeInt(buffer.getDuration());  // duration - time spent on lane
 	}
+
+	
 }

@@ -21,32 +21,21 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
-/**
- * This query allows to change the color of a POI.
- * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- */
-public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
-	ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
-			String objectID) {
-//		super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_COLOR);
+public class ChangeSpeedQuery extends ChangeObjectVarQuery<Double> {
+		
+	ChangeSpeedQuery(DataInputStream dis, DataOutputStream dos, String objectID) {
+		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_SPEED);
 	}
-
-	/**
-	 * After writing params, flushes the cache of {@link POI#changeColorQuery}.
-	 */
+	
+	
 	@Override
-	protected void writeValueTo(Color color, Storage content) {
-		content.writeByte(Constants.TYPE_COLOR);
-		content.writeUnsignedByte(color.getRed());
-		content.writeUnsignedByte(color.getGreen());
-		content.writeUnsignedByte(color.getBlue());
-		content.writeUnsignedByte(color.getAlpha());
+	protected void writeValueTo(Double speed, Storage content) {
+		content.writeByte(Constants.TYPE_DOUBLE);
+		content.writeDouble(speed);
 	}
 }

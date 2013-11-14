@@ -134,6 +134,18 @@ implements StepAdvanceListener
 		 */
 		NOISE_EMISSION,
 		
+		/** 
+		 * Query "ReadColor"
+		 * @see {@link #queryReadColor}
+		 */
+		COLOR,
+		
+		/** 
+		 * Query "ReadType"
+		 * @see {@link #queryReadType}
+		 */
+		TYPE,
+		
 	}
 	
 	
@@ -141,11 +153,17 @@ implements StepAdvanceListener
 	
 	private final RerouteQuery csqvar_Reroute;
 	
+	private final ChangeLaneIndexQuery csqvar_ChangeLaneIndex;
+	
+	private final ChangeColorQuery csqvar_ChangeColor;
+	
 	private final ChangeTargetQuery csqvar_ChangeTarget;
 	
 	private final ChangeMaxSpeedQuery csqvar_ChangeMaxSpeed;
 	
 	private final ChangeRouteQuery csqvar_ChangeRoute;
+	
+	private final ChangeSpeedQuery csqvar_ChangeSpeed;
 	Vehicle (
 		DataInputStream dis,
 		DataOutputStream dos, 
@@ -275,6 +293,22 @@ implements StepAdvanceListener
 				
 				));
 		
+		addReadQuery(Variable.COLOR, 
+				new ReadObjectVarQuery.ColorQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_COLOR
+				
+				));
+		
+		addReadQuery(Variable.TYPE, 
+				new ReadObjectVarQuery.StringQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_TYPE
+				
+				));
+		
 
 		/*
 		 * initialization of change state queries
@@ -293,6 +327,32 @@ implements StepAdvanceListener
 				super.pickResponses(responseIterator);
 				
 				queryReadCurrentRoute().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeLaneIndex = new ChangeLaneIndexQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadCurrentLaneIndex().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeColor = new ChangeColorQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadColor().setObsolete();
 				
 			}
 		};
@@ -334,6 +394,19 @@ implements StepAdvanceListener
 			}
 		};
 		
+		csqvar_ChangeSpeed = new ChangeSpeedQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadSpeed().setObsolete();
+				
+			}
+		};
+		
 	
 	}
 	
@@ -367,6 +440,8 @@ implements StepAdvanceListener
 		getReadQuery(Variable.FUEL_CONSUMPTION).setObsolete();
 		
 		getReadQuery(Variable.NOISE_EMISSION).setObsolete();
+		
+		getReadQuery(Variable.COLOR).setObsolete();
 		
 	}
 	
@@ -487,6 +562,22 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<java.awt.Color> queryReadColor() {
+		return (ReadObjectVarQuery.ColorQ) getReadQuery(Variable.COLOR);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<java.lang.String> queryReadType() {
+		return (ReadObjectVarQuery.StringQ) getReadQuery(Variable.TYPE);
+	}
+	
+	
+	/**
 	 * @return the instance of {@link ChangeEdgeTravelTimeQuery} relative to this query.
 	 */
 	public ChangeEdgeTravelTimeQuery querySetEdgeTravelTime() {
@@ -498,6 +589,20 @@ implements StepAdvanceListener
 	 */
 	public RerouteQuery queryReroute() {
 		return csqvar_Reroute;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeLaneIndexQuery} relative to this query.
+	 */
+	public ChangeLaneIndexQuery queryChangeLaneIndex() {
+		return csqvar_ChangeLaneIndex;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeColorQuery} relative to this query.
+	 */
+	public ChangeColorQuery queryChangeColor() {
+		return csqvar_ChangeColor;
 	}
 	
 	/**
@@ -519,6 +624,13 @@ implements StepAdvanceListener
 	 */
 	public ChangeRouteQuery queryChangeRoute() {
 		return csqvar_ChangeRoute;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeSpeedQuery} relative to this query.
+	 */
+	public ChangeSpeedQuery queryChangeSpeed() {
+		return csqvar_ChangeSpeed;
 	}
 	
 }

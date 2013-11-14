@@ -169,7 +169,24 @@
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>	
+		<readQuery>
+			<name>ReadColor</name>
+			<enum>COLOR</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COLOR</const>
+			<query>ReadObjectVarQuery.ColorQ</query>
+			<returnType>java.awt.Color</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadType</name>
+			<enum>TYPE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_TYPE</const>
+			<query>ReadObjectVarQuery.StringQ</query>
+			<returnType>java.lang.String</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+			
 	</readQueries>
 
 	<!-- List of all "change state" queries, i.e. those that change the state 
@@ -194,6 +211,23 @@
 			</affects>
 		</changeStateQuery>
 		
+		
+		<changeStateQuery>
+			<name>ChangeLaneIndex</name>
+			<query>ChangeLaneIndexQuery</query>
+			<affects>
+				<affect>ReadCurrentLaneIndex</affect>
+			</affects>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeColor</name>
+			<query>ChangeColorQuery</query>
+			<affects>
+				<affect>ReadColor</affect>
+			</affects>
+		</changeStateQuery>
+		
 		<changeStateQuery>
 			<name>ChangeTarget</name>
 			<query>ChangeTargetQuery</query>
@@ -207,13 +241,24 @@
 			<query>ChangeMaxSpeedQuery</query>
 			<affects>
 			</affects>
-		</changeStateQuery><changeStateQuery>
+		</changeStateQuery>
+		
+		<changeStateQuery>
 			<name>ChangeRoute</name>
 			<query>ChangeRouteQuery</query>
 			<affects>
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeSpeed</name>
+			<query>ChangeSpeedQuery</query>
+			<affects>
+				<affect>ReadSpeed</affect>
+			</affects>
+		</changeStateQuery>
+		
 		
 	</changeStateQueries>
 
