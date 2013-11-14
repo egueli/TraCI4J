@@ -32,8 +32,81 @@
 			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
+		
+		<readQuery>
+			<name>ReadAccel</name>
+			<enum>ACCEL</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_ACCEL</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		
+		<readQuery>
+			<name>ReadDecel</name>
+			<enum>DECEL</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_DECEL</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		
+				
+		<readQuery>
+			<name>ReadMaxSpeed</name>
+			<enum>MAXSPEED</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		
+		
+		<readQuery>
+			<name>ReadMinGap</name>
+			<enum>MINGAP</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_MINGAP</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		
 	</readQueries>
 
 	<changeStateQueries>
+	
+		<changeStateQuery>
+			<name>ChangeAccel</name>
+			<query>ChangeAccelQuery</query>
+			<affects>
+				<affect>ReadAccel</affect>
+			</affects>
+		</changeStateQuery>
+	
+		<changeStateQuery>
+			<name>ChangeDecel</name>
+			<query>ChangeDecelQuery</query>
+			<affects>
+				<affect>ReadDecel</affect>
+			</affects>
+		</changeStateQuery>
+		
+		
+		<changeStateQuery>
+			<name>ChangeMaxSpeed</name>
+			<query>ChangeMaxSpeedQuery</query>
+			<affects>
+				<affect>ReadMaxSpeed</affect>
+			</affects>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeMinGap</name>
+			<query>ChangeMinGapQuery</query>
+			<affects>
+				<affect>ReadMinGap</affect>
+			</affects>
+		</changeStateQuery>
+	
 	</changeStateQueries>
 </traciClass>

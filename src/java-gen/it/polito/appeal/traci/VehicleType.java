@@ -56,8 +56,40 @@ implements StepAdvanceListener
 		 */
 		LENGTH,
 		
+		/** 
+		 * Query "ReadAccel"
+		 * @see {@link #queryReadAccel}
+		 */
+		ACCEL,
+		
+		/** 
+		 * Query "ReadDecel"
+		 * @see {@link #queryReadDecel}
+		 */
+		DECEL,
+		
+		/** 
+		 * Query "ReadMaxSpeed"
+		 * @see {@link #queryReadMaxSpeed}
+		 */
+		MAXSPEED,
+		
+		/** 
+		 * Query "ReadMinGap"
+		 * @see {@link #queryReadMinGap}
+		 */
+		MINGAP,
+		
 	}
 	
+	
+	private final ChangeAccelQuery csqvar_ChangeAccel;
+	
+	private final ChangeDecelQuery csqvar_ChangeDecel;
+	
+	private final ChangeMaxSpeedQuery csqvar_ChangeMaxSpeed;
+	
+	private final ChangeMinGapQuery csqvar_ChangeMinGap;
 	VehicleType (
 		DataInputStream dis,
 		DataOutputStream dos, 
@@ -78,10 +110,94 @@ implements StepAdvanceListener
 				
 				));
 		
+		addReadQuery(Variable.ACCEL, 
+				new ReadObjectVarQuery.DoubleQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_ACCEL
+				
+				));
+		
+		addReadQuery(Variable.DECEL, 
+				new ReadObjectVarQuery.DoubleQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_DECEL
+				
+				));
+		
+		addReadQuery(Variable.MAXSPEED, 
+				new ReadObjectVarQuery.DoubleQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED
+				
+				));
+		
+		addReadQuery(Variable.MINGAP, 
+				new ReadObjectVarQuery.DoubleQ (dis, dos, 
+				it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE, 
+				id, 
+				it.polito.appeal.traci.protocol.Constants.VAR_MINGAP
+				
+				));
+		
 
 		/*
 		 * initialization of change state queries
 		 */
+		
+		csqvar_ChangeAccel = new ChangeAccelQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadAccel().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeDecel = new ChangeDecelQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadDecel().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeMaxSpeed = new ChangeMaxSpeedQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadMaxSpeed().setObsolete();
+				
+			}
+		};
+		
+		csqvar_ChangeMinGap = new ChangeMinGapQuery(dis, dos, id
+		)
+		{
+			@Override
+			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)
+					throws TraCIException {
+				super.pickResponses(responseIterator);
+				
+				queryReadMinGap().setObsolete();
+				
+			}
+		};
 		
 	
 	}
@@ -90,6 +206,10 @@ implements StepAdvanceListener
 	
 	@Override
 	public void nextStep(double step) {
+		
+		getReadQuery(Variable.MAXSPEED).setObsolete();
+		
+		getReadQuery(Variable.MINGAP).setObsolete();
 		
 	}
 	
@@ -104,6 +224,66 @@ implements StepAdvanceListener
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LENGTH);
 	}
 	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<Double> queryReadAccel() {
+		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.ACCEL);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<Double> queryReadDecel() {
+		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.DECEL);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<Double> queryReadMaxSpeed() {
+		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MAXSPEED);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
+	 */
+	public ReadObjectVarQuery<Double> queryReadMinGap() {
+		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MINGAP);
+	}
+	
+	
+	/**
+	 * @return the instance of {@link ChangeAccelQuery} relative to this query.
+	 */
+	public ChangeAccelQuery queryChangeAccel() {
+		return csqvar_ChangeAccel;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeDecelQuery} relative to this query.
+	 */
+	public ChangeDecelQuery queryChangeDecel() {
+		return csqvar_ChangeDecel;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeMaxSpeedQuery} relative to this query.
+	 */
+	public ChangeMaxSpeedQuery queryChangeMaxSpeed() {
+		return csqvar_ChangeMaxSpeed;
+	}
+	
+	/**
+	 * @return the instance of {@link ChangeMinGapQuery} relative to this query.
+	 */
+	public ChangeMinGapQuery queryChangeMinGap() {
+		return csqvar_ChangeMinGap;
+	}
 	
 }
 

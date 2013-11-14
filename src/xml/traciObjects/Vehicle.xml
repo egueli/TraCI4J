@@ -170,6 +170,22 @@
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>	
+		<readQuery>
+			<name>ReadColor</name>
+			<enum>COLOR</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COLOR</const>
+			<query>ReadObjectVarQuery.ColorQ</query>
+			<returnType>java.awt.Color</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadType</name>
+			<enum>TYPE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_TYPE</const>
+			<query>ReadObjectVarQuery.StringQ</query>
+			<returnType>java.lang.String</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
 			
 	</readQueries>
 
@@ -201,6 +217,14 @@
 			<query>ChangeLaneIndexQuery</query>
 			<affects>
 				<affect>ReadCurrentLaneIndex</affect>
+			</affects>
+		</changeStateQuery>
+		
+		<changeStateQuery>
+			<name>ChangeColor</name>
+			<query>ChangeColorQuery</query>
+			<affects>
+				<affect>ReadColor</affect>
 			</affects>
 		</changeStateQuery>
 		
