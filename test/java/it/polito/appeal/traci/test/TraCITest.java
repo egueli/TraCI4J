@@ -548,6 +548,16 @@ public class TraCITest {
 	}
 	
 	/**
+	 * Checks that the reported max speed of a lane is correct.
+	 * @throws IOException
+	 */
+	@Test
+	public void testQueryLaneMaxSpeed() throws IOException {
+	  assertEquals(27.8, conn.getLaneRepository().getByID("beg_0").queryReadMaxSpeed().get(), DELTA);
+	}
+	
+	
+	/**
 	 * This test verifies that all the vehicles entered in the simulation will
 	 * leave it sooner or later.
 	 * @throws IOException
