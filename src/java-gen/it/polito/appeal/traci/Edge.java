@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 
@@ -294,6 +295,7 @@ implements StepAdvanceListener
 	public ChangeGlobalTravelTimeQuery queryChangeTravelTime() {
 		return csqvar_ChangeTravelTime;
 	}
+	
 	
 }
 

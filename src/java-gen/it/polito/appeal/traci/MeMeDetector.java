@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 

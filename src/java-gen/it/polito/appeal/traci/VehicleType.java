@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 
@@ -264,12 +265,14 @@ implements StepAdvanceListener
 		return csqvar_ChangeAccel;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeDecelQuery} relative to this query.
 	 */
 	public ChangeDecelQuery queryChangeDecel() {
 		return csqvar_ChangeDecel;
 	}
+	
 	
 	/**
 	 * @return the instance of {@link ChangeMaxSpeedQuery} relative to this query.
@@ -278,12 +281,14 @@ implements StepAdvanceListener
 		return csqvar_ChangeMaxSpeed;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeMinGapQuery} relative to this query.
 	 */
 	public ChangeMinGapQuery queryChangeMinGap() {
 		return csqvar_ChangeMinGap;
 	}
+	
 	
 }
 

@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 
-<!--  This XML document defines which repositories are needed by each query. -->
+<!--  This XML document provides additional info for each query, 
+      useful for code generation. -->
 
 <queries>
 	<query>
@@ -44,5 +45,54 @@
 		<usedRepos>
 			<repo>Lane</repo>
 		</usedRepos>
+	</query>
+
+	<!-- Single-value change-state queries (i.e. subclasses of ChangeObjectVarQuery) 
+		should be all cited here so they get a simpler "setter" method in auto-generated 
+		TraCI object classes. -->
+	
+	<query>
+	    <class>ChangeSpeedQuery</class>
+	    <changeValueType>Double</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeColorQuery</class>
+	    <changeValueType>java.awt.Color</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeCompleteProgramQuery</class>
+	    <changeValueType>Logic</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeDoubleQ</class>
+	    <changeValueType>Double</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeIntegerQ</class>
+	    <changeValueType>Integer</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeLaneIndexQuery</class>
+	    <changeValueType>LaneIndexQueryParameter</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeLightsStateQuery</class>
+	    <changeValueType>TLState</changeValueType>
+	</query>
+	<query>
+	    <class>ChangePositionQuery</class>
+	    <changeValueType>java.awt.geom.Point2D</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeRouteQuery</class>
+	    <changeValueType>java.util.List&lt;Edge&gt;</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeStringQ</class>
+	    <changeValueType>String</changeValueType>
+	</query>
+	<query>
+	    <class>ChangeTargetQuery</class>
+	    <changeValueType>Edge</changeValueType>
 	</query>
 </queries>

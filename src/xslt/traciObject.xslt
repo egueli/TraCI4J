@@ -12,6 +12,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="text"/>
 
+<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
+<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+
 <xsl:param name="queries-file-name" />
 
 <xsl:variable name="queries" select="document($queries-file-name)" />
@@ -47,6 +50,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 <xsl:value-of select="javadoc"/>
@@ -161,12 +165,27 @@ implements StepAdvanceListener
 	<!--  QUERY SETTERS -->
 	
 	<xsl:for-each select="changeStateQueries/changeStateQuery">
+		<xsl:variable name="query-class" select="query" />
+		<xsl:variable name="query-data" select="$queries/queries/query[class=$query-class]" />
 	/**
 	 * @return the instance of {@link <xsl:value-of select="query"/>} relative to this query.
 	 */
 	public <xsl:value-of select="query" /> query<xsl:value-of select="name"/>() {
 		return csqvar_<xsl:value-of select="name"/>;
 	}
+	
+	<xsl:variable name="valueType" select="$query-data/changeValueType"/>
+	<xsl:if test="$valueType">
+	<xsl:variable name="mixedCaseQueryName" select="concat(translate(substring(name, 1, 1), $uppercase, $lowercase), substring(name,2))"/>
+	/**
+	 * This setter method is equivalent to query<xsl:value-of select="name"/>().setValue(value).run().
+	 */
+	public void <xsl:value-of select="$mixedCaseQueryName"/>(<xsl:value-of select="$valueType"/> value) throws IOException {
+		<xsl:value-of select="query"/> q = csqvar_<xsl:value-of select="name"/>;
+		q.setValue(value);
+		q.run();
+	}
+	</xsl:if>
 	</xsl:for-each>
 }
 

@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 
@@ -200,6 +201,16 @@ implements StepAdvanceListener
 		return csqvar_ChangeColor;
 	}
 	
+	
+	/**
+	 * This setter method is equivalent to queryChangeColor().setValue(value).run().
+	 */
+	public void changeColor(java.awt.Color value) throws IOException {
+		ChangeColorQuery q = csqvar_ChangeColor;
+		q.setValue(value);
+		q.run();
+	}
+	
 	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeStringQ} relative to this query.
 	 */
@@ -207,11 +218,22 @@ implements StepAdvanceListener
 		return csqvar_ChangeType;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangePositionQuery} relative to this query.
 	 */
 	public ChangePositionQuery queryChangePosition() {
 		return csqvar_ChangePosition;
+	}
+	
+	
+	/**
+	 * This setter method is equivalent to queryChangePosition().setValue(value).run().
+	 */
+	public void changePosition(java.awt.geom.Point2D value) throws IOException {
+		ChangePositionQuery q = csqvar_ChangePosition;
+		q.setValue(value);
+		q.run();
 	}
 	
 }

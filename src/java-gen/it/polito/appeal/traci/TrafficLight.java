@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 
@@ -309,12 +310,23 @@ implements StepAdvanceListener
 		return csqvar_ChangeLightsState;
 	}
 	
+	
+	/**
+	 * This setter method is equivalent to queryChangeLightsState().setValue(value).run().
+	 */
+	public void changeLightsState(TLState value) throws IOException {
+		ChangeLightsStateQuery q = csqvar_ChangeLightsState;
+		q.setValue(value);
+		q.run();
+	}
+	
 	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeIntegerQ} relative to this query.
 	 */
 	public ChangeObjectVarQuery.ChangeIntegerQ queryChangePhaseIndex() {
 		return csqvar_ChangePhaseIndex;
 	}
+	
 	
 	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeStringQ} relative to this query.
@@ -323,6 +335,7 @@ implements StepAdvanceListener
 		return csqvar_ChangeProgram;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeIntegerQ} relative to this query.
 	 */
@@ -330,11 +343,22 @@ implements StepAdvanceListener
 		return csqvar_ChangePhaseDuration;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeCompleteProgramQuery} relative to this query.
 	 */
 	public ChangeCompleteProgramQuery queryChangeCompleteProgramDefinition() {
 		return csqvar_ChangeCompleteProgramDefinition;
+	}
+	
+	
+	/**
+	 * This setter method is equivalent to queryChangeCompleteProgramDefinition().setValue(value).run().
+	 */
+	public void changeCompleteProgramDefinition(Logic value) throws IOException {
+		ChangeCompleteProgramQuery q = csqvar_ChangeCompleteProgramDefinition;
+		q.setValue(value);
+		q.run();
 	}
 	
 }

@@ -29,6 +29,7 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 /**
 
@@ -584,6 +585,7 @@ implements StepAdvanceListener
 		return csqvar_SetEdgeTravelTime;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link RerouteQuery} relative to this query.
 	 */
@@ -591,11 +593,22 @@ implements StepAdvanceListener
 		return csqvar_Reroute;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeLaneIndexQuery} relative to this query.
 	 */
 	public ChangeLaneIndexQuery queryChangeLaneIndex() {
 		return csqvar_ChangeLaneIndex;
+	}
+	
+	
+	/**
+	 * This setter method is equivalent to queryChangeLaneIndex().setValue(value).run().
+	 */
+	public void changeLaneIndex(LaneIndexQueryParameter value) throws IOException {
+		ChangeLaneIndexQuery q = csqvar_ChangeLaneIndex;
+		q.setValue(value);
+		q.run();
 	}
 	
 	/**
@@ -605,11 +618,31 @@ implements StepAdvanceListener
 		return csqvar_ChangeColor;
 	}
 	
+	
+	/**
+	 * This setter method is equivalent to queryChangeColor().setValue(value).run().
+	 */
+	public void changeColor(java.awt.Color value) throws IOException {
+		ChangeColorQuery q = csqvar_ChangeColor;
+		q.setValue(value);
+		q.run();
+	}
+	
 	/**
 	 * @return the instance of {@link ChangeTargetQuery} relative to this query.
 	 */
 	public ChangeTargetQuery queryChangeTarget() {
 		return csqvar_ChangeTarget;
+	}
+	
+	
+	/**
+	 * This setter method is equivalent to queryChangeTarget().setValue(value).run().
+	 */
+	public void changeTarget(Edge value) throws IOException {
+		ChangeTargetQuery q = csqvar_ChangeTarget;
+		q.setValue(value);
+		q.run();
 	}
 	
 	/**
@@ -619,6 +652,7 @@ implements StepAdvanceListener
 		return csqvar_ChangeMaxSpeed;
 	}
 	
+	
 	/**
 	 * @return the instance of {@link ChangeRouteQuery} relative to this query.
 	 */
@@ -626,11 +660,31 @@ implements StepAdvanceListener
 		return csqvar_ChangeRoute;
 	}
 	
+	
+	/**
+	 * This setter method is equivalent to queryChangeRoute().setValue(value).run().
+	 */
+	public void changeRoute(java.util.List<Edge> value) throws IOException {
+		ChangeRouteQuery q = csqvar_ChangeRoute;
+		q.setValue(value);
+		q.run();
+	}
+	
 	/**
 	 * @return the instance of {@link ChangeSpeedQuery} relative to this query.
 	 */
 	public ChangeSpeedQuery queryChangeSpeed() {
 		return csqvar_ChangeSpeed;
+	}
+	
+	
+	/**
+	 * This setter method is equivalent to queryChangeSpeed().setValue(value).run().
+	 */
+	public void changeSpeed(Double value) throws IOException {
+		ChangeSpeedQuery q = csqvar_ChangeSpeed;
+		q.setValue(value);
+		q.run();
 	}
 	
 }
