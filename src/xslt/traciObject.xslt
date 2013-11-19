@@ -12,8 +12,33 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="text"/>
 
-<xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
-<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+<!--
+BEGIN underscore-to-mixedCase conversion
+see http://stackoverflow.com/a/2647656/327648 
+ -->
+
+<xsl:variable name="vLower" select="'abcdefghijklmnopqrstuvwxyz'"/>
+<xsl:variable name="vUpper" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'"/>
+
+ <xsl:template name="underscoreToMixedCase">
+  <xsl:param name="pText"/>
+
+  <xsl:if test="$pText">
+   <xsl:value-of select="substring($pText,1,1)"/>
+
+   <xsl:value-of select="substring-before(substring(translate($pText, $vUpper, $vLower), 2), '_')"/>
+
+   <xsl:call-template name="underscoreToMixedCase">
+     <xsl:with-param name="pText"
+       select="substring-after(substring($pText,2), '_')"/>
+   </xsl:call-template>
+  </xsl:if>
+ </xsl:template>
+
+<!--
+END underscore-to-mixedCase conversion
+ -->
+
 
 <xsl:param name="queries-file-name" />
 
@@ -160,6 +185,21 @@ implements StepAdvanceListener
 		return (<xsl:value-of select="query"/>) getReadQuery(Variable.<xsl:value-of select="enum"/>);
 	}
 	
+	<xsl:if test="returnType!=''">
+	<xsl:variable name="mixedCaseQueryName">
+		<xsl:call-template name="underscoreToMixedCase">
+			<xsl:with-param name="pText" select="concat(enum, '_')"/>
+		</xsl:call-template>
+	</xsl:variable>
+	/**
+	 * Executes an instance of {@link <xsl:value-of select="$javadocLinkReturnType"/>} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public <xsl:value-of select="returnType"/> get<xsl:value-of select="$mixedCaseQueryName" />() throws IOException {
+		return ((<xsl:value-of select="query"/>) getReadQuery(Variable.<xsl:value-of select="enum"/>)).get();
+	}
+	</xsl:if>
+	
 	</xsl:for-each>
 	
 	<!--  QUERY SETTERS -->
@@ -176,7 +216,7 @@ implements StepAdvanceListener
 	
 	<xsl:variable name="valueType" select="$query-data/changeValueType"/>
 	<xsl:if test="$valueType">
-	<xsl:variable name="mixedCaseQueryName" select="concat(translate(substring(name, 1, 1), $uppercase, $lowercase), substring(name,2))"/>
+	<xsl:variable name="mixedCaseQueryName" select="concat(translate(substring(name, 1, 1), $vUpper, $vLower), substring(name,2))"/>
 	/**
 	 * Execute an instance of <xsl:value-of select="query"/> set to the given value.
 	 * <br/>

@@ -242,12 +242,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getCo2Emission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCOEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getCoEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -258,12 +274,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getHcEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadPMXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getPmxEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -274,6 +306,14 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getNoxEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadFuelConsumption() {
@@ -282,12 +322,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getFuelConsumption() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getNoiseEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ChangeGlobalTravelTimeQuery} relative to this query.

@@ -173,12 +173,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Lane getLane() throws IOException {
+		return ((ReadObjectVarQuery.LaneQ) getReadQuery(Variable.LANE)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPositionInLane() {
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.awt.geom.Point2D getPosition() throws IOException {
+		return ((ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -189,6 +205,14 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Integer getVehicleNumber() throws IOException {
+		return ((ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.VEHICLE_NUMBER)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<Double> queryReadLastStepMeanSpeed() {
@@ -197,12 +221,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getMeanSpeed() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MEAN_SPEED)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.util.Set<Vehicle>> queryReadLastStepVehicles() {
 		return (VehicleSetQuery) getReadQuery(Variable.LAST_STEP_VEHICLES);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.util.Set<Vehicle> getLastStepVehicles() throws IOException {
+		return ((VehicleSetQuery) getReadQuery(Variable.LAST_STEP_VEHICLES)).get();
+	}
 	
 }
 

@@ -227,12 +227,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getLength() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LENGTH)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<Double> queryReadAccel() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.ACCEL);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getAccel() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.ACCEL)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -243,6 +259,14 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getDecel() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.DECEL)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<Double> queryReadMaxSpeed() {
@@ -251,12 +275,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getMaxspeed() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MAXSPEED)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<Double> queryReadMinGap() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MINGAP);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Double getMingap() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.MINGAP)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ChangeAccelQuery} relative to this query.

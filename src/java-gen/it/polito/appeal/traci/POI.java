@@ -179,6 +179,14 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.String getType() throws IOException {
+		return ((ReadObjectVarQuery.StringQ) getReadQuery(Variable.TYPE)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.awt.Color> queryReadColor() {
@@ -187,12 +195,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.awt.Color getColor() throws IOException {
+		return ((ReadObjectVarQuery.ColorQ) getReadQuery(Variable.COLOR)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPosition() {
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.awt.geom.Point2D getPosition() throws IOException {
+		return ((ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ChangeColorQuery} relative to this query.

@@ -256,6 +256,14 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Integer getDefaultCurrentPhaseDuration() throws IOException {
+		return ((ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.DEFAULT_CURRENT_PHASE_DURATION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link LaneListQuery} relative to this query.
 	 */
 	public LaneListQuery queryReadControlledLanes() {

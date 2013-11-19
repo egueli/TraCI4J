@@ -459,12 +459,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getSpeed() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.SPEED)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.awt.geom.Point2D> queryReadPosition() {
 		return (ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.awt.geom.Point2D getPosition() throws IOException {
+		return ((ReadObjectVarQuery.PositionQ) getReadQuery(Variable.POSITION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -475,12 +491,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getLanePosition() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.LANE_POSITION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Integer> queryReadCurrentLaneIndex() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.LANE_INDEX);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Integer getLaneIndex() throws IOException {
+		return ((ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.LANE_INDEX)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -491,12 +523,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Lane getLaneId() throws IOException {
+		return ((ReadObjectVarQuery.LaneQ) getReadQuery(Variable.LANE_ID)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.util.List<Edge>> queryReadCurrentRoute() {
 		return (RouteQuery) getReadQuery(Variable.CURRENT_ROUTE);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.util.List<Edge> getCurrentRoute() throws IOException {
+		return ((RouteQuery) getReadQuery(Variable.CURRENT_ROUTE)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -507,12 +555,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public Edge getCurrentEdge() throws IOException {
+		return ((ReadObjectVarQuery.EdgeQ) getReadQuery(Variable.CURRENT_EDGE)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadCO2Emission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getCo2Emission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO2_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -523,12 +587,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getCoEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.CO_EMISSION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadHCEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getHcEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.HC_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -539,12 +619,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getPmxEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.PMX_EMISSION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNOXEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getNoxEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOX_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -555,12 +651,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getFuelConsumption() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.FUEL_CONSUMPTION)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.Double> queryReadNoiseEmission() {
 		return (ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.Double getNoiseEmission() throws IOException {
+		return ((ReadObjectVarQuery.DoubleQ) getReadQuery(Variable.NOISE_EMISSION)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
@@ -571,12 +683,28 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.awt.Color getColor() throws IOException {
+		return ((ReadObjectVarQuery.ColorQ) getReadQuery(Variable.COLOR)).get();
+	}
+	
+	/**
 	 * @return the instance of {@link ReadObjectVarQuery} relative to this query.
 	 */
 	public ReadObjectVarQuery<java.lang.String> queryReadType() {
 		return (ReadObjectVarQuery.StringQ) getReadQuery(Variable.TYPE);
 	}
 	
+	
+	/**
+	 * Executes an instance of {@link ReadObjectVarQuery} relative to this query,
+	 * and returns the corresponding value.
+	 */
+	public java.lang.String getType() throws IOException {
+		return ((ReadObjectVarQuery.StringQ) getReadQuery(Variable.TYPE)).get();
+	}
 	
 	/**
 	 * @return the instance of {@link ChangeEdgeTravelTimeQuery} relative to this query.
