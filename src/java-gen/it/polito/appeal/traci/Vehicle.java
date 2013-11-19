@@ -345,7 +345,7 @@ implements StepAdvanceListener
 		};
 		
 		csqvar_ChangeColor = new ChangeColorQuery(dis, dos, id
-		)
+		, it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLE_VARIABLE, it.polito.appeal.traci.protocol.Constants.VAR_COLOR)
 		{
 			@Override
 			void pickResponses(java.util.Iterator<it.polito.appeal.traci.protocol.ResponseContainer> responseIterator)

@@ -30,6 +30,8 @@
 	</repos>
 	
 	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLE_VARIABLE</changeStateCommand>
+	
 
 	<!-- List of all "read" queries, i.e. those that don't change the state 
 		of the object and return a value -->
@@ -223,6 +225,7 @@
 		<changeStateQuery>
 			<name>ChangeColor</name>
 			<query>ChangeColorQuery</query>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COLOR</const>
 			<affects>
 				<affect>ReadColor</affect>
 			</affects>

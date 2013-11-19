@@ -28,14 +28,13 @@ import java.io.DataOutputStream;
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
- * This query allows to change the color of a POI.
+ * This query allows to change the color attribute of a TraCI object.
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  */
 public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
 	ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
-			String objectID) {
-//		super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_COLOR);
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_COLOR);
+			String objectID, int commandID, int variableID) {
+		super(dis, dos, commandID, objectID, variableID);
 	}
 
 	/**
