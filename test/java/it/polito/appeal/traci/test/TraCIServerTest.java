@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("javadoc")
 public class TraCIServerTest {
 	
-	private static final int API_VERSION = 5;
+	private static final int API_VERSION = 6;
 
 	/**
 	 * The system property name to get the executable path and name to run.
@@ -84,10 +84,9 @@ public class TraCIServerTest {
 	}
 
 	private void runSUMO() throws IOException {
-		final String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
+		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
-			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
-					+ " must be set");
+			sumoEXE = "sumo";
 
 		String[] args;
 		args = new String[] { 
@@ -224,7 +223,6 @@ public class TraCIServerTest {
 		
 		ResponseContainer pair = respm.responses().get(0);
 		assertEquals(Constants.CMD_CLOSE, pair.getStatus().id());
-		assertEquals("Goodbye", pair.getStatus().description()); // undocumented!
 		
 		assertNull(pair.getResponse());
 	}

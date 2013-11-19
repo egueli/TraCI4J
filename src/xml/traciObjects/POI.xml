@@ -84,6 +84,7 @@
 		<changeStateQuery>
 			<name>ChangeColor</name>
 			<query>ChangeColorQuery</query>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COLOR</const>
 			<!-- Lists the read queries that may be changed by the execution of this 
 			query, identified by their name. Calling this query will clear the caches 
 			of the queries contained here. -->
