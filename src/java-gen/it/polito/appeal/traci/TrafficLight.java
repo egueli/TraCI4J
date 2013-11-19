@@ -339,6 +339,17 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeObjectVarQuery.ChangeIntegerQ set to the given value.
+	 * 
+	 * This setter method is equivalent to queryChangePhaseIndex().setValue(value).run().
+	 */
+	public void changePhaseIndex(Integer value) throws IOException {
+		ChangeObjectVarQuery.ChangeIntegerQ q = csqvar_ChangePhaseIndex;
+		q.setValue(value);
+		q.run();
+	}
+	
+	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeStringQ} relative to this query.
 	 */
 	public ChangeObjectVarQuery.ChangeStringQ queryChangeProgram() {
@@ -347,12 +358,34 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeObjectVarQuery.ChangeStringQ set to the given value.
+	 * 
+	 * This setter method is equivalent to queryChangeProgram().setValue(value).run().
+	 */
+	public void changeProgram(String value) throws IOException {
+		ChangeObjectVarQuery.ChangeStringQ q = csqvar_ChangeProgram;
+		q.setValue(value);
+		q.run();
+	}
+	
+	/**
 	 * @return the instance of {@link ChangeObjectVarQuery.ChangeIntegerQ} relative to this query.
 	 */
 	public ChangeObjectVarQuery.ChangeIntegerQ queryChangePhaseDuration() {
 		return csqvar_ChangePhaseDuration;
 	}
 	
+	
+	/**
+	 * Execute an instance of ChangeObjectVarQuery.ChangeIntegerQ set to the given value.
+	 * 
+	 * This setter method is equivalent to queryChangePhaseDuration().setValue(value).run().
+	 */
+	public void changePhaseDuration(Integer value) throws IOException {
+		ChangeObjectVarQuery.ChangeIntegerQ q = csqvar_ChangePhaseDuration;
+		q.setValue(value);
+		q.run();
+	}
 	
 	/**
 	 * @return the instance of {@link ChangeCompleteProgramQuery} relative to this query.

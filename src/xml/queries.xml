@@ -64,11 +64,11 @@
 	    <changeValueType>Logic</changeValueType>
 	</query>
 	<query>
-	    <class>ChangeDoubleQ</class>
+	    <class>ChangeObjectVarQuery.ChangeDoubleQ</class>
 	    <changeValueType>Double</changeValueType>
 	</query>
 	<query>
-	    <class>ChangeIntegerQ</class>
+	    <class>ChangeObjectVarQuery.ChangeIntegerQ</class>
 	    <changeValueType>Integer</changeValueType>
 	</query>
 	<query>
@@ -88,7 +88,7 @@
 	    <changeValueType>java.util.List&lt;Edge&gt;</changeValueType>
 	</query>
 	<query>
-	    <class>ChangeStringQ</class>
+	    <class>ChangeObjectVarQuery.ChangeStringQ</class>
 	    <changeValueType>String</changeValueType>
 	</query>
 	<query>

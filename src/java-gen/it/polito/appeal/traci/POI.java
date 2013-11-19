@@ -246,6 +246,17 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeObjectVarQuery.ChangeStringQ set to the given value.
+	 * 
+	 * This setter method is equivalent to queryChangeType().setValue(value).run().
+	 */
+	public void changeType(String value) throws IOException {
+		ChangeObjectVarQuery.ChangeStringQ q = csqvar_ChangeType;
+		q.setValue(value);
+		q.run();
+	}
+	
+	/**
 	 * @return the instance of {@link ChangePositionQuery} relative to this query.
 	 */
 	public ChangePositionQuery queryChangePosition() {
