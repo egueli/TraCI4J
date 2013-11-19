@@ -43,7 +43,7 @@ Bug reports and feature requests can be posted in the Issues tab.
 
 === Usage examples ===
 
-You can find some usage examples [in this directory](examples/it/polito/appeal/traci/examples).
+You can find some usage examples [examples/it/polito/appeal/traci/examples in this directory].
 
 == Disclaimer ==
 
