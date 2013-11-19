@@ -8,7 +8,7 @@ It is developed by members at [http://omero.polito.it/appeal/home.html ApPeAL] (
 
 The library can act as a complete front-end for a SUMO instance. The simulation can be started, stopped and advanced step by step.
 
-The SUMO instance che be run by the library itself or can be already running. Since the TraCI communication is done via TCP, the existing SUMO instance can be in the same machine or in another host.
+The SUMO instance can be run by the library itself or can be already running. Since the TraCI communication is done via TCP, the existing SUMO instance can be in the same machine or in another host.
 
 While the simulation is running, many informations can be retrieved, both static (e.g. the road network topology) and dynamic (e.g. position and speed of vehicles). A set of TraCI4J classes match the corresponding [http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI.html#TraCI_Commands TraCI objects], each with methods that allow for value reading and state changing.
 
@@ -43,95 +43,7 @@ Bug reports and feature requests can be posted in the Issues tab.
 
 === Usage examples ===
 
-In order to run, all examples need the PATH environment variable to point to your SUMO bin directory. 
-
-Otherwise, the JVM should be run with the system property '''it.polito.appeal.traci.sumo_exe''' set to the full path of the SUMO executable.
-
-Here is an example command line for Windows:
-  java "-Dit.polito.appeal.traci.sumo_exe=C:\Program Files\sumo-0.16.0\bin\sumo.exe" -cp [your-class-path] [your-class-name]
-
-And here's one for Linux:
-  java "-Dit.polito.appeal.traci.sumo_exe=/usr/local/bin/sumo" -cp [your-class-path] [your-class-name]
-
-==== Running the simulation ====
-
-This code runs an instance of SUMO, queries the map bounds and does ten simulation steps. For each step, it prints which and how many vehicles are active.
-
-The specified configuration file is relative to the TraCI4J package's base directory.
-
-  import it.polito.appeal.traci.SumoTraciConnection;
-  import java.util.Set;
-  public class OpenStepsClose {
-    public static void main(String[] args) {
-      SumoTraciConnection conn = new SumoTraciConnection(
-          "test/sumo_maps/box1l/test.sumo.cfg",  // config file
-          12345,                                 // random seed
-          false                                  // look for geolocalization info in the map
-          );
-      try {
-        conn.runServer();
-      
-        System.out.println("Map bounds are: " + conn.queryBounds());
-      
-        for (int i = 0; i < 10; i++) {
-          int time = conn.getCurrentSimStep();
-          Set<String> vehicles = conn.getActiveVehicles();
-        
-          System.out.println("At time step " + time + ", there are "
-              + vehicles.size() + " vehicles: " + vehicles);
-        
-          conn.nextSimStep();
-        }
-        
-        conn.close();
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-==== Getting vehicle info ====
-
-This code picks a vehicle from the active ones and queries its current route.
-
-  import it.polito.appeal.traci.SumoTraciConnection;
-  import it.polito.appeal.traci.Vehicle;
-  
-  import java.util.Set;
-  
-  public class GetVehicleInfo {
-  
-    public static void main(String[] args) {
-      SumoTraciConnection conn = new SumoTraciConnection(
-          "test/sumo_maps/box1l/test.sumo.cfg",  // config file
-          12345,                                 // random seed
-          false                                  // look for geolocalization info in the map
-          );
-      try {
-        conn.runServer();
-      
-        // the first two steps of this simulation have no vehicles.
-        conn.nextSimStep();
-        conn.nextSimStep();
-      
-        Set<String> vehicles = conn.getActiveVehicles();
-        
-        String aVehicleID = vehicles.iterator().next();
-        Vehicle aVehicle = conn.getVehicle(aVehicleID);
-      
-        System.out.println("Vehicle " + aVehicleID
-            + " will traverse these edges: "
-            + aVehicle.getCurrentRoute());
-      
-        conn.close();
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
+You can find some usage examples here: [examples/it/polito/appeal/traci/examples].
 
 == Disclaimer ==
 
