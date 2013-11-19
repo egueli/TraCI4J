@@ -84,10 +84,9 @@ public class TraCIServerTest {
 	}
 
 	private void runSUMO() throws IOException {
-		final String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
+		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
-			throw new RuntimeException("System property " + SUMO_EXE_PROPERTY
-					+ " must be set");
+			sumoEXE = "sumo";
 
 		String[] args;
 		args = new String[] { 
