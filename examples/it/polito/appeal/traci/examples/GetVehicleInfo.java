@@ -56,7 +56,7 @@ public class GetVehicleInfo {
 			
 			System.out.println("Vehicle " + aVehicle
 					+ " will traverse these edges: "
-					+ aVehicle.queryReadCurrentRoute().get());
+					+ aVehicle.getCurrentRoute());
 			
 			conn.close();
 		}

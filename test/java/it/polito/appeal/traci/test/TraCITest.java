@@ -226,8 +226,8 @@ public class TraCITest {
 	}
 	
 	/**
-	 * This test shows how a TraCI object is updated; calling {@link ValueReadQuery#get()}
-	 * on the same query object in two different simulation steps may give different
+	 * This test shows how a TraCI object is updated; calling {@link Vehicle#getSpeed()}
+	 * in two different simulation steps may give different
 	 * results. 
 	 * @throws IllegalStateException
 	 * @throws IOException
@@ -236,12 +236,11 @@ public class TraCITest {
 	public void testRefreshedValues() throws IllegalStateException, IOException {
 		conn.nextSimStep();
 		Vehicle v = conn.getVehicleRepository().getAll().values().iterator().next();
-		ValueReadQuery<Double> readSpeedQuery = v.queryReadSpeed();
-		Double speedFirst = readSpeedQuery.get();
+		Double speedFirst = v.getSpeed();
 		
 		for (int i=0; i<10; i++) {
 			conn.nextSimStep();
-			Double speedNow = readSpeedQuery.get();
+			Double speedNow = v.getSpeed();
 			log.info(speedNow.toString());
 			assertTrue(Math.abs(speedFirst - speedNow) > DELTA);
 		}
@@ -287,7 +286,7 @@ public class TraCITest {
 		conn.nextSimStep();
 		final Repository<Vehicle> repo = conn.getVehicleRepository();
 		Vehicle v0 = repo.getByID("0.0");
-		assertEquals(0, v0.queryReadLanePosition().get(), DELTA);
+		assertEquals(0, v0.getLanePosition(), DELTA);
 	}
 	
 	/**
@@ -302,7 +301,7 @@ public class TraCITest {
 		conn.nextSimStep();
 		final Repository<Vehicle> repo = conn.getVehicleRepository();
 		Vehicle v0 = repo.getByID("0.0");
-		assertEquals(1.886542, v0.queryReadLanePosition().get(), DELTA);
+		assertEquals(1.886542, v0.getLanePosition(), DELTA);
 	}
 	
 	private Vehicle firstVehicle = null;
@@ -316,8 +315,7 @@ public class TraCITest {
 	public void testRoute() throws IOException {
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
-		List<Edge> route = routeQuery.get();
+		List<Edge> route = firstVehicle.getCurrentRoute();
 		assertEquals(4, route.size());
 
 		Iterator<Edge> it = route.iterator();
@@ -339,9 +337,7 @@ public class TraCITest {
 		
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
-		
-		List<Edge> routeBefore = routeQuery.get();
+		List<Edge> routeBefore = firstVehicle.getCurrentRoute();
 		log.info("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
@@ -353,7 +349,7 @@ public class TraCITest {
 		
 		firstVehicle.queryReroute().run();
 		
-		List<Edge> routeAfter = routeQuery.get();
+		List<Edge> routeAfter = firstVehicle.getCurrentRoute();
 		log.info("Route after:          " + routeAfter);
 		
 		assertFalse(routeBefore.equals(routeAfter));
@@ -389,8 +385,7 @@ public class TraCITest {
 
 		getFirstVehicle();
 		
-		ValueReadQuery<List<Edge>> routeQuery = firstVehicle.queryReadCurrentRoute();
-		List<Edge> routeBefore = routeQuery.get();
+		List<Edge> routeBefore = firstVehicle.getCurrentRoute();
 		log.info("Route before:         " + routeBefore);
 
 		String edgeID = "middle";
@@ -408,7 +403,7 @@ public class TraCITest {
 
 		firstVehicle.queryReroute().run();
 
-		List<Edge> routeAfter = routeQuery.get();
+		List<Edge> routeAfter = firstVehicle.getCurrentRoute();
 		log.info("Route after:          " + routeAfter);
 
 		assertFalse(routeBefore.equals(routeAfter));
@@ -423,7 +418,7 @@ public class TraCITest {
 	@Test
 	public void testGetShape() throws IOException {
 		Lane lane = conn.getLaneRepository().getByID("beg_0");
-		PathIterator it = lane.queryReadShape().get().getPathIterator(null);
+		PathIterator it = lane.getShape().getPathIterator(null);
 		assertFalse(it.isDone());
 		double[] coords = new double[2];
 		assertEquals(PathIterator.SEG_MOVETO, it.currentSegment(coords));
@@ -446,7 +441,7 @@ public class TraCITest {
 	@Test
 	public void testGetBelongingEdge() throws IOException {
 		Lane lane = conn.getLaneRepository().getByID("beg_0");
-		Edge edge = lane.queryReadParentEdge().get();
+		Edge edge = lane.getParentEdge();
 		assertEquals("beg", edge.getID());
 	}
 	
@@ -477,7 +472,7 @@ public class TraCITest {
 		for (int r = 0; r < RETRIES; r++) {
 			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			for (Vehicle vehicle : vehicles.values()) {
-				vehicle.queryReadPosition().get();
+				vehicle.getPosition();
 			}
 			conn.nextSimStep();
 		}
@@ -508,7 +503,7 @@ public class TraCITest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testQueryBounds() throws IOException {
+	public void testGetBounds() throws IOException {
 		Rectangle2D bounds = conn.getSimulationData().queryNetBoundaries().get();
 		assertEquals(0.0, bounds.getMinX(), DELTA);
 		assertEquals(0.0, bounds.getMinY(), DELTA);
@@ -520,7 +515,7 @@ public class TraCITest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testQueryRoads() throws IOException, InterruptedException {
+	public void testGetRoads() throws IOException, InterruptedException {
 		Set<String> expectedLaneIDs = new HashSet<String>();
 		expectedLaneIDs.add("beg_0");
 		expectedLaneIDs.add(":beg_0_0");
@@ -552,8 +547,8 @@ public class TraCITest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testQueryLaneMaxSpeed() throws IOException {
-	  assertEquals(27.8, conn.getLaneRepository().getByID("beg_0").queryReadMaxSpeed().get(), DELTA);
+	public void testGetLaneMaxSpeed() throws IOException {
+	  assertEquals(27.8, conn.getLaneRepository().getByID("beg_0").getMaxSpeed(), DELTA);
 	}
 	
 	
@@ -615,13 +610,12 @@ public class TraCITest {
 		getFirstVehicle();
 		Vehicle v = firstVehicle;
 
-		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setValue(conn.getEdgeRepository().getByID("end"));
-		ctq.run();
+		Edge endEdge = conn.getEdgeRepository().getByID("end"); 
+		v.changeTarget(endEdge);
 		
 		Edge lastEdge = null;
 		while (conn.getVehicleRepository().getByID(v.getID()) != null) {
-			lastEdge = v.queryReadCurrentEdge().get();
+			lastEdge = v.getCurrentEdge();
 			assertFalse(lastEdge.getID().equals("rend"));
 
 			conn.nextSimStep();
@@ -638,10 +632,9 @@ public class TraCITest {
 	public void testChangeTargetAlsoAffectsRouteList() throws IOException {
 		getFirstVehicle();
 		Vehicle v = firstVehicle;
-		ChangeTargetQuery ctq = v.queryChangeTarget();
-		ctq.setValue(conn.getEdgeRepository().getByID("end"));
-		ctq.run();
-		List<Edge> route = v.queryReadCurrentRoute().get();
+		Edge endEdge = conn.getEdgeRepository().getByID("end"); 
+		v.changeTarget(endEdge);
+		List<Edge> route = v.getCurrentRoute();
 		assertEquals("end", route.get(route.size()-1).getID());
 	}
 	
@@ -660,10 +653,8 @@ public class TraCITest {
 		newRoute.add(conn.getEdgeRepository().getByID("beg2left"));
 		newRoute.add(conn.getEdgeRepository().getByID("left"));
 		newRoute.add(conn.getEdgeRepository().getByID("left2end"));
-		ChangeRouteQuery crq = v.queryChangeRoute();
-		crq.setValue(newRoute);
-		crq.run();
-		assertEquals(newRoute, v.queryReadCurrentRoute().get());
+		v.changeRoute(newRoute);
+		assertEquals(newRoute, v.getCurrentRoute());
 	}
 	
 	/**
@@ -675,7 +666,7 @@ public class TraCITest {
 	@Test
 	public void testLaneLinks() throws IOException {
 		Lane begLane = conn.getLaneRepository().getByID("beg_0");
-		List<Link> links = begLane.queryReadLinks().get();
+		List<Link> links = begLane.getLinks();
 		Set<String> linkIDs = new HashSet<String>();
 		Set<String> intLinkIDs = new HashSet<String>();
 		for (Link link : links) {
@@ -699,9 +690,8 @@ public class TraCITest {
 	@Test
 	public void testVehiclePositionIsInBounds() throws IOException {
 		getFirstVehicle();
-		final ValueReadQuery<Point2D> queryReadPosition = firstVehicle.queryReadPosition();
 		while (conn.getVehicleRepository().getByID(firstVehicle.getID()) != null) {
-			Point2D pos = queryReadPosition.get();
+			Point2D pos = firstVehicle.getPosition();
 			assertTrue(pos.getX() >= 0);
 			assertTrue(pos.getX() < 2500);
 			assertEquals(-1.65, pos.getY(), DELTA);
@@ -731,7 +721,7 @@ public class TraCITest {
 			public void vehicleArrived(Vehicle vehicle) {
 				if (vehicle.equals(firstVehicle)) {
 					try {
-						log.info("pos: " + firstVehicle.queryReadPosition().get());
+						log.info("pos: " + firstVehicle.getPosition());
 						fail("it should throw an exception");
 					} catch (IOException e) {
 					}
@@ -764,7 +754,7 @@ public class TraCITest {
 	public void testPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		assertEquals("TEST_TYPE", poi.queryReadType().get());
+		assertEquals("TEST_TYPE", poi.getType());
 	}
 	
 	/**
@@ -777,7 +767,7 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		Color c = new Color(255, 128, 0);
-		assertEquals(c, poi.queryReadColor().get());
+		assertEquals(c, poi.getColor());
 	}
 	
 	/**
@@ -790,7 +780,7 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		Point2D pos = new Point2D.Double(100, 50);
-		Point2D poiPos = poi.queryReadPosition().get();
+		Point2D poiPos = poi.getPosition();
 		assertEquals(pos.getX(), poiPos.getX(), DELTA);
 		assertEquals(pos.getY(), poiPos.getY(), DELTA);
 	}
@@ -804,11 +794,9 @@ public class TraCITest {
 	public void testSetPOIType() throws IOException {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
-		ChangeStringQ q = poi.queryChangeType();
 		final String newType = "NEW_TYPE";
-		q.setValue(newType);
-		q.run();
-		assertEquals(newType, poi.queryReadType().get());
+		poi.changeType(newType);
+		assertEquals(newType, poi.getType());
 	}
 	
 	/**
@@ -821,10 +809,8 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		final Point2D newPos = new Point2D.Double(0, 0);
-		ChangePositionQuery q = poi.queryChangePosition();
-		q.setValue(newPos);
-		q.run();
-		final Point2D pos = poi.queryReadPosition().get();
+		poi.changePosition(newPos);
+		final Point2D pos = poi.getPosition();
 		assertEquals(newPos.getX(), pos.getX(), DELTA);
 		assertEquals(newPos.getY(), pos.getY(), DELTA);
 	}
@@ -839,10 +825,8 @@ public class TraCITest {
 		Repository<POI> poiRepo = conn.getPOIRepository();
 		POI poi = poiRepo.getByID("0");
 		final Color newColor = Color.cyan;
-		ChangeColorQuery q = poi.queryChangeColor();
-		q.setValue(newColor);
-		q.run();
-		assertEquals(newColor, poi.queryReadColor().get());
+		poi.changeColor(newColor);
+		assertEquals(newColor, poi.getColor());
 	}
 	
 	/**
@@ -861,31 +845,16 @@ public class TraCITest {
 	 * @throws IOException
 	 */
 	@Test
-	public void testMeMeDetectorIsDetecting() throws IOException {
-		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
-		MeMeDetector detector = memeRepo.getByID("e3_0");
-		
-//		ValueReadQuery<Double> meanSpeed = detector.queryReadLastStepMeanSpeed();
-		ValueReadQuery<Integer> vehicleNum = detector.queryReadLastStepVehicleNumber();
-//		ValueReadQuery<Set<Vehicle>> vehicles = detector.queryReadLastStepVehicles();
-		
-		MultiQuery batch = conn.makeMultiQuery();
-//		batch.add(meanSpeed);
-		batch.add(vehicleNum);
-//		batch.add(vehicles);
-		
+	public void testMeMeDetectorIsDetecting() throws IOException {		
 		
 		for (int t=0; t<100; t++) {
 			conn.nextSimStep();
 		}
 		
-		batch.run();
-//		log.info(""
-//				+ ":   " + meanSpeed.get() 
-//				+ "    " + vehicleNum.get()
-//				+ "    " + vehicles.get());
+		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
+		MeMeDetector detector = memeRepo.getByID("e3_0");
 		
-		assertEquals(38, (int)vehicleNum.get());
+		assertEquals(38, (int)detector.getVehicleNumber());
 	}
 	
 	/**
@@ -965,7 +934,7 @@ public class TraCITest {
 		 */
 		getFirstVehicle();
 		
-		assertThat(firstVehicle.queryReadCurrentLaneIndex().get(), equalTo(0));
+		assertThat(firstVehicle.getLaneIndex(), equalTo(0));
 	}
 	
 
@@ -973,7 +942,7 @@ public class TraCITest {
 	public void testGetLaneID() throws IOException {
 		getFirstVehicle();
 		
-		assertThat(firstVehicle.queryReadCurrentLane().get().getID(), equalTo("beg_0"));
+		assertThat(firstVehicle.getLaneId().getID(), equalTo("beg_0"));
 	}
 	
 	
