@@ -178,6 +178,8 @@ implements StepAdvanceListener
 	<xsl:if test="$valueType">
 	<xsl:variable name="mixedCaseQueryName" select="concat(translate(substring(name, 1, 1), $uppercase, $lowercase), substring(name,2))"/>
 	/**
+	 * Execute an instance of <xsl:value-of select="query"/> set to the given value.
+	 * <br/>
 	 * This setter method is equivalent to query<xsl:value-of select="name"/>().setValue(value).run().
 	 */
 	public void <xsl:value-of select="$mixedCaseQueryName"/>(<xsl:value-of select="$valueType"/> value) throws IOException {

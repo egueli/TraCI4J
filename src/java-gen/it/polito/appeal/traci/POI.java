@@ -203,6 +203,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeColorQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeColor().setValue(value).run().
 	 */
 	public void changeColor(java.awt.Color value) throws IOException {
@@ -228,6 +230,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangePositionQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangePosition().setValue(value).run().
 	 */
 	public void changePosition(java.awt.geom.Point2D value) throws IOException {

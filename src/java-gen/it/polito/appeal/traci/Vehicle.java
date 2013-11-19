@@ -603,6 +603,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeLaneIndexQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeLaneIndex().setValue(value).run().
 	 */
 	public void changeLaneIndex(LaneIndexQueryParameter value) throws IOException {
@@ -620,6 +622,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeColorQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeColor().setValue(value).run().
 	 */
 	public void changeColor(java.awt.Color value) throws IOException {
@@ -637,6 +641,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeTargetQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeTarget().setValue(value).run().
 	 */
 	public void changeTarget(Edge value) throws IOException {
@@ -662,6 +668,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeRouteQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeRoute().setValue(value).run().
 	 */
 	public void changeRoute(java.util.List<Edge> value) throws IOException {
@@ -679,6 +687,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeSpeedQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeSpeed().setValue(value).run().
 	 */
 	public void changeSpeed(Double value) throws IOException {

@@ -312,6 +312,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeLightsStateQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeLightsState().setValue(value).run().
 	 */
 	public void changeLightsState(TLState value) throws IOException {
@@ -353,6 +355,8 @@ implements StepAdvanceListener
 	
 	
 	/**
+	 * Execute an instance of ChangeCompleteProgramQuery set to the given value.
+	 * 
 	 * This setter method is equivalent to queryChangeCompleteProgramDefinition().setValue(value).run().
 	 */
 	public void changeCompleteProgramDefinition(Logic value) throws IOException {
