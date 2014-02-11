@@ -81,6 +81,11 @@ public class SumoTraciConnection {
 	 */
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
+    /**
+     * The system property name to get user defined tcp_nodedelay for the tcp socket.
+     */
+    public static final String TCP_NODELAY_PROPERTY = "it.polito.appeal.traci.tcp_nodelay";
+
 	private static final Logger log = Logger.getLogger(SumoTraciConnection.class);
 
 	private String configFile;
@@ -271,6 +276,7 @@ public class SumoTraciConnection {
 
 	private boolean tryConnectOnce(InetAddress addr, int port) throws UnknownHostException, IOException {
 		socket = new Socket();
+        socket.setTcpNoDelay(Boolean.getBoolean(TCP_NODELAY_PROPERTY));
 		try {
 			socket.connect(new InetSocketAddress(addr, port));
 			return true;
