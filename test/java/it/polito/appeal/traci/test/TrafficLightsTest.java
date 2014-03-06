@@ -42,31 +42,28 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
-public class TrafficLightsTest {
+public class TrafficLightsTest extends SingleSimTraCITest {
 
-	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/cross3ltl/test.sumo.cfg";
 	private Repository<TrafficLight> repo;
 	private SumoTraciConnection conn;
 
 	private static final Logger log = Logger.getLogger(TrafficLightsTest.class);
 	
+	@Override
+	protected String getSimConfigFileLocation() {
+		return "test/sumo_maps/cross3ltl/test.sumo.cfg";
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		TraCITest.printSeparator();
-		conn = TraCITest.startSumoConn(SIM_CONFIG_LOCATION);
 		repo = conn.getTrafficLightRepository();
 	}
 
-	@After
-	public void tearDown() throws IOException, InterruptedException {
-		TraCITest.stopSumoConn(conn);
-	}
-	
 	@Test
 	public void testTrafficLightExistence() throws IOException {
 		assertNotNull(repo.getByID("0"));
