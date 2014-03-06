@@ -286,13 +286,13 @@ public class SumoTraciConnection {
 	}
 	
 	private void postConnect() throws IOException {
-		currentSimStep = 0;
-
 		dis = new DataInputStream(socket.getInputStream());
 		dos = new DataOutputStream(socket.getOutputStream());
 
 		closeQuery = new CloseQuery(dis, dos);
 		simData = new SimulationData(dis, dos);
+		
+		currentSimStep = simData.queryCurrentSimTime().get();
 		
 		vehicles = new HashMap<String, Vehicle>();
 		
