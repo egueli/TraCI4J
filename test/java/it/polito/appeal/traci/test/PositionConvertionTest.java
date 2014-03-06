@@ -37,10 +37,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
-public class PositionConvertionTest {
-
-	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/polito/test.sumo.cfg";
-	private SumoTraciConnection conn;
+public class PositionConvertionTest extends SingleSimTraCITest {
 
 	private static final String EDGE_NAME = "-105254616#1";
 	private static final int LANE_NUM = 0;
@@ -51,15 +48,14 @@ public class PositionConvertionTest {
 		BasicConfigurator.configure();
 	}
 	
+	@Override
+	protected String getSimConfigFileLocation() {
+		return "test/sumo_maps/polito/test.sumo.cfg";
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		TraCITest.printSeparator();
-		conn = TraCITest.startSumoConn(SIM_CONFIG_LOCATION);
-	}
-
-	@After
-	public void tearDown() throws IOException, InterruptedException {
-		TraCITest.stopSumoConn(conn);
 	}
 
 	@Test

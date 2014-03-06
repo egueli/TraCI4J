@@ -92,63 +92,37 @@ import org.apache.log4j.Logger;
  * 
  */
 @SuppressWarnings("javadoc")
-public class TraCITest {
+public class TraCITest extends SingleSimTraCITest {
 
 	private static final Logger log = Logger.getLogger(TraCITest.class);
 	
 	protected static final double DELTA = 1e-6;
-	private static final String SIM_CONFIG_LOCATION = "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
-	protected SumoTraciConnection conn;
 	
 	static {
 		// Log4j configuration must be done only once, otherwise output will be duplicated for each test
 		
 		// Basic configuration that outputs everything		
-		//BasicConfigurator.configure();
+		//org.apache.log4j.BasicConfigurator.configure();
 		
 		// Configuration specified by a properties file
 		PropertyConfigurator.configure("test/log4j.properties");
 	}
 
+	@Override
+	protected String getSimConfigFileLocation() {
+		return "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 		printSeparator();
-		conn = startSumoConn(SIM_CONFIG_LOCATION);
 	}
 
-	/**
-	 * Start SUMO and connect to it.
-	 * 
-	 * @param simConfigLocation
-	 * @return
-	 * @throws Exception
-	 */
-	public static SumoTraciConnection startSumoConn(String simConfigLocation) throws Exception {
-		try {
-			SumoTraciConnection newConn = new SumoTraciConnection(simConfigLocation, 0);
-			newConn.runServer();
-			return newConn;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
 
 	public static void printSeparator() {
 		log.info("=======================================");
 	}
 
-	@After
-	public void tearDown() throws IOException, InterruptedException {
-		stopSumoConn(conn);
-	}
-
-	public static void stopSumoConn(SumoTraciConnection conn) throws IOException, InterruptedException {
-		if (conn != null)
-			conn.close();
-	}
-	
 	@Ignore
 	public void ignore() {
 		// do nothing, it's here just to avoid an unused import warning
