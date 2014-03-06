@@ -292,7 +292,7 @@ public class SumoTraciConnection {
 		closeQuery = new CloseQuery(dis, dos);
 		simData = new SimulationData(dis, dos);
 		
-		currentSimStep = simData.queryCurrentSimTime().get();
+		currentSimStep = simData.queryCurrentSimTime().get() / 1000;
 		
 		vehicles = new HashMap<String, Vehicle>();
 		
@@ -506,7 +506,7 @@ public class SumoTraciConnection {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		{ // begin multi-query
 			SimStepQuery ssq = new SimStepQuery(dis, dos);
-			ssq.setTargetTime(currentSimStep * 1000);
+			ssq.setTargetTime(currentSimStep);
 			multi.add(ssq);
 
 			multi.add(vehicleListQuery);
