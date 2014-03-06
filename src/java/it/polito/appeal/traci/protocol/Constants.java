@@ -637,5 +637,8 @@ public class Constants {
 
 	/** track vehicle */
 	public static final int VAR_TRACK_VEHICLE = 0xa6;
+	
+	/** vehicle waiting time */
+	public static final int VAR_WAITING_TIME = 122;
 
 }
