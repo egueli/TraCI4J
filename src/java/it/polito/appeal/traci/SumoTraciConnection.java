@@ -92,6 +92,7 @@ public class SumoTraciConnection {
 	private int randomSeed;
 	private Socket socket;
 	
+	/** The current simulation step, in seconds. */
 	private int currentSimStep;
 	private Process sumoProcess;
 	
@@ -495,7 +496,7 @@ public class SumoTraciConnection {
 		/*
 		 * forces querying of vehicle IDs when requested
 		 */
-		simData.nextStep(currentSimStep);
+		simData.nextStep(currentSimStep * 1000);
 		
 		/*
 		 * constructs a multi-query that advances one step, reads the list of
@@ -506,7 +507,7 @@ public class SumoTraciConnection {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		{ // begin multi-query
 			SimStepQuery ssq = new SimStepQuery(dis, dos);
-			ssq.setTargetTime(currentSimStep);
+			ssq.setTargetTime(currentSimStep * 1000);
 			multi.add(ssq);
 
 			multi.add(vehicleListQuery);
