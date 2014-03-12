@@ -49,7 +49,6 @@ import org.junit.Test;
 public class TrafficLightsTest extends SingleSimTraCITest {
 
 	private Repository<TrafficLight> repo;
-	private SumoTraciConnection conn;
 
 	private static final Logger log = Logger.getLogger(TrafficLightsTest.class);
 	
