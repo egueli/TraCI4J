@@ -143,7 +143,8 @@ public class TraCIServerTest {
 		log.info("response length = " + respLen);
 		assertTrue("minimum response length", respLen > 5);
 		assertEquals("Response ID", Constants.CMD_GETVERSION, inStream.readByte());
-		assertTrue("API minimum version", inStream.readInt() > API_VERSION);
+		int version = inStream.readInt();
+		assertTrue("API version is " + version, version >= API_VERSION);
 		int nameLen = inStream.readInt();
 		assertEquals(1 + 1 + 4 + 4 + nameLen, respLen);
 		byte[] name = new byte[nameLen];
