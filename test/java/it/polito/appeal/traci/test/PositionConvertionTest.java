@@ -22,7 +22,9 @@ package it.polito.appeal.traci.test;
 import static org.junit.Assert.assertEquals;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.PositionConversionQuery;
+import it.polito.appeal.traci.ReadObjectVarQuery;
 import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
 
 import static org.junit.Assert.*;
@@ -47,7 +49,7 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 	static {
 		BasicConfigurator.configure();
 	}
-	
+
 	@Override
 	protected String getSimConfigFileLocation() {
 		return "test/sumo_maps/polito/test.sumo.cfg";
