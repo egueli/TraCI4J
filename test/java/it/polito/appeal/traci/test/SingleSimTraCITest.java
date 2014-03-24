@@ -21,7 +21,9 @@ package it.polito.appeal.traci.test;
 
 import java.io.IOException;
 
+import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.Vehicle;
 
 import org.junit.After;
 import org.junit.Before;
@@ -41,6 +43,7 @@ public abstract class SingleSimTraCITest {
 	protected abstract String getSimConfigFileLocation();
 	
 	protected SumoTraciConnection conn;
+	protected Vehicle firstVehicle = null;
 	
 	/**
 	 * Start SUMO and connect to it.
@@ -61,5 +64,21 @@ public abstract class SingleSimTraCITest {
 	public void stopSumoConnection() throws IOException, InterruptedException {
 		if (conn != null)
 			conn.close();
+	}
+
+	/**
+	 * Returns the first vehicle entered in the simulation. Since all vehicles
+	 * depart from the same road, and SUMO lets at most one vehicle to depart
+	 * from a given road at each step, the vehicle returned from this function
+	 * will always be the same.
+	 * 
+	 * @throws IOException
+	 */
+	public void getFirstVehicle() throws IOException {
+		Repository<Vehicle> repo = conn.getVehicleRepository();
+		while(repo.getAll().isEmpty())
+			conn.nextSimStep();
+		
+		firstVehicle = repo.getAll().values().iterator().next();
 	}
 }
