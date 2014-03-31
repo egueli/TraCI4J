@@ -65,6 +65,8 @@ public class ApiPerformanceTest extends SingleSimTraCITest {
 		}
 		long end = System.currentTimeMillis();
 		
-		return (end - begin) / (float)N_READS;
+		float speed = (end - begin) / (float)N_READS;
+		System.out.println("query speed for " + var + ": " + speed + "ms");
+		return speed;
 	}
 }
