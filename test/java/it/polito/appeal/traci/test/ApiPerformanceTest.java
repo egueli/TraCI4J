@@ -46,10 +46,10 @@ public class ApiPerformanceTest extends SingleSimTraCITest {
 	public void testReadCurrentEdgeSpeed() throws IOException {
 		getFirstVehicle();
 
-		float readLaneIDSpeed = getCallSpeed(Vehicle.Variable.LANE_ID);
+		float readLaneIndexSpeed = getCallSpeed(Vehicle.Variable.LANE_INDEX);
 		float readCurrentEdgeSpeed = getCallSpeed(Vehicle.Variable.CURRENT_EDGE);
 		
-		assert(readLaneIDSpeed * 10 < readCurrentEdgeSpeed);
+		assert(readLaneIndexSpeed * 10 < readCurrentEdgeSpeed);
 	}
 
 	private final int N_READS = 1000;
