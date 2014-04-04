@@ -45,7 +45,8 @@ public class ApiPerformanceTest extends SingleSimTraCITest {
 	@Test
 	public void testReadCurrentEdgeSpeed() throws IOException {
 		getFirstVehicle();
-
+		System.out.println("got first vehicle.");
+		
 		float readLaneIndexSpeed = getCallSpeed(Vehicle.Variable.LANE_INDEX);
 		float readCurrentEdgeSpeed = getCallSpeed(Vehicle.Variable.CURRENT_EDGE);
 		

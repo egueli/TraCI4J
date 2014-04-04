@@ -60,14 +60,25 @@ public class Repository<V extends TraciObject<?>> {
 	private final StringListQ idListQuery;
 	
 	/**
+	 * This should be set to <code>true</code> if SUMO won't add or remove
+	 * any objects during the simulation. This implies that {@link #idListQuery} will
+	 * always return the same set. This information can be used to
+	 * optimize some stuff. 
+	 */
+	private final boolean invariant;
+	
+	/**
 	 * Constructor for the repository.
 	 * @param factory the {@link ObjectFactory} that will be used to make new
 	 * objects when requested the first time
 	 * @param idListQuery a reference to a query of list of IDs.
+	 * @param invariant <code>true</code> if the repository isn't expected to change
+	 * its content, i.e. no objects will be added or removed during the simulation
 	 */
-	Repository(ObjectFactory<V> factory, StringListQ idListQuery) {
+	Repository(ObjectFactory<V> factory, StringListQ idListQuery, boolean invariant) {
 		this.factory = factory;
 		this.idListQuery = idListQuery;
+		this.invariant = invariant;
 	}
 	
 	protected void setObjectFactory(ObjectFactory<V> factory) {
@@ -99,41 +110,44 @@ public class Repository<V extends TraciObject<?>> {
 	 * @throws IOException
 	 */
 	public Set<String> getIDs() throws IOException {
-		/*
-		 * If the ID list query wasn't made obsolete, just get the key set
-		 * from the object cache (i.e. the previously made object set).
-		 */
-//		if (idListQuery.hasValue()) {
-//			List<String> set1 = idListQuery.get();
-//			Set<String> set2 = objectCache.keySet();
-//			log.info(set1);
-//			log.info(set2);
-//			return set2;
-//		}
-//		boolean test = idListQuery.hasValue();
-		/*
-		 * Here we also update the cache.
-		 */
-		Set<String> idSet = new HashSet<String>(idListQuery.get());
+	  if (invariant) {
+	    // do a lazy initialization
+	    if (objectCache.isEmpty()) {
+  	    for (String newID : idListQuery.get()) {
+          V newObject = factory.newObject(newID);
+          if (newObject == null)
+            throw new IllegalStateException("newObject == null");
+          objectCache.put(newID, newObject);
+  	    }
+	    }
+	  }
+	  else {
+  		/*
+  		 * "Variant" repositories need to check if the ID list from SUMO
+  		 * differs from the object cache's keys.
+  		 * This check doesn't scale well, optimization ideas are welcome.
+  		 */
+  		Set<String> idSet = new HashSet<String>(idListQuery.get());
+  		
+  		final Set<String> cachedSet = objectCache.keySet();
+  		
+  		if (!cachedSet.equals(idSet)) {
+  			Set<String> added = Utils.getAddedItems(cachedSet, idSet);
+  			for (String newID : added) {
+  				V newObject = factory.newObject(newID);
+  				if (newObject == null)
+  					throw new IllegalStateException("newObject == null");
+  				objectCache.put(newID, newObject);
+  			}
+  			
+  			Set<String> removed = Utils.getRemovedItems(cachedSet, idSet);
+  			for (String oldID : removed) {
+  				objectCache.remove(oldID);
+  			}
+  		}
+	  }
+	  return Collections.unmodifiableSet(objectCache.keySet());
 		
-		final Set<String> cachedSet = objectCache.keySet();
-		
-		if (!cachedSet.equals(idSet)) {
-			Set<String> added = Utils.getAddedItems(cachedSet, idSet);
-			for (String newID : added) {
-				V newObject = factory.newObject(newID);
-				if (newObject == null)
-					throw new IllegalStateException("newObject == null");
-				objectCache.put(newID, newObject);
-			}
-			
-			Set<String> removed = Utils.getRemovedItems(cachedSet, idSet);
-			for (String oldID : removed) {
-				objectCache.remove(oldID);
-			}
-		}
-		
-		return Collections.unmodifiableSet(idSet);
 	}
 	
 	/**
@@ -165,8 +179,8 @@ public class Repository<V extends TraciObject<?>> {
 	static class UpdatableRepository<V extends TraciObject<?> & StepAdvanceListener> extends Repository<V> implements StepAdvanceListener {
 
 		public UpdatableRepository(ObjectFactory<V> factory,
-				StringListQ idListQuery) {
-			super(factory, idListQuery);
+				StringListQ idListQuery, boolean invariant) {
+			super(factory, idListQuery, invariant);
 		}
 
 		@Override
@@ -189,13 +203,13 @@ public class Repository<V extends TraciObject<?>> {
 				public Edge newObject(String objectID) {
 					return new Edge(dis, dos, objectID);
 				}
-			}, idListQuery);
+			}, idListQuery, true);
 		}
 	}
 	
 	static class Lanes extends Repository<Lane> {
 		Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges, StringListQ idListQuery) {
-			super(null, idListQuery);
+			super(null, idListQuery, true);
 			
 			setObjectFactory(new ObjectFactory<Lane>() {
 				@Override
@@ -228,7 +242,7 @@ public class Repository<V extends TraciObject<?>> {
 						log.debug(" vehicleID " + objectID + " found in vehicles map");
 					return vehicles.get(objectID);
 				}
-			}, idListQuery);
+			}, idListQuery, false);
 			
 		}
 	}
@@ -240,7 +254,7 @@ public class Repository<V extends TraciObject<?>> {
 				public POI newObject(String objectID) {
 					return new POI(dis, dos, objectID);
 				}
-			}, idListQuery);
+			}, idListQuery, false);
 		}
 	}
 	
@@ -256,7 +270,7 @@ public class Repository<V extends TraciObject<?>> {
 				public InductionLoop newObject(String objectID) {
 					return new InductionLoop(dis, dos, objectID, lanes, vehicles);
 				}
-			}, idListQuery);
+			}, idListQuery, true);
 		}
 	}
 	
@@ -272,7 +286,7 @@ public class Repository<V extends TraciObject<?>> {
 				public TrafficLight newObject(String objectID) {
 					return new TrafficLight(dis, dos, objectID, lanes);
 				}
-			}, idListQuery);
+			}, idListQuery, true);
 		}
 	}
 	
@@ -283,7 +297,7 @@ public class Repository<V extends TraciObject<?>> {
 				public VehicleType newObject(String objectID) {
 					return new VehicleType(dis, dos, objectID);
 				}
-			}, idListQuery);
+			}, idListQuery, true);
 		}
 	}
 	
@@ -298,7 +312,7 @@ public class Repository<V extends TraciObject<?>> {
 				public MeMeDetector newObject(String objectID) {
 					return new MeMeDetector(dis, dos, objectID, vehicles);
 				}
-			}, idListQuery);
+			}, idListQuery, true);
 		}
 	}
 	
@@ -313,7 +327,7 @@ public class Repository<V extends TraciObject<?>> {
 				public Route newObject(String objectID) {
 					return new Route(dis, dos, objectID, edges);
 				}
-			}, idListQuery);
+			}, idListQuery, false);
 		}
 	}	
 	
