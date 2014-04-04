@@ -258,7 +258,7 @@ public class SumoTraciConnection {
 			if (log.isDebugEnabled())
 				log.debug("Connecting to " + addr + ":" + port);
 
-			if (tryConnectOnce(addr, port)) {
+			if (tryConnectOnce(addr, port, process != null)) {
 				log.info("Connection to SUMO established.");
 				break;
 			}
@@ -275,15 +275,21 @@ public class SumoTraciConnection {
 		}
 	}
 
-	private boolean tryConnectOnce(InetAddress addr, int port) throws UnknownHostException, IOException {
-		socket = new Socket();
-        socket.setTcpNoDelay(Boolean.getBoolean(TCP_NODELAY_PROPERTY));
-		try {
-			socket.connect(new InetSocketAddress(addr, port));
-			return true;
-		} catch (ConnectException ce) {
-			return false;
-		}
+	private boolean tryConnectOnce(InetAddress addr, int port, boolean forceTcpNoDelay) throws UnknownHostException, IOException {
+	  boolean tcpNoDelay;
+	  if (forceTcpNoDelay)
+	    tcpNoDelay = true;
+	  else
+	    tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
+
+	  socket = new Socket();
+	  socket.setTcpNoDelay(tcpNoDelay);
+	  try {
+	    socket.connect(new InetSocketAddress(addr, port));
+	    return true;
+	  } catch (ConnectException ce) {
+	    return false;
+	  }
 	}
 	
 	private void postConnect() throws IOException {
