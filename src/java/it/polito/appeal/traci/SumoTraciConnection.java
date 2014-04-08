@@ -181,6 +181,10 @@ public class SumoTraciConnection {
 	 * Creates an instance of this class and connects to a running instance of
 	 * SUMO.
 	 * 
+	 * <br/><br/> Note that TCP_NODELAY on the socket connection to SUMO will be
+	 * <b>enabled</b> by default. You can modify this behaviour later before the
+	 * call to <code>runServer()</code>.
+	 * 
 	 * @param addr
 	 *            the IP address of the machine where SUMO runs
 	 * @param port
@@ -192,6 +196,9 @@ public class SumoTraciConnection {
 	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
 			InterruptedException {
 
+	   // Set TCP_NODELAY as enabled by default.
+	   enableTcpNoDelay();
+	   
 		tryConnect(addr, port, null);
 		postConnect();
 	}
@@ -258,7 +265,7 @@ public class SumoTraciConnection {
 			if (log.isDebugEnabled())
 				log.debug("Connecting to " + addr + ":" + port);
 
-			if (tryConnectOnce(addr, port, process != null)) {
+			if (tryConnectOnce(addr, port)) {
 				log.info("Connection to SUMO established.");
 				break;
 			}
@@ -275,15 +282,50 @@ public class SumoTraciConnection {
 		}
 	}
 
-	private boolean tryConnectOnce(InetAddress addr, int port, boolean forceTcpNoDelay) throws UnknownHostException, IOException {
-	  boolean tcpNoDelay;
-	  if (forceTcpNoDelay)
-	    tcpNoDelay = true;
-	  else
-	    tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
+	/**
+	 * Is TCP_NODELAY activated for the socket connection to SUMO?
+	 * 
+	 * @return true if active and false otherwise.
+	 */
+	public boolean isTcpNoDelayActive()
+   {
+      return Boolean.getBoolean(TCP_NODELAY_PROPERTY);
+   }
+   
+	/**
+    * Enables TCP_NODELAY in the socket connection to SUMO
+    */
+   public void enableTcpNoDelay()
+   {
+      setTcpNoDelay(true);      
+   }
+   
+   /**
+    * Disables TCP_NODELAY in the socket connection to SUMO
+    */
+   public void disableTcpNoDelay()
+   {
+      setTcpNoDelay(false);
+   }
+   
+   /**
+    * Forcibly set TCP_NODELAY_PROPERTY
+    *  
+    * @param on If true TCP_NODELAY will be turned on. Else turned off.
+    */
+   public void setTcpNoDelay(boolean on)
+   {
+      System.setProperty(TCP_NODELAY_PROPERTY, String.valueOf(on));
+   }
+   
+	private boolean tryConnectOnce(InetAddress addr, int port)
+	      throws UnknownHostException, IOException
+   {
+	  boolean tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
 
 	  socket = new Socket();
 	  socket.setTcpNoDelay(tcpNoDelay);
+	  
 	  try {
 	    socket.connect(new InetSocketAddress(addr, port));
 	    return true;
