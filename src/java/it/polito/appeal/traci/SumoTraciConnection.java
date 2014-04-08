@@ -275,8 +275,10 @@ public class SumoTraciConnection {
 		}
 	}
 
-	private boolean tryConnectOnce(InetAddress addr, int port, boolean forceTcpNoDelay) throws UnknownHostException, IOException {
-	  boolean tcpNoDelay;
+	private boolean tryConnectOnce(InetAddress addr, int port, boolean forceTcpNoDelay) throws UnknownHostException, IOException
+   {
+	  
+     boolean tcpNoDelay;
 	  if (forceTcpNoDelay)
 	    tcpNoDelay = true;
 	  else
