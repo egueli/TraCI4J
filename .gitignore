@@ -1,6 +1,9 @@
 bin/
 junit*.properties
 junit/
+.idea/
+*.jar
+*.iml
 
 *~
 

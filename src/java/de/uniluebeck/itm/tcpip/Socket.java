@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.tcpip;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -39,17 +41,21 @@ public class Socket {
 	
 	public void accept() throws IOException
 	{
-		serverSocket = new ServerSocket(port);
-		socketConnection = serverSocket.accept();
-		
+        System.out.println("accept");
+        serverSocket = new ServerSocket(port);
+        socketConnection = serverSocket.accept();
+        socketConnection.setTcpNoDelay(true);
+
 		outStream = socketConnection.getOutputStream();
 		inStream = socketConnection.getInputStream();
 	}
 	
 	public void connect() throws UnknownHostException, IOException
 	{
-		socketConnection = new java.net.Socket(host, port);
-		
+        System.out.println("connect");
+        socketConnection = new java.net.Socket(host, port);
+        socketConnection.setTcpNoDelay(true);
+
 		outStream = socketConnection.getOutputStream();
 		inStream = socketConnection.getInputStream();
 	}
