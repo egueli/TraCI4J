@@ -13,7 +13,7 @@ package it.polito.appeal.traci.protocol;
 public class Constants {
 
 	// ****************************************
-	/** VERSION */
+	// VERSION
 	// ****************************************
 	public static final int TRACI_VERSION = 5;
 
@@ -640,5 +640,8 @@ public class Constants {
 	
 	/** vehicle waiting time */
 	public static final int VAR_WAITING_TIME = 122;
+
+	/** lane change mode (change: vehicle state) */
+	public static final int CMD_CHANGE_LANE_CHANGE_MODE = 0xb6;
 
 }

@@ -34,7 +34,8 @@ public class ChangeAccelQuery extends ChangeDoubleQ {
 		super(dis, dos, Constants.CMD_SET_VEHICLETYPE_VARIABLE, objectID, Constants.VAR_ACCEL);
 	}
 	
-	@Override
+	//@todo  Is that redundant? (view ChangeDoubleQ.writeDouble)
+    @Override
 	protected void writeValueTo(Double accel, Storage content) {
 		content.writeByte(Constants.TYPE_DOUBLE);
 		content.writeDouble(accel);

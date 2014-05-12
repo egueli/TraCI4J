@@ -262,6 +262,10 @@
 			</affects>
 		</changeStateQuery>
 		
+		<changeStateQuery>
+			<name>ChangeLaneChangeMode</name>
+			<query>ChangeLaneChangeModeQuery</query>
+		</changeStateQuery>
 		
 	</changeStateQueries>
 
