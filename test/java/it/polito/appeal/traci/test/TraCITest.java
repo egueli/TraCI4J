@@ -846,7 +846,7 @@ public class TraCITest extends SingleSimTraCITest {
 		VehicleType vType = conn.getVehicleTypeRepository().getByID("KRAUSS_DEFAULT");
 		
 		AddVehicleQuery avq = conn.queryAddVehicle();
-		avq.setVehicleData(id, vType, route, 0, 0, 0);
+		avq.setVehicleData(id, vType, route, 0, 0, 0, 0);
 		avq.run();
 		
 		/*
