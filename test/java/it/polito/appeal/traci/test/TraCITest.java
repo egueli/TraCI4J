@@ -832,7 +832,7 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 	
 	/**
-	 * Checks for the correct adding of a new vehicle.
+	 * Checks for the correct adding of new vehicles.
 	 * 
 	 * @throws IOException
 	 */
@@ -841,23 +841,38 @@ public class TraCITest extends SingleSimTraCITest {
 		conn.nextSimStep();
 
 		//assertTrue(conn.getVehicleRepository().getIDs().size() > 0);
-		final String id = "A_NEW_VEHICLE";
+		final String id1 = "A_NEW_VEHICLE";
+		final String id2 = "ANOTHER_NEW_VEHICLE";
 		Route route = conn.getRouteRepository().getByID("0");
 		VehicleType vType = conn.getVehicleTypeRepository().getByID("KRAUSS_DEFAULT");
-		
-		AddVehicleQuery avq = conn.queryAddVehicle();
-		avq.setVehicleData(id, vType, route, 0, 0, 0, 0);
-		avq.run();
+
+		int now = conn.getCurrentSimStep() * 1000; // time is in ms
 		
 		/*
-		 * The new vehicle won't enter the simulation immediately, because other
-		 * vehicles are waiting the lane to be freed before entering.
+		 * Add one vehicle now and one at a later time.
 		 */
+		AddVehicleQuery avqNow = conn.queryAddVehicle();		
+		avqNow.setVehicleData(id1, vType, route, 0, now, 0, 0);
+		avqNow.run();
+		
+		AddVehicleQuery avqLater = conn.queryAddVehicle();		
+		avqLater.setVehicleData(id2, vType, route, 0, now+70001, 0, 0);
+		avqLater.run();
+		
+		/*
+		 * The new vehicle might not enter the simulation immediately because its
+		 * lane must be freed of other waiting vehicles first.
+		 */
+		for (int t=0; t<70; t++)
+			conn.nextSimStep();
+		
+		assertTrue(conn.getVehicleRepository().getAll().containsKey(id1));
+		assertFalse(conn.getVehicleRepository().getAll().containsKey(id2));
 		
 		for (int t=0; t<70; t++)
 			conn.nextSimStep();
 		
-		assertTrue(conn.getVehicleRepository().getAll().containsKey(id));
+		assertTrue(conn.getVehicleRepository().getAll().containsKey(id2));
 	}
 	
 	/**
