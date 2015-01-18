@@ -22,7 +22,8 @@
 	</repos>
 	
 	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE</command>
-
+  <changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLETYPE_VARIABLE</changeStateCommand>
+	
 	<readQueries>
 		<readQuery>
 			<name>ReadGlobalTravelTime</name>
@@ -77,8 +78,9 @@
 	
 		<changeStateQuery>
 			<name>ChangeAccel</name>
-			<query>ChangeAccelQuery</query>
-			<affects>
+      <query>ChangeObjectVarQuery.ChangeDoubleQ</query>
+      <const>it.polito.appeal.traci.protocol.Constants.VAR_ACCEL</const>
+      <affects>
 				<affect>ReadAccel</affect>
 			</affects>
 		</changeStateQuery>

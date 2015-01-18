@@ -1,6 +1,10 @@
 bin/
+src/java-gen
 junit*.properties
 junit/
+.idea/
+*.jar
+*.iml
 
 *~
 

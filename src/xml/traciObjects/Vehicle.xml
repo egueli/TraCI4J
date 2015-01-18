@@ -261,8 +261,13 @@
 				<affect>ReadSpeed</affect>
 			</affects>
 		</changeStateQuery>
-		
-		
+
+		<changeStateQuery>
+      <name>ChangeLaneChangeMode</name>
+      <query>ChangeObjectVarQuery.ChangeIntegerQ</query>
+      <const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_CHANGE_MODE</const>
+    </changeStateQuery>
+		 
 	</changeStateQueries>
 
 </traciClass>

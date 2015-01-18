@@ -75,8 +75,8 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	 *
 	 */
 	public static class ChangeStringQ extends ChangeObjectVarQuery<String> {
-		ChangeStringQ(DataInputStream dis, DataOutputStream dos,
-				String objectID, int commandID, int variableID) {
+		ChangeStringQ(DataInputStream dis, DataOutputStream dos, int commandID,
+				String objectID, int variableID) {
 			super(dis, dos, commandID, objectID, variableID);
 		}
 
@@ -95,8 +95,8 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	 */
 	public static class ChangeIntegerQ extends ChangeObjectVarQuery<Integer> {
 
-		ChangeIntegerQ(DataInputStream dis, DataOutputStream dos,
-				String objectID, int commandID, int variableID) {
+		ChangeIntegerQ(DataInputStream dis, DataOutputStream dos, int commandID,
+				String objectID, int variableID) {
 			super(dis, dos, commandID, objectID, variableID);
 		}
 
