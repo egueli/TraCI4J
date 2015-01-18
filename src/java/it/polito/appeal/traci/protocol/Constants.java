@@ -642,6 +642,6 @@ public class Constants {
 	public static final int VAR_WAITING_TIME = 122;
 
 	/** lane change mode (change: vehicle state) */
-	public static final int CMD_CHANGE_LANE_CHANGE_MODE = 0xb6;
+	public static final int VAR_LANE_CHANGE_MODE = 0xb6;
 
 }
