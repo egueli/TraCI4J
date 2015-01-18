@@ -44,6 +44,7 @@ public class AddVehicleQuery extends ChangeStateQuery {
 	private double insertionPosition;
 	private double insertionSpeed;
 	private final Repository<Vehicle> vehicles;
+	private int departureTime;
 
 	AddVehicleQuery(DataInputStream dis, DataOutputStream dos,
 			Repository<Vehicle> vehicles) {
@@ -67,6 +68,7 @@ public class AddVehicleQuery extends ChangeStateQuery {
 			VehicleType vehicleType, 
 			Route route,
 			int lane,
+			int departureTime,
 			double insertionPosition, 
 			double insertionSpeed) 
 	throws IOException {
@@ -80,7 +82,7 @@ public class AddVehicleQuery extends ChangeStateQuery {
 		this.lane = lane;
 		this.insertionPosition = insertionPosition;
 		this.insertionSpeed = insertionSpeed;
-		
+		this.departureTime = departureTime;
 	}
 	
 	@Override
@@ -98,7 +100,7 @@ public class AddVehicleQuery extends ChangeStateQuery {
 		content.writeStringASCII(route.getID());
 
 		content.writeUnsignedByte(Constants.TYPE_INTEGER);
-		content.writeInt(0); // departure time - TODO add departure times in the future
+		content.writeInt(departureTime);
 		
 		content.writeUnsignedByte(Constants.TYPE_DOUBLE);
 		content.writeDouble(insertionPosition);
