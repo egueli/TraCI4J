@@ -137,8 +137,10 @@ implements StepAdvanceListener
 		 * initialization of change state queries
 		 */
 		<xsl:for-each select="changeStateQueries/changeStateQuery">
-		csqvar_<xsl:value-of select="name"/> = new <xsl:value-of select="query"/>(dis, dos, id
-		<xsl:if test="const">, <xsl:value-of select="../../changeStateCommand"/>, <xsl:value-of select="const"/></xsl:if>)
+		csqvar_<xsl:value-of select="name"/> = new <xsl:value-of select="query"/>(dis, dos
+		<xsl:if test="const">, <xsl:value-of select="../../changeStateCommand"/></xsl:if>
+		, id
+		<xsl:if test="const">, <xsl:value-of select="const"/></xsl:if>)
 		<xsl:if test="affects">{
 			@Override
 			void pickResponses(java.util.Iterator&lt;it.polito.appeal.traci.protocol.ResponseContainer&gt; responseIterator)

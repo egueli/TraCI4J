@@ -33,7 +33,7 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
 	ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
-			String objectID, int commandID, int variableID) {
+			int commandID, String objectID, int variableID) {
 		super(dis, dos, commandID, objectID, variableID);
 	}
 
