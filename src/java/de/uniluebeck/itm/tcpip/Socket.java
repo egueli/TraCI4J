@@ -1,7 +1,5 @@
 package de.uniluebeck.itm.tcpip;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
