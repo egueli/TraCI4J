@@ -132,7 +132,7 @@
         </javadoc>
     </target>
 
-	<target name="deploy">
+	<target name="deploy" depends="build">
         <jar destfile="traci4j-1.6.jar"
         	duplicate="fail"
         	update="yes">
