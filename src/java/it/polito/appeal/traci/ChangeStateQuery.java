@@ -92,6 +92,7 @@ public abstract class ChangeStateQuery extends Query {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		multi.add(this);
 		multi.run();
+		dos.flush();
 	}
 
 }
