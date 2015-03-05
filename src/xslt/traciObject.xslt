@@ -156,8 +156,6 @@ implements StepAdvanceListener
 	}
 	
 	<!-- CACHE CLEANER -->
-	
-	@Override
 	public void nextStep(double step) {
 		<xsl:for-each select="readQueries/readQuery[dynamic='true']">
 		getReadQuery(Variable.<xsl:value-of select="enum"/>).setObsolete();
