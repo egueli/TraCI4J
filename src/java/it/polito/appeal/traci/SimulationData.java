@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci;
 
@@ -34,40 +34,39 @@ import java.io.DataOutputStream;
  *      href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Simulation_Value_Retrieval.html">TraCI
  *      docs</a>
  */
-public class SimulationData extends TraciObject<SimulationData.Variable> implements StepAdvanceListener {
+public class SimulationData extends TraciObject<SimulationData.Variable>
+		implements StepAdvanceListener {
 
 	private final DataInputStream dis;
 	private final DataOutputStream dos;
-	
-	
+
 	enum Variable {
-		CURRENT_SIM_TIME (Constants.VAR_TIME_STEP),
-		NET_BOUNDARIES (Constants.VAR_NET_BOUNDING_BOX),
-		;
+		CURRENT_SIM_TIME(Constants.VAR_TIME_STEP), NET_BOUNDARIES(
+				Constants.VAR_NET_BOUNDING_BOX), ;
 		public final int id;
+
 		private Variable(int id) {
 			this.id = id;
 		}
 	}
-	
+
 	SimulationData(DataInputStream dis, DataOutputStream dos) {
 		super("", Variable.class);
-		
+
 		addReadQuery(Variable.CURRENT_SIM_TIME,
 				new ReadObjectVarQuery.IntegerQ(dis, dos,
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.CURRENT_SIM_TIME.id) {
-			
-		});
-		
+
+				});
+
 		addReadQuery(Variable.NET_BOUNDARIES,
 				new ReadObjectVarQuery.BoundingBoxQ(dis, dos,
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.NET_BOUNDARIES.id));
-		
+
 		this.dis = dis;
 		this.dos = dos;
-		
 
 	}
 
@@ -78,13 +77,13 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 	public ReadObjectVarQuery<Integer> queryCurrentSimTime() {
 		return (ReadObjectVarQuery.IntegerQ) getReadQuery(Variable.CURRENT_SIM_TIME);
 	}
-	
+
 	/**
 	 * Note: the data returned from this query will return the network
 	 * boundaries regardless of the lane width and number. Actual borders of
 	 * lanes, as well as position of vehicles, may lie outside these boundaries.
-	 * To read absolute borders, iterate over all lanes and calculate the
-	 * common bounding box.
+	 * To read absolute borders, iterate over all lanes and calculate the common
+	 * bounding box.
 	 * 
 	 * @return the bounding box of the road network
 	 */
@@ -106,8 +105,7 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 				Constants.POSITION_CONVERSION);
 
 	}
-	
-	@Override
+
 	public void nextStep(double step) {
 		queryCurrentSimTime().setObsolete();
 	}

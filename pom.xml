@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>it.polito.appeal.traci</groupId>
+	<artifactId>TraCI4J</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>TraCI4J</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>ant-magic</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<property name="build.compiler" value="extJavac" />
+								<property name="runtime_classpath" refid="maven.runtime.classpath" />
+								<property name="compile_classpath" refid="maven.compile.classpath" />
+								<property name="test_classpath" refid="maven.test.classpath" />
+								<property name="outputDir" value="${project.build.outputDirectory}" />
+								<property name="sourceDir" value="${project.build.sourceDirectory}" />
+								<ant antfile="${basedir}/build.xml" target="build" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
