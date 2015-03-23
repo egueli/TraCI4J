@@ -34,6 +34,33 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<includes>
+						<include>de/**</include>
+						<include>it/**</include>
+						<include>xml/**</include>
+						<include>xslt/**</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>bin</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 	</build>
 </project>
