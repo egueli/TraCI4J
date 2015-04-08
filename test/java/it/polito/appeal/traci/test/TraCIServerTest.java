@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("javadoc")
 public class TraCIServerTest {
 	
-	private static final int API_VERSION = 6;
+	private static final int API_VERSION = 8;
 
 	/**
 	 * The system property name to get the executable path and name to run.
