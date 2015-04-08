@@ -855,6 +855,7 @@ public class TraCITest extends SingleSimTraCITest {
 		final String id1 = "A_NEW_VEHICLE";
 		final String id2 = "ANOTHER_NEW_VEHICLE";
 		Route route = conn.getRouteRepository().getByID("0");
+		Lane lane = conn.getLaneRepository().getByID("0");
 		VehicleType vType = conn.getVehicleTypeRepository().getByID(
 				"KRAUSS_DEFAULT");
 
@@ -864,11 +865,11 @@ public class TraCITest extends SingleSimTraCITest {
 		 * Add one vehicle now and one at a later time.
 		 */
 		AddVehicleQuery avqNow = conn.queryAddVehicle();
-		avqNow.setVehicleData(id1, vType, route, 0, now, 0, 0);
+		avqNow.setVehicleData(id1, vType, route, lane, now, 0, 0);
 		avqNow.run();
 
 		AddVehicleQuery avqLater = conn.queryAddVehicle();
-		avqLater.setVehicleData(id2, vType, route, 0, now + 70001, 0, 0);
+		avqLater.setVehicleData(id2, vType, route, lane, now + 70001, 0, 0);
 		avqLater.run();
 
 		/*
