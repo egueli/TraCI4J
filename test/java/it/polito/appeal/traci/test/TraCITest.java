@@ -839,7 +839,7 @@ public class TraCITest extends SingleSimTraCITest {
 		Repository<MeMeDetector> memeRepo = conn.getMeMeDetectorRepository();
 		MeMeDetector detector = memeRepo.getByID("e3_0");
 
-		assertEquals(38, (int) detector.getVehicleNumber());
+		assertEquals(39, (int) detector.getVehicleNumber());
 	}
 
 	/**
@@ -855,7 +855,7 @@ public class TraCITest extends SingleSimTraCITest {
 		final String id1 = "A_NEW_VEHICLE";
 		final String id2 = "ANOTHER_NEW_VEHICLE";
 		Route route = conn.getRouteRepository().getByID("0");
-		Lane lane = conn.getLaneRepository().getByID("0");
+		Lane lane = conn.getLaneRepository().getAll().values().iterator().next();
 		VehicleType vType = conn.getVehicleTypeRepository().getByID(
 				"KRAUSS_DEFAULT");
 
@@ -882,7 +882,7 @@ public class TraCITest extends SingleSimTraCITest {
 		assertTrue(conn.getVehicleRepository().getAll().containsKey(id1));
 		assertFalse(conn.getVehicleRepository().getAll().containsKey(id2));
 
-		for (int t = 0; t < 70; t++)
+		for (int t = 0; t < 80; t++)
 			conn.nextSimStep();
 
 		assertTrue(conn.getVehicleRepository().getAll().containsKey(id2));
