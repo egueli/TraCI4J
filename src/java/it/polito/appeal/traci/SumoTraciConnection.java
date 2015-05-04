@@ -81,6 +81,9 @@ public class SumoTraciConnection {
 	 */
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
+	public static final String OS_ARCH_PROPERTY = "os.arch";
+	public static final String OS_NAME_PROPERTY = "os.name";
+
 	/**
 	 * The system property name to get user defined tcp_nodedelay for the tcp
 	 * socket.
@@ -430,8 +433,12 @@ public class SumoTraciConnection {
 		if (sumoEXE == null)
 			sumoEXE = "sumo";
 
-		args.add(0, sumoEXE);
+		// only on windows x64 (since version 0.23.0)
+		if (System.getProperty(OS_ARCH_PROPERTY).contains("64")
+				&& System.getProperty(OS_NAME_PROPERTY).contains("Win"))
+			sumoEXE += "64";
 
+		args.add(sumoEXE);
 		args.add("-c");
 		args.add(configFile);
 		args.add("--remote-port");
