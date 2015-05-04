@@ -50,6 +50,10 @@ public class RemoteTraCITest {
 		if (exe == null) {
 			exe = "sumo";
 		}
+
+		if (System.getProperty(SumoTraciConnection.OS_ARCH_PROPERTY).contains("64") && System.getProperty(SumoTraciConnection.OS_NAME_PROPERTY).contains("Win")) {
+			exe += "64";
+		}
 		
 		String[] args = new String[] {
 			exe,
