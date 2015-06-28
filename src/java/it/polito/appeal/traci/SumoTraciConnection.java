@@ -459,15 +459,15 @@ public class SumoTraciConnection {
 				&& System.getProperty(OS_NAME_PROPERTY).contains("Win"))
 			sumoEXE += "64";
 
-		args.add(sumoEXE);
-		args.add("-c");
-		args.add(configFile);
-		args.add("--remote-port");
-		args.add(Integer.toString(remotePort));
+		args.add(0, sumoEXE);
+		args.add(1, "-c");
+		args.add(2, configFile);
+		args.add(3, "--remote-port");
+		args.add(4, Integer.toString(remotePort));
 
 		if (randomSeed != -1) {
-			args.add("--seed");
-			args.add(Integer.toString(randomSeed));
+			args.add(5, "--seed");
+			args.add(6, Integer.toString(randomSeed));
 		}
 
 		if (log.isDebugEnabled())
