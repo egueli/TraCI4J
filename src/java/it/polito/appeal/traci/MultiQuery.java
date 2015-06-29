@@ -31,7 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Represents a list of {@link Query}s to run as a whole, i.e. within a single
@@ -48,7 +49,7 @@ import org.apache.log4j.Logger;
  */
 public class MultiQuery {
 	
-	private static final Logger log = Logger.getLogger(MultiQuery.class);
+	private static final Logger log = LogManager.getLogger();
 	
 	private final DataOutputStream dos;
 	private final DataInputStream dis;

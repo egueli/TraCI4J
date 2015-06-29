@@ -5,11 +5,12 @@
 	<groupId>it.polito.appeal.traci</groupId>
 	<artifactId>TraCI4J</artifactId>
 	<packaging>jar</packaging>
-	<version>1.7-SNAPSHOT</version>
+	<version>1.9-SNAPSHOT</version>
 	<name>TraCI4J</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<profiles>
@@ -87,9 +88,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>

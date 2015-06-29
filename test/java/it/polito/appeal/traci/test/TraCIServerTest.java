@@ -37,7 +37,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +68,7 @@ public class TraCIServerTest {
 
 	private Process sumoProcess;
 	
-	private static final Logger log = Logger.getLogger(TraCIServerTest.class);
+	private static final Logger log = LogManager.getLogger();
 	
 	@Before
 	public void setUp() throws UnknownHostException, IOException, InterruptedException {

@@ -30,7 +30,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Represents a collection of TraCI objects, that may or may not be complete
@@ -48,7 +49,7 @@ import org.apache.log4j.Logger;
 public class Repository<V extends TraciObject<?>> {
 
 	// log4j Logger
-	private static final Logger log = Logger.getLogger(Repository.class);
+	private static final Logger log = LogManager.getLogger();
 
 	private final Map<String, V> objectCache = new HashMap<String, V>();
 	/*

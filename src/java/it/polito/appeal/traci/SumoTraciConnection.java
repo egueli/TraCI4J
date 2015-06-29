@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 /**
@@ -90,8 +91,7 @@ public class SumoTraciConnection {
 	 */
 	public static final String TCP_NODELAY_PROPERTY = "it.polito.appeal.traci.tcp_nodelay";
 
-	private static final Logger log = Logger
-			.getLogger(SumoTraciConnection.class);
+	private static final Logger log = LogManager.getLogger();
 
 	private String configFile;
 	private int randomSeed;
