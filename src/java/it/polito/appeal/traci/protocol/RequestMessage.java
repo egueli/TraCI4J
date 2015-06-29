@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -46,7 +47,7 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class RequestMessage {
 
-	private static final Logger log = Logger.getLogger(RequestMessage.class);
+	private static final Logger log = LogManager.getLogger();
 
 	private final List<Command> commands = new ArrayList<Command>();
 

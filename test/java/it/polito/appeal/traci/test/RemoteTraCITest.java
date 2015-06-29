@@ -26,7 +26,6 @@ import java.net.InetAddress;
 
 import it.polito.appeal.traci.SumoTraciConnection;
 
-import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,10 +38,6 @@ public class RemoteTraCITest {
 	private SumoTraciConnection conn;
 	
 	private static final int PORT = 5450;
-	
-	static {
-		BasicConfigurator.configure();
-	}
 	
 	@Before
 	public void setUp() throws IOException, InterruptedException {
