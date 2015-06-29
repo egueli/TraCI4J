@@ -19,7 +19,10 @@
 
 package it.polito.appeal.traci.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import it.polito.appeal.traci.ChangeLightsStateQuery;
 import it.polito.appeal.traci.ControlledLink;
 import it.polito.appeal.traci.ControlledLinks;
@@ -30,7 +33,6 @@ import it.polito.appeal.traci.Phase;
 import it.polito.appeal.traci.Program;
 import it.polito.appeal.traci.ReadObjectVarQuery;
 import it.polito.appeal.traci.Repository;
-import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.TLState;
 import it.polito.appeal.traci.TrafficLight;
 
@@ -41,7 +43,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +53,7 @@ public class TrafficLightsTest extends SingleSimTraCITest {
 
 	private Repository<TrafficLight> repo;
 
-	private static final Logger log = Logger.getLogger(TrafficLightsTest.class);
+	private static final Logger log = LogManager.getLogger();
 	
 	@Override
 	protected String getSimConfigFileLocation() {

@@ -60,8 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -86,20 +86,9 @@ import org.junit.Test;
 @SuppressWarnings("javadoc")
 public class TraCITest extends SingleSimTraCITest {
 
-	private static final Logger log = Logger.getLogger(TraCITest.class);
+	private static final Logger log = LogManager.getLogger();
 
 	protected static final double DELTA = 1e-6;
-
-	static {
-		// Log4j configuration must be done only once, otherwise output will be
-		// duplicated for each test
-
-		// Basic configuration that outputs everything
-		// org.apache.log4j.BasicConfigurator.configure();
-
-		// Configuration specified by a properties file
-		PropertyConfigurator.configure("test/log4j.properties");
-	}
 
 	@Override
 	protected String getSimConfigFileLocation() {
