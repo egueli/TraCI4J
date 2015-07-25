@@ -10,8 +10,7 @@ import org.apache.logging.log4j.Logger;
  * Reads an InputStream object and logs each row in the containing class's
  * logger.
  * 
- * @author Enrico
- * 
+ * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  */
 public class StreamLogger implements Runnable {
 	private final InputStream stream;
@@ -40,7 +39,7 @@ public class StreamLogger implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 }

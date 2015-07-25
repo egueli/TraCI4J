@@ -21,8 +21,6 @@ package it.polito.appeal.traci;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import de.uniluebeck.itm.tcpip.Storage;
 import it.polito.appeal.traci.protocol.Constants;

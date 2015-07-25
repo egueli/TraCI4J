@@ -2,6 +2,10 @@ package it.polito.appeal.traci.test;
 
 import java.io.*;
 import java.util.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.*;
 
 /**
@@ -45,6 +49,8 @@ import java.net.*;
 @SuppressWarnings("javadoc")
 public class NanoHTTPD
 {
+	private Logger log = LogManager.getLogger();
+
 	// ==================================================
 	// API parts
 	// ==================================================
@@ -62,20 +68,20 @@ public class NanoHTTPD
 	 */
 	public Response serve( String uri, String method, Properties header, Properties parms )
 	{
-		System.out.println( method + " '" + uri + "' " );
+		log.debug( method + " '" + uri + "' " );
 
 		Enumeration<?> e = header.propertyNames();
 		while ( e.hasMoreElements())
 		{
 			String value = (String)e.nextElement();
-			System.out.println( "  HDR: '" + value + "' = '" +
+			log.debug( "  HDR: '" + value + "' = '" +
 								header.getProperty( value ) + "'" );
 		}
 		e = parms.propertyNames();
 		while ( e.hasMoreElements())
 		{
 			String value = (String)e.nextElement();
-			System.out.println( "  PRM: '" + value + "' = '" +
+			log.debug( "  PRM: '" + value + "' = '" +
 								parms.getProperty( value ) + "'" );
 		}
 
@@ -179,6 +185,7 @@ public class NanoHTTPD
 	{
 		myTcpPort = port;
 
+		@SuppressWarnings("resource")
 		final ServerSocket ss = new ServerSocket( myTcpPort );
 		Thread t = new Thread( new Runnable()
 			{
@@ -190,7 +197,9 @@ public class NanoHTTPD
 							new HTTPSession( ss.accept());
 					}
 					catch ( IOException ioe )
-					{}
+					{
+						log.error(ioe);
+					}
 				}
 			});
 		t.setDaemon( true );
@@ -314,7 +323,7 @@ public class NanoHTTPD
 					if (contentLength != null)
 					{
 						try { size = Integer.parseInt(contentLength); }
-						catch (NumberFormatException ex) {}
+						catch (NumberFormatException ex) { log.error(ex); }
 					}
 					String postLine = "";
 					char buf[] = new char[512];
@@ -642,7 +651,7 @@ public class NanoHTTPD
 					try	{
 						startFrom = Long.parseLong( range );
 					}
-					catch ( NumberFormatException nfe ) {}
+					catch ( NumberFormatException nfe ) {log.error(nfe);}
 				}
 			}
 

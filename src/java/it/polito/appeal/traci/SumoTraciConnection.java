@@ -287,7 +287,7 @@ public class SumoTraciConnection {
 							"SUMO process terminated unexpectedly with value "
 									+ retVal);
 				} catch (IllegalThreadStateException e) {
-					// it's alive, go ahead.
+					log.debug("It's alive, go ahead", e);
 				}
 			}
 
@@ -354,6 +354,7 @@ public class SumoTraciConnection {
 			socket.connect(new InetSocketAddress(addr, port));
 			return true;
 		} catch (ConnectException ce) {
+			log.debug(ce);
 			return false;
 		}
 	}
