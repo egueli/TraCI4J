@@ -232,13 +232,31 @@ public class SumoTraciConnection {
 	 *             if something wrong occurs while starting SUMO or connecting
 	 *             at it.
 	 * @throws InterruptedException
+	 * 
+	 * @see {@link #runServer(boolean)}
 	 */
 	public void runServer() throws IOException, InterruptedException {
+		runServer(false);
+	}
+
+	/**
+	 * Runs a SUMO instance and tries to connect at it.
+	 * 
+	 * @param withGui
+	 *            Start sumo with gui or not
+	 * @throws IOException
+	 *             if something wrong occurs while starting SUMO or connecting
+	 *             at it.
+	 * @throws InterruptedException
+	 * 
+	 * @see {@link #runServer()}
+	 */
+	public void runServer(boolean withGui) throws IOException, InterruptedException {
 		retrieveFromURLs();
 
 		int port = findAvailablePort();
 
-		runSUMO(port);
+		runSUMO(port, withGui);
 
 		tryConnect(InetAddress.getLocalHost(), port, sumoProcess);
 		postConnect();
@@ -428,10 +446,13 @@ public class SumoTraciConnection {
 
 	}
 
-	private void runSUMO(int remotePort) throws IOException {
+	private void runSUMO(int remotePort, boolean withGui) throws IOException {
 		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
 			sumoEXE = "sumo";
+
+		if (withGui)
+			sumoEXE += "-gui";
 
 		// only on windows x64 (since version 0.23.0)
 		if (System.getProperty(OS_ARCH_PROPERTY).contains("64")
