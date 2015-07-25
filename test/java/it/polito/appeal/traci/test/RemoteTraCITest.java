@@ -26,12 +26,16 @@ import java.net.InetAddress;
 
 import it.polito.appeal.traci.SumoTraciConnection;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("javadoc")
 public class RemoteTraCITest {
+
+	private Logger log = LogManager.getLogger();
 
 	private Process sumoProcess;
 
@@ -63,7 +67,7 @@ public class RemoteTraCITest {
 			throw new IOException("SUMO died with exit value " + exitVal);
 		}
 		catch (IllegalThreadStateException e) {
-			// all OK, it's alive
+			log.debug("All OK, it's alive", e);
 		}
 		
 		conn = new SumoTraciConnection(InetAddress.getLocalHost(), PORT);

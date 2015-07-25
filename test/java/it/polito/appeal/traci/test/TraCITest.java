@@ -697,6 +697,7 @@ public class TraCITest extends SingleSimTraCITest {
 						log.info("pos: " + firstVehicle.getPosition());
 						fail("it should throw an exception");
 					} catch (IOException e) {
+						log.trace(e);
 					}
 				}
 			}

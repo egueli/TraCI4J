@@ -323,7 +323,7 @@ public class NanoHTTPD
 					if (contentLength != null)
 					{
 						try { size = Integer.parseInt(contentLength); }
-						catch (NumberFormatException ex) {}
+						catch (NumberFormatException ex) { log.error(ex); }
 					}
 					String postLine = "";
 					char buf[] = new char[512];
@@ -651,7 +651,7 @@ public class NanoHTTPD
 					try	{
 						startFrom = Long.parseLong( range );
 					}
-					catch ( NumberFormatException nfe ) {}
+					catch ( NumberFormatException nfe ) {log.error(nfe);}
 				}
 			}
 

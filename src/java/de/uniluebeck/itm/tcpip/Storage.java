@@ -490,7 +490,8 @@ public class Storage {
 			result = new String(content, charset);
 			
 		} catch (UnsupportedEncodingException e) {
-			assert false : e;
+			log.error(e);
+			throw new AssertionError(e);
 		}
 		
 		return result;
