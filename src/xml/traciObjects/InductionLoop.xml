@@ -31,8 +31,7 @@
 			<query>ReadObjectVarQuery.LaneQ</query>
 			<returnType>Lane</returnType>
 			<dynamic>false</dynamic>
-		</readQuery>
-	<readQuery>
+		</readQuery><readQuery>
 			<name>ReadPositionInLane</name>
 			<enum>POSITION</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION</const>
