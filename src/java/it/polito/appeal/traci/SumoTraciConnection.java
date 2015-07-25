@@ -44,6 +44,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
+import it.polito.appeal.traci.StreamLogger.StreamLoggerTyp;
+
 /**
  * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
  * protocol.
@@ -481,10 +483,10 @@ public class SumoTraciConnection {
 		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
 		// + 1);
 
-		StreamLogger errStreamLogger = new StreamLogger(
-				sumoProcess.getErrorStream(), "SUMO-err:", log);
-		StreamLogger outStreamLogger = new StreamLogger(
-				sumoProcess.getInputStream(), "SUMO-out:", log);
+		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO", log,
+				StreamLoggerTyp.ERROR);
+		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO", log,
+				StreamLoggerTyp.INFO);
 		new Thread(errStreamLogger, "StreamLogger-SUMO-err").start();
 		new Thread(outStreamLogger, "StreamLogger-SUMO-out").start();
 	}
