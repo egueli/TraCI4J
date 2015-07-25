@@ -15,6 +15,7 @@
 	<javadoc>
 	Representation of a class of vehicles in the SUMO environment.
 	@see &lt;a href="http://sumo.dlr.de/wiki/Definition_of_Vehicles,_Vehicle_Types,_and_Routes#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/TraCI/VehicleType_Value_Retrieval"&gt;TraCI documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 
