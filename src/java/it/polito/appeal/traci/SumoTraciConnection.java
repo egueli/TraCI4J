@@ -133,6 +133,7 @@ public class SumoTraciConnection {
 	private Repository.TrafficLights trafficLightRepo;
 	private Repository.VehicleTypes vehicleTypeRepo;
 	private Repository.MeMeDetectors memeDetectorRepo;
+	private Repository.LaArDetectors laarDetectorRepo;
 	private Repository.Routes routeRepo;
 
 	/*
@@ -400,6 +401,10 @@ public class SumoTraciConnection {
 		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE));
 		addStepAdvanceListener(memeDetectorRepo);
+
+		laarDetectorRepo = new Repository.LaArDetectors(dis, dos, laneRepo, vehicleRepo,
+				newIDListQuery(Constants.CMD_GET_LANE_AREA_DETECTOR_VARIABLE));
+		addStepAdvanceListener(laarDetectorRepo);
 
 		routeRepo = new Repository.Routes(dis, dos, edgeRepo, newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
 
@@ -759,6 +764,15 @@ public class SumoTraciConnection {
 	 */
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
+	}
+	
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the lane area detectors in
+	 *         the network.
+	 */
+	public Repository<LaArDetector> getLaArDetectorRepository() {
+		return laarDetectorRepo;
 	}
 
 	/**

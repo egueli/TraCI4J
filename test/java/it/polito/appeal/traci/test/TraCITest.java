@@ -32,6 +32,8 @@ import it.polito.appeal.traci.AddVehicleQuery;
 import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
 import it.polito.appeal.traci.Edge;
+import it.polito.appeal.traci.InductionLoop;
+import it.polito.appeal.traci.LaArDetector;
 import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.Link;
 import it.polito.appeal.traci.MeMeDetector;
@@ -804,7 +806,7 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
-	 * Checks for presence of a Multi-entry/Multi-exit detector.
+	 * Checks for presence of a Multi-entry/Multi-exit detector (E3).
 	 * 
 	 * @throws IOException
 	 */
@@ -815,7 +817,7 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
-	 * Checks for the correct behaviour of a MeMe detector.
+	 * Checks for the correct behaviour of a Multi-entry/Multi-exit detector (E3).
 	 * 
 	 * @throws IOException
 	 */
@@ -831,7 +833,64 @@ public class TraCITest extends SingleSimTraCITest {
 
 		assertEquals(39, (int) detector.getVehicleNumber());
 	}
+	
+	/**
+	 * Checks for presence of a Lane area detector (E2).
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testLaArExistence() throws IOException {
+		Repository<LaArDetector> laArRepo = conn.getLaArDetectorRepository();
+		assertNotNull(laArRepo.getByID("e2_0"));
+	}
 
+	/**
+	 * Checks for the correct behaviour of a Lane area detector (E2).
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testLaArDetectorIsDetecting() throws IOException {
+
+		for (int t = 0; t < 100; t++) {
+			conn.nextSimStep();
+		}
+
+		Repository<LaArDetector> laArRepo = conn.getLaArDetectorRepository();
+		LaArDetector detector = laArRepo.getByID("e2_0");
+
+		assertEquals(2, (int) detector.getVehicleNumber());
+	}
+	
+	/**
+	 * Checks for presence of a induction loop (E1).
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testInLoExistence() throws IOException {
+		Repository<InductionLoop> inLoRepo = conn.getInductionLoopRepository();
+		assertNotNull(inLoRepo.getByID("e2_0"));
+	}
+
+	/**
+	 * Checks for the correct behaviour of a induction loop (E1).
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testInductionLoopIsDetecting() throws IOException {
+
+		for (int t = 0; t < 100; t++) {
+			conn.nextSimStep();
+		}
+
+		Repository<InductionLoop> laArRepo = conn.getInductionLoopRepository();
+		InductionLoop detector = laArRepo.getByID("e1_0");
+
+		assertEquals(1, (int) detector.getVehicleNumber());
+	}
 	/**
 	 * Checks for the correct adding of new vehicles.
 	 * 

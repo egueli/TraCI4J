@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,6 +30,8 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
 
 /**
  * Represents a collection of TraCI objects, that may or may not be complete
@@ -168,11 +168,10 @@ public class Repository<V extends TraciObject<?>> {
 	 *
 	 * @param <V>
 	 */
-	static class UpdatableRepository<V extends TraciObject<?> & StepAdvanceListener>
-			extends Repository<V> implements StepAdvanceListener {
+	static class UpdatableRepository<V extends TraciObject<?> & StepAdvanceListener> extends Repository<V>
+			implements StepAdvanceListener {
 
-		public UpdatableRepository(ObjectFactory<V> factory,
-				StringListQ idListQuery) {
+		public UpdatableRepository(ObjectFactory<V> factory, StringListQ idListQuery) {
 			super(factory, idListQuery);
 		}
 
@@ -188,8 +187,7 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class Edges extends UpdatableRepository<Edge> {
-		Edges(final DataInputStream dis, final DataOutputStream dos,
-				StringListQ idListQuery) {
+		Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<Edge>() {
 				public Edge newObject(String objectID) {
 					return new Edge(dis, dos, objectID);
@@ -199,8 +197,8 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class Lanes extends Repository<Lane> {
-		Lanes(final DataInputStream dis, final DataOutputStream dos,
-				final Repository<Edge> edges, StringListQ idListQuery) {
+		Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges,
+				StringListQ idListQuery) {
 			super(null, idListQuery);
 
 			setObjectFactory(new ObjectFactory<Lane>() {
@@ -213,10 +211,8 @@ public class Repository<V extends TraciObject<?>> {
 
 	static class Vehicles extends UpdatableRepository<Vehicle> {
 
-		Vehicles(final DataInputStream dis, final DataOutputStream dos,
-				final Repository<Edge> edges, final Repository<Lane> lanes,
-				final Map<String, Vehicle> vehicles,
-				final StringListQ idListQuery) {
+		Vehicles(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges,
+				final Repository<Lane> lanes, final Map<String, Vehicle> vehicles, final StringListQ idListQuery) {
 			super(new ObjectFactory<Vehicle>() {
 				/**
 				 * This implementation does not make a new object; instead it
@@ -224,11 +220,9 @@ public class Repository<V extends TraciObject<?>> {
 				 */
 				public Vehicle newObject(String objectID) {
 					if (!vehicles.containsKey(objectID))
-						throw new IllegalArgumentException("vehicleID '"
-								+ objectID + "' not found in vehicles map");
+						throw new IllegalArgumentException("vehicleID '" + objectID + "' not found in vehicles map");
 					else
-						log.debug(" vehicleID " + objectID
-								+ " found in vehicles map");
+						log.debug(" vehicleID " + objectID + " found in vehicles map");
 					return vehicles.get(objectID);
 				}
 			}, idListQuery);
@@ -237,8 +231,7 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class POIs extends Repository<POI> {
-		public POIs(final DataInputStream dis, final DataOutputStream dos,
-				StringListQ idListQuery) {
+		public POIs(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<POI>() {
 				public POI newObject(String objectID) {
 					return new POI(dis, dos, objectID);
@@ -248,13 +241,11 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class InductionLoops extends UpdatableRepository<InductionLoop> {
-		public InductionLoops(final DataInputStream dis,
-				final DataOutputStream dos, final Repository<Lane> lanes,
+		public InductionLoops(final DataInputStream dis, final DataOutputStream dos, final Repository<Lane> lanes,
 				final Repository<Vehicle> vehicles, StringListQ idListQuery) {
 			super(new ObjectFactory<InductionLoop>() {
 				public InductionLoop newObject(String objectID) {
-					return new InductionLoop(dis, dos, objectID, lanes,
-							vehicles);
+					return new InductionLoop(dis, dos, objectID, lanes, vehicles);
 				}
 			}, idListQuery);
 		}
@@ -262,8 +253,7 @@ public class Repository<V extends TraciObject<?>> {
 
 	static class TrafficLights extends UpdatableRepository<TrafficLight> {
 
-		public TrafficLights(final DataInputStream dis,
-				final DataOutputStream dos, final Repository<Lane> lanes,
+		public TrafficLights(final DataInputStream dis, final DataOutputStream dos, final Repository<Lane> lanes,
 				StringListQ idListQuery) {
 			super(new ObjectFactory<TrafficLight>() {
 				public TrafficLight newObject(String objectID) {
@@ -274,8 +264,7 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class VehicleTypes extends Repository<VehicleType> {
-		public VehicleTypes(final DataInputStream dis,
-				final DataOutputStream dos, StringListQ idListQuery) {
+		public VehicleTypes(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
 			super(new ObjectFactory<VehicleType>() {
 				public VehicleType newObject(String objectID) {
 					return new VehicleType(dis, dos, objectID);
@@ -285,8 +274,7 @@ public class Repository<V extends TraciObject<?>> {
 	}
 
 	static class MeMeDetectors extends UpdatableRepository<MeMeDetector> {
-		public MeMeDetectors(final DataInputStream dis,
-				final DataOutputStream dos, final Repository<Vehicle> vehicles,
+		public MeMeDetectors(final DataInputStream dis, final DataOutputStream dos, final Repository<Vehicle> vehicles,
 				StringListQ idListQuery) {
 			super(new ObjectFactory<MeMeDetector>() {
 				public MeMeDetector newObject(String objectID) {
@@ -296,9 +284,20 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 
+	static class LaArDetectors extends UpdatableRepository<LaArDetector> {
+		public LaArDetectors(final DataInputStream dis, final DataOutputStream dos, final Repository<Lane> lanes,
+				final Repository<Vehicle> vehicles, StringListQ idListQuery) {
+			super(new ObjectFactory<LaArDetector>() {
+				public LaArDetector newObject(String objectID) {
+					return new LaArDetector(dis, dos, objectID, lanes, vehicles);
+				}
+			}, idListQuery);
+		}
+	}
+
 	static class Routes extends UpdatableRepository<Route> {
-		public Routes(final DataInputStream dis, final DataOutputStream dos,
-				final Repository<Edge> edges, StringListQ idListQuery) {
+		public Routes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges,
+				StringListQ idListQuery) {
 			super(new ObjectFactory<Route>() {
 				public Route newObject(String objectID) {
 					return new Route(dis, dos, objectID, edges);
