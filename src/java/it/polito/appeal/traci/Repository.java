@@ -296,6 +296,17 @@ public class Repository<V extends TraciObject<?>> {
 		}
 	}
 
+	static class LaArDetectors extends UpdatableRepository<LaArDetector> {
+		public LaArDetectors(final DataInputStream dis, final DataOutputStream dos, final Repository<Lane> lanes,
+				final Repository<Vehicle> vehicles, StringListQ idListQuery) {
+			super(new ObjectFactory<LaArDetector>() {
+				public LaArDetector newObject(String objectID) {
+					return new LaArDetector(dis, dos, objectID, lanes, vehicles);
+				}
+			}, idListQuery);
+		}
+	}
+
 	static class Routes extends UpdatableRepository<Route> {
 		public Routes(final DataInputStream dis, final DataOutputStream dos,
 				final Repository<Edge> edges, StringListQ idListQuery) {
