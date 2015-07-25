@@ -19,9 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
-import it.polito.appeal.traci.protocol.Constants;
-
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
@@ -44,7 +41,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
+import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
 import it.polito.appeal.traci.StreamLogger.StreamLoggerTyp;
+import it.polito.appeal.traci.protocol.Constants;
 
 /**
  * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
@@ -178,8 +177,7 @@ public class SumoTraciConnection {
 	 *            config file or, if absent, the system time
 	 */
 	@Deprecated
-	public SumoTraciConnection(String configFile, int randomSeed,
-			boolean useGeoOffset) {
+	public SumoTraciConnection(String configFile, int randomSeed, boolean useGeoOffset) {
 		this(configFile, randomSeed);
 	}
 
@@ -201,8 +199,7 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
-			InterruptedException {
+	public SumoTraciConnection(InetAddress addr, int port) throws IOException, InterruptedException {
 
 		// Set TCP_NODELAY as enabled by default.
 		enableTcpNoDelay();
@@ -278,16 +275,13 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	private void tryConnect(InetAddress addr, int port, Process process)
-			throws IOException, InterruptedException {
+	private void tryConnect(InetAddress addr, int port, Process process) throws IOException, InterruptedException {
 		int waitTime = 500; // milliseconds
 		for (int i = 0; i < CONNECT_RETRIES; i++) {
 			if (process != null) {
 				try {
 					int retVal = process.exitValue();
-					throw new IOException(
-							"SUMO process terminated unexpectedly with value "
-									+ retVal);
+					throw new IOException("SUMO process terminated unexpectedly with value " + retVal);
 				} catch (IllegalThreadStateException e) {
 					log.debug("It's alive, go ahead", e);
 				}
@@ -345,8 +339,7 @@ public class SumoTraciConnection {
 		System.setProperty(TCP_NODELAY_PROPERTY, String.valueOf(on));
 	}
 
-	private boolean tryConnectOnce(InetAddress addr, int port)
-			throws UnknownHostException, IOException {
+	private boolean tryConnectOnce(InetAddress addr, int port) throws UnknownHostException, IOException {
 		boolean tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
 
 		socket = new Socket();
@@ -372,12 +365,10 @@ public class SumoTraciConnection {
 
 		vehicles = new HashMap<String, Vehicle>();
 
-		edgeRepo = new Repository.Edges(dis, dos,
-				newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
+		edgeRepo = new Repository.Edges(dis, dos, newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
 		addStepAdvanceListener(edgeRepo);
 
-		laneRepo = new Repository.Lanes(dis, dos, edgeRepo,
-				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
+		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
 
 		vehicleListQuery = newIDListQuery(Constants.CMD_GET_VEHICLE_VARIABLE);
 		addStepAdvanceListener(new StepAdvanceListener() {
@@ -387,19 +378,16 @@ public class SumoTraciConnection {
 		});
 		vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
 
-		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
-				vehicles, vehicleListQuery);
+		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo, vehicles, vehicleListQuery);
 		addStepAdvanceListener(vehicleRepo);
 
 		addVehicleQuery = new AddVehicleQuery(dis, dos, vehicleRepo);
 
 		removeVehicleQuery = new RemoveVehicleQuery(dis, dos);
 
-		poiRepo = new Repository.POIs(dis, dos,
-				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
+		poiRepo = new Repository.POIs(dis, dos, newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
 
-		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
-				vehicleRepo,
+		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo, vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
 		addStepAdvanceListener(inductionLoopRepo);
 
@@ -407,18 +395,13 @@ public class SumoTraciConnection {
 				newIDListQuery(Constants.CMD_GET_TL_VARIABLE));
 		addStepAdvanceListener(trafficLightRepo);
 
-		vehicleTypeRepo = new Repository.VehicleTypes(dis, dos,
-				newIDListQuery(Constants.CMD_GET_VEHICLETYPE_VARIABLE));
+		vehicleTypeRepo = new Repository.VehicleTypes(dis, dos, newIDListQuery(Constants.CMD_GET_VEHICLETYPE_VARIABLE));
 
-		memeDetectorRepo = new Repository.MeMeDetectors(
-				dis,
-				dos,
-				vehicleRepo,
+		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE));
 		addStepAdvanceListener(memeDetectorRepo);
 
-		routeRepo = new Repository.Routes(dis, dos, edgeRepo,
-				newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
+		routeRepo = new Repository.Routes(dis, dos, edgeRepo, newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
 
 		addRouteQuery = new AddRouteQuery(dis, dos, routeRepo);
 
@@ -458,8 +441,7 @@ public class SumoTraciConnection {
 			sumoEXE += "-gui";
 
 		// only on windows x64 (since version 0.23.0)
-		if (System.getProperty(OS_ARCH_PROPERTY).contains("64")
-				&& System.getProperty(OS_NAME_PROPERTY).contains("Win"))
+		if (System.getProperty(OS_ARCH_PROPERTY).contains("64") && System.getProperty(OS_NAME_PROPERTY).contains("Win"))
 			sumoEXE += "64";
 
 		args.add(0, sumoEXE);
@@ -479,9 +461,6 @@ public class SumoTraciConnection {
 		String[] argsArray = new String[args.size()];
 		args.toArray(argsArray);
 		sumoProcess = Runtime.getRuntime().exec(argsArray);
-
-		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
-		// + 1);
 
 		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO", log,
 				StreamLoggerTyp.ERROR);
@@ -597,13 +576,11 @@ public class SumoTraciConnection {
 
 			multi.add(vehicleListQuery);
 
-			teleportStartQ = new StringListQ(dis, dos,
-					Constants.CMD_GET_SIM_VARIABLE, "",
+			teleportStartQ = new StringListQ(dis, dos, Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
 			multi.add(teleportStartQ);
 
-			teleportEndQ = new StringListQ(dis, dos,
-					Constants.CMD_GET_SIM_VARIABLE, "",
+			teleportEndQ = new StringListQ(dis, dos, Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
 			multi.add(teleportEndQ);
 		} // end multi-query
@@ -615,15 +592,12 @@ public class SumoTraciConnection {
 		List<String> teleportStart = teleportStartQ.get();
 		List<String> teleportEnd = teleportEndQ.get();
 
-		Set<String> vehicleListAfter = new HashSet<String>(
-				vehicleListQuery.get());
+		Set<String> vehicleListAfter = new HashSet<String>(vehicleListQuery.get());
 
-		Set<String> departedIDs = Utils.getAddedItems(vehicleListBefore,
-				vehicleListAfter);
+		Set<String> departedIDs = Utils.getAddedItems(vehicleListBefore, vehicleListAfter);
 		departedIDs.removeAll(teleportEnd);
 
-		Set<String> arrivedIDs = Utils.getRemovedItems(vehicleListBefore,
-				vehicleListAfter);
+		Set<String> arrivedIDs = Utils.getRemovedItems(vehicleListBefore, vehicleListAfter);
 		arrivedIDs.removeAll(teleportStart);
 
 		/*
@@ -640,11 +614,9 @@ public class SumoTraciConnection {
 			}
 		}
 		for (String departedID : departedIDs) {
-			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo,
-					laneRepo);
+			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
 			if (log.isDebugEnabled())
-				log.debug(" departedID = " + departedID + " Vehicle = "
-						+ departed);
+				log.debug(" departedID = " + departedID + " Vehicle = " + departed);
 			addStepAdvanceListener(departed);
 			vehicles.put(departedID, departed);
 		}
@@ -660,23 +632,19 @@ public class SumoTraciConnection {
 				Vehicle vehicle = vehicles.get(teleportStarting);
 				if (vehicle != null) {
 					if (log.isDebugEnabled())
-						log.debug(" Vehicle " + teleportStarting
-								+ " started teleporting.");
+						log.debug(" Vehicle " + teleportStarting + " started teleporting.");
 					observer.vehicleTeleportStarting(vehicle);
 				} else
-					log.warn(" Teleporting vehicle " + teleportStarting
-							+ " not found!");
+					log.warn(" Teleporting vehicle " + teleportStarting + " not found!");
 			}
 			for (String teleportEnding : teleportEnd) {
 				Vehicle vehicle = vehicles.get(teleportEnding);
 				if (vehicle != null) {
 					if (log.isDebugEnabled())
-						log.debug(" Vehicle " + teleportEnding
-								+ " ended teleporting.");
+						log.debug(" Vehicle " + teleportEnding + " ended teleporting.");
 					observer.vehicleTeleportEnding(vehicle);
 				} else
-					log.warn(" Teleporting vehicle " + teleportEnding
-							+ " not found!");
+					log.warn(" Teleporting vehicle " + teleportEnding + " not found!");
 			}
 		}
 
