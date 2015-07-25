@@ -871,7 +871,7 @@ public class TraCITest extends SingleSimTraCITest {
 	@Test
 	public void testInLoExistence() throws IOException {
 		Repository<InductionLoop> inLoRepo = conn.getInductionLoopRepository();
-		assertNotNull(inLoRepo.getByID("e2_0"));
+		assertNotNull(inLoRepo.getByID("e1_0"));
 	}
 
 	/**
