@@ -14,7 +14,8 @@
 
 	<javadoc>
 	Representation of a Multi-Entry Multi-Exit detector (E3) in the SUMO environment.
-	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Output/Multi-Entry_Multi-Exit_Detectors_(E3).html"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/Simulation/Output/Multi-Entry_Multi-Exit_Detectors_(E3)"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/TraCI/Multi-Entry/Multi-Exit_Detectors_Value_Retrieval"&gt;TraCI documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 
