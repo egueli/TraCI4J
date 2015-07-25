@@ -17,6 +17,7 @@
 	<!-- The javadoc of the class that will be generated. -->
 	<javadoc>
 	Represents a POI (Point-of-Interest) in the SUMO environment.
+	@see &lt;a href="http://sumo.dlr.de/wiki/Simulation/Shapes#POI_.28Point_of_interest.29_Definitions"&gt;SUMO documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 

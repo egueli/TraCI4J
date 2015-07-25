@@ -14,7 +14,7 @@
 
 	<javadoc>
 	Representation of an induction loop in the SUMO environment.
-	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Output/Induction_Loops_Detectors_(E1).html"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/Simulation/Output/Induction_Loops_Detectors_(E1)"&gt;SUMO documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 

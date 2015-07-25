@@ -14,7 +14,7 @@
 
 	<javadoc>
 	Representation of an edge in the SUMO environment. It contains one or more lanes.
-	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Networks/SUMO_Road_Networks.html#Edges_and_Lanes"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/Networks/SUMO_Road_Networks#Edges_and_Lanes"&gt;SUMO documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 
