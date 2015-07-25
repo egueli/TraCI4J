@@ -12,15 +12,15 @@
         <pathelement location="target"/>
     </path>
     <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
+        <mkdir dir="target"/>
+        <copy includeemptydirs="false" todir="target">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
                 <exclude name="sumo/traci/"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="target">
             <fileset dir="test/java">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
@@ -28,19 +28,19 @@
         </copy>
     </target>
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="target"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init,generate" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target" includeantruntime="false">
             <src path="src"/>
             <exclude name="sumo/traci/"/>
             <classpath refid="TraCI4J.classpath"/>
         </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target" includeantruntime="false">
             <src path="test/java"/>
             <classpath refid="TraCI4J.classpath"/>
         </javac>
