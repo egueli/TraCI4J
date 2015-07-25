@@ -5,7 +5,7 @@
 	<groupId>it.polito.appeal.traci</groupId>
 	<artifactId>TraCI4J</artifactId>
 	<packaging>jar</packaging>
-	<version>1.9-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 	<name>TraCI4J</name>
 
 	<properties>
