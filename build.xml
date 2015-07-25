@@ -9,15 +9,7 @@
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <path id="TraCI4J.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="lib/junit.jar"/>
-        <pathelement location="lib/log4j.jar"/>
-        <pathelement location="lib/resolver.jar"/>
-        <pathelement location="lib/serializer.jar"/>
-        <pathelement location="lib/xercesImpl.jar"/>
-    	<!-- TODO put these in a separate path for testing only -->
-        <pathelement location="lib/xml-apis.jar"/>
-    	<pathelement location="lib/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+        <pathelement location="target"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
