@@ -19,6 +19,9 @@
 				<activeByDefault></activeByDefault>
 			</activation>
 			<id>build</id>
+			<properties>
+				<src.dir>src/java</src.dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -44,6 +47,9 @@
 		</profile>
 		<profile>
 			<id>generate</id>
+			<properties>
+				<src.dir>src/java-gen</src.dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -77,7 +83,7 @@
 	</profiles>
 	<build>
 		<defaultGoal>compile</defaultGoal>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>${src.dir}</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 	</build>
 	<dependencies>
