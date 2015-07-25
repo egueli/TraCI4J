@@ -57,6 +57,19 @@ public class Constants {
 	/** response: subscribe induction loop (e1) variable */
 	public static final int RESPONSE_SUBSCRIBE_INDUCTIONLOOP_VARIABLE = 0xe0;
 
+	/** command: subscribe lane area detector (e2) context */
+	public static final int CMD_SUBSCRIBE_LANE_AREA_DETECTOR_CONTEXT = 0x8d;
+	/** response: subscribe lane area detector (e2) context */
+	public static final int RESPONSE_SUBSCRIBE_LANE_AREA_DETECTOR_CONTEXT = 0x9d;
+	/** command: get lane area detector (e2) variable */
+	public static final int CMD_GET_LANE_AREA_DETECTOR_VARIABLE = 0xad;
+	/** response: get lane area detector (e2) variable */
+	public static final int RESPONSE_GET_LANE_AREA_DETECTOR_VARIABLE = 0xbd;
+	/** command: subscribe lane area detector (e2) variable */
+	public static final int CMD_SUBSCRIBE_LANE_AREA_DETECTOR_VARIABLE = 0xdd;
+	/** response: subscribe lane area detector (e2) variable */
+	public static final int RESPONSE_SUBSCRIBE_LANE_AREA_DETECTOR_VARIABLE = 0xed;
+
 	/** command: subscribe multi-entry/multi-exit detector (e3) context */
 	public static final int CMD_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_CONTEXT = 0x81;
 	/** response: subscribe multi-entry/multi-exit detector (e3) context */
