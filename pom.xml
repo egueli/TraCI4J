@@ -19,9 +19,6 @@
 				<activeByDefault></activeByDefault>
 			</activation>
 			<id>build</id>
-			<properties>
-				<src.dir>src/java</src.dir>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -33,23 +30,10 @@
 						</configuration>
 					</plugin>
 				</plugins>
-				<resources>
-					<resource>
-						<directory>src/xml</directory>
-						<targetPath>xml</targetPath>
-					</resource>
-					<resource>
-						<directory>src/xslt</directory>
-						<targetPath>xslt</targetPath>
-					</resource>
-				</resources>
 			</build>
 		</profile>
 		<profile>
 			<id>generate</id>
-			<properties>
-				<src.dir>src/java-gen</src.dir>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -59,7 +43,7 @@
 						<executions>
 							<execution>
 								<id>ant-magic</id>
-								<phase>compile</phase>
+								<phase>validate</phase>
 								<goals>
 									<goal>run</goal>
 								</goals>
@@ -69,8 +53,9 @@
 										<property name="runtime_classpath" refid="maven.runtime.classpath" />
 										<property name="compile_classpath" refid="maven.compile.classpath" />
 										<property name="test_classpath" refid="maven.test.classpath" />
+										<property name="plugin_classpath" refid="maven.plugin.classpath" />
 										<property name="outputDir" value="${project.build.outputDirectory}" />
-										<property name="sourceDir" value="${project.build.sourceDirectory}" />
+										<property name="sourceDir" value="${project.build.sourceDirectory}/java-gen" />
 										<ant antfile="${basedir}/build.xml" target="generate" />
 									</tasks>
 								</configuration>
@@ -83,7 +68,7 @@
 	</profiles>
 	<build>
 		<defaultGoal>compile</defaultGoal>
-		<sourceDirectory>${src.dir}</sourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test/java</testSourceDirectory>
 		<testResources>
 			<testResource>
