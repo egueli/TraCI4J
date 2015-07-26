@@ -27,26 +27,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import it.polito.appeal.traci.AddRouteQuery;
-import it.polito.appeal.traci.AddVehicleQuery;
-import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
-import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
-import it.polito.appeal.traci.Edge;
-import it.polito.appeal.traci.InductionLoop;
-import it.polito.appeal.traci.LaArDetector;
-import it.polito.appeal.traci.Lane;
-import it.polito.appeal.traci.Link;
-import it.polito.appeal.traci.MeMeDetector;
-import it.polito.appeal.traci.MultiQuery;
-import it.polito.appeal.traci.POI;
-import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
-import it.polito.appeal.traci.RemoveVehicleQuery;
-import it.polito.appeal.traci.Repository;
-import it.polito.appeal.traci.Route;
-import it.polito.appeal.traci.SumoTraciConnection;
-import it.polito.appeal.traci.Vehicle;
-import it.polito.appeal.traci.VehicleLifecycleObserver;
-import it.polito.appeal.traci.VehicleType;
 
 import java.awt.Color;
 import java.awt.geom.PathIterator;
@@ -68,6 +48,30 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import it.polito.appeal.traci.AddRouteQuery;
+import it.polito.appeal.traci.AddVehicleQuery;
+import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
+import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
+import it.polito.appeal.traci.Edge;
+import it.polito.appeal.traci.InductionLoop;
+import it.polito.appeal.traci.LaArDetector;
+import it.polito.appeal.traci.Lane;
+import it.polito.appeal.traci.Link;
+import it.polito.appeal.traci.MeMeDetector;
+import it.polito.appeal.traci.MultiQuery;
+import it.polito.appeal.traci.POI;
+import it.polito.appeal.traci.PositionConversionQuery;
+import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
+import it.polito.appeal.traci.RemoveVehicleQuery;
+import it.polito.appeal.traci.Repository;
+import it.polito.appeal.traci.Route;
+import it.polito.appeal.traci.SumoTraciConnection;
+import it.polito.appeal.traci.Vehicle;
+import it.polito.appeal.traci.VehicleLifecycleObserver;
+import it.polito.appeal.traci.VehicleType;
+import it.polito.appeal.traci.protocol.Constants;
+import it.polito.appeal.traci.protocol.RoadmapPosition;
+
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the
  * basic features of the library.
@@ -80,7 +84,8 @@ import org.junit.Test;
  * not, please set the Java system variable
  * <code>it.polito.appeal.traci.sumo_exe</code> to the full path of the "sumo"
  * executable, e.g. <code>/usr/bin/sumo</code>; see
- * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd> </dl>
+ * {@link SumoTraciConnection#SUMO_EXE_PROPERTY}</dd>
+ * </dl>
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  * 
@@ -179,8 +184,7 @@ public class TraCITest extends SingleSimTraCITest {
 		for (int i = 0; i < 10; i++) {
 			conn.nextSimStep();
 			int t = conn.getCurrentSimStep();
-			Map<String, Vehicle> vehicles = conn.getVehicleRepository()
-					.getAll();
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			log.info(t + "\t" + vehicles.keySet());
 			assertTrue(vehicles.size() > 0);
 		}
@@ -197,8 +201,7 @@ public class TraCITest extends SingleSimTraCITest {
 	@Test
 	public void testRefreshedValues() throws IllegalStateException, IOException {
 		conn.nextSimStep();
-		Vehicle v = conn.getVehicleRepository().getAll().values().iterator()
-				.next();
+		Vehicle v = conn.getVehicleRepository().getAll().values().iterator().next();
 		Double speedFirst = v.getSpeed();
 
 		for (int i = 0; i < 10; i++) {
@@ -428,8 +431,7 @@ public class TraCITest extends SingleSimTraCITest {
 	 */
 	@Test
 	// @Ignore // its duration may be annoying; feel free to comment this
-	public void testMultiQueryPerformance() throws IllegalStateException,
-			IOException {
+	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
 		final int RETRIES = 5;
 
 		while (conn.getCurrentSimStep() < 300)
@@ -437,8 +439,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		long start = System.currentTimeMillis();
 		for (int r = 0; r < RETRIES; r++) {
-			Map<String, Vehicle> vehicles = conn.getVehicleRepository()
-					.getAll();
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			for (Vehicle vehicle : vehicles.values()) {
 				vehicle.getPosition();
 			}
@@ -451,8 +452,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		start = System.currentTimeMillis();
 		for (int r = 0; r < RETRIES; r++) {
-			Map<String, Vehicle> vehicles = conn.getVehicleRepository()
-					.getAll();
+			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			MultiQuery multi = conn.makeMultiQuery();
 			for (Vehicle vehicle : vehicles.values()) {
 				multi.add(vehicle.queryReadPosition());
@@ -474,8 +474,7 @@ public class TraCITest extends SingleSimTraCITest {
 	 */
 	@Test
 	public void testGetBounds() throws IOException {
-		Rectangle2D bounds = conn.getSimulationData().queryNetBoundaries()
-				.get();
+		Rectangle2D bounds = conn.getSimulationData().queryNetBoundaries().get();
 		assertEquals(0.0, bounds.getMinX(), DELTA);
 		assertEquals(0.0, bounds.getMinY(), DELTA);
 		assertEquals(2500.0, bounds.getMaxX(), DELTA);
@@ -521,8 +520,7 @@ public class TraCITest extends SingleSimTraCITest {
 	 */
 	@Test
 	public void testGetLaneMaxSpeed() throws IOException {
-		assertEquals(27.8, conn.getLaneRepository().getByID("beg_0")
-				.getMaxSpeed(), DELTA);
+		assertEquals(27.8, conn.getLaneRepository().getByID("beg_0").getMaxSpeed(), DELTA);
 	}
 
 	/**
@@ -817,7 +815,8 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
-	 * Checks for the correct behaviour of a Multi-entry/Multi-exit detector (E3).
+	 * Checks for the correct behaviour of a Multi-entry/Multi-exit detector
+	 * (E3).
 	 * 
 	 * @throws IOException
 	 */
@@ -833,7 +832,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		assertEquals(39, (int) detector.getVehicleNumber());
 	}
-	
+
 	/**
 	 * Checks for presence of a Lane area detector (E2).
 	 * 
@@ -888,7 +887,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		assertEquals(2, (int) detector.getVehicleNumber());
 	}
-	
+
 	/**
 	 * Checks for presence of a induction loop (E1).
 	 * 
@@ -899,7 +898,7 @@ public class TraCITest extends SingleSimTraCITest {
 		Repository<InductionLoop> inLoRepo = conn.getInductionLoopRepository();
 		assertNotNull(inLoRepo.getByID("e1_0"));
 	}
-	
+
 	/**
 	 * Checks the get position method of an induction loop (E1).
 	 * 
@@ -941,6 +940,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		assertEquals(1, (int) detector.getVehicleNumber());
 	}
+
 	/**
 	 * Checks for the correct adding of new vehicles.
 	 * 
@@ -955,8 +955,7 @@ public class TraCITest extends SingleSimTraCITest {
 		final String id2 = "ANOTHER_NEW_VEHICLE";
 		Route route = conn.getRouteRepository().getByID("0");
 		Lane lane = conn.getLaneRepository().getAll().values().iterator().next();
-		VehicleType vType = conn.getVehicleTypeRepository().getByID(
-				"KRAUSS_DEFAULT");
+		VehicleType vType = conn.getVehicleTypeRepository().getByID("KRAUSS_DEFAULT");
 
 		int now = conn.getCurrentSimStep() * 1000; // time is in ms
 
