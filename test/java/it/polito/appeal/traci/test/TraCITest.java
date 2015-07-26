@@ -885,7 +885,7 @@ public class TraCITest extends SingleSimTraCITest {
 		Repository<LaArDetector> laArRepo = conn.getLaArDetectorRepository();
 		LaArDetector detector = laArRepo.getByID("e2_0");
 
-		assertEquals(2, (int) detector.getVehicleNumber());
+		assertEquals(1, (int) detector.getVehicleNumber());
 	}
 
 	/**
