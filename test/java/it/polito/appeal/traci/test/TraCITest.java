@@ -859,6 +859,19 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
+	 * Checks the get lane method of a lane area detector (E2).
+	 * 
+	 * @throws IOException
+	 */
+	@Ignore
+	@Test
+	public void testLaArGetLane() throws IOException {
+		Repository<LaArDetector> laArRepo = conn.getLaArDetectorRepository();
+		LaArDetector laAr = laArRepo.getByID("e2_0");
+		assertEquals(laAr.getLane().getID(), "beg_0");
+	}
+
+	/**
 	 * Checks for the correct behaviour of a Lane area detector (E2).
 	 * 
 	 * @throws IOException
@@ -897,6 +910,18 @@ public class TraCITest extends SingleSimTraCITest {
 		Repository<InductionLoop> inLoRepo = conn.getInductionLoopRepository();
 		InductionLoop loop = inLoRepo.getByID("e1_0");
 		assertEquals(30, loop.getPosition(), 0);
+	}
+
+	/**
+	 * Checks the get lane method of an induction loop (E1).
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testInLoGetLane() throws IOException {
+		Repository<InductionLoop> inLoRepo = conn.getInductionLoopRepository();
+		InductionLoop loop = inLoRepo.getByID("e1_0");
+		assertEquals(loop.getLane().getID(), "beg_0");
 	}
 
 	/**
