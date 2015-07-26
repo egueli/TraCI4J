@@ -34,7 +34,7 @@ public class HttpDownloadTest {
 	public void testHttpDownload() throws IOException, InterruptedException {
 		new NanoHTTPD(5432);
 
-		SumoTraciConnection conn = new SumoTraciConnection("http://127.0.0.1:5432/test/sumo_maps/variable_speed_signs/test.sumo.cfg", 1);
+		SumoTraciConnection conn = new SumoTraciConnection("http://127.0.0.1:5432/test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg", 1);
 		conn.runServer();
 		conn.nextSimStep();
 		conn.nextSimStep();

@@ -97,7 +97,7 @@ public class TraCIServerTest {
 		String[] args;
 		args = new String[] { 
 				sumoEXE, 
-				"-c", "test/sumo_maps/box1l/test.sumo.cfg", 
+				"-c", "test/resources/sumo_maps/box1l/test.sumo.cfg", 
 				"--remote-port", Integer.toString(TRACI_PORT)
 				};
 

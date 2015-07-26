@@ -57,8 +57,8 @@
 			<name>ReadPositionInLane</name>
 			<enum>POSITION</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION</const>
-			<query>ReadObjectVarQuery.PositionQ</query>
-			<returnType>java.awt.geom.Point2D</returnType>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
 		</readQuery><readQuery>
 			<name>ReadLengthInLane</name>

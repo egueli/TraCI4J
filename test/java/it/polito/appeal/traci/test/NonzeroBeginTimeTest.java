@@ -29,7 +29,7 @@ public class NonzeroBeginTimeTest extends SingleSimTraCITest {
 
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/box1l/test-nonzero-begin-time.sumo.cfg";
+		return "test/resources/sumo_maps/box1l/test-nonzero-begin-time.sumo.cfg";
 	}
 	
 	@Test

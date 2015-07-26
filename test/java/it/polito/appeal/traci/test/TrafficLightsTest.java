@@ -57,7 +57,7 @@ public class TrafficLightsTest extends SingleSimTraCITest {
 	
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/cross3ltl/test.sumo.cfg";
+		return "test/resources/sumo_maps/cross3ltl/test.sumo.cfg";
 	}
 	
 	@Before
