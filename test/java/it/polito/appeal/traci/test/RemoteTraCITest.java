@@ -56,7 +56,7 @@ public class RemoteTraCITest {
 		
 		String[] args = new String[] {
 			exe,
-			"-c", "test/sumo_maps/variable_speed_signs/test.sumo.cfg",
+			"-c", "test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg",
 			"--remote-port", Integer.toString(PORT),
 		};
 		

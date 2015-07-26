@@ -44,7 +44,7 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/polito/test.sumo.cfg";
+		return "test/resources/sumo_maps/polito/test.sumo.cfg";
 	}
 
 	@Before

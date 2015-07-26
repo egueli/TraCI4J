@@ -94,7 +94,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/variable_speed_signs/test.sumo.cfg";
+		return "test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg";
 	}
 
 	@Before
