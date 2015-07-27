@@ -999,6 +999,19 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
+	 * Checks the length of the vehicle type method.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testVehicleTypLength() throws IOException {
+		Repository<VehicleType> repo = conn.getVehicleTypeRepository();
+		assertEquals(5, repo.getByID("DEFAULT_VEHTYPE").getLength(), 0);
+		assertEquals(3, repo.getByID("KRAUSS_DEFAULT").getLength(), 0);
+		assertEquals(0.215, repo.getByID("DEFAULT_PEDTYPE").getLength(), 0);
+	}
+
+	/**
 	 * Checks for the correct adding of a new route.
 	 * 
 	 * @throws IOException
