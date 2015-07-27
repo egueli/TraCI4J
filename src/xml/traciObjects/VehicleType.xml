@@ -29,7 +29,7 @@
 
 	<readQueries>
 		<readQuery>
-			<name>ReadGlobalTravelTime</name>
+			<name>ReadLength</name>
 			<enum>LENGTH</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_LENGTH</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
