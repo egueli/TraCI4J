@@ -11,93 +11,96 @@
 
 <traciClass>
 	<name>TrafficLight</name>
-	
+
 	<javadoc>
 	Representation of a traffic light in the SUMO environment.
 	@see &lt;a href="http://sumo.dlr.de/wiki/Simulation/Traffic_Lights"&gt;SUMO documentation&lt;/a&gt;
 	@see &lt;a href="http://sumo.dlr.de/wiki/TraCI/Traffic_Lights_Value_Retrieval"&gt;TraCI documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
-	
+
 	<repos>
 		<repo>Lane</repo>
 	</repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_TL_VARIABLE</command>
-	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_TL_VARIABLE</changeStateCommand>
+
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_TL_VARIABLE
+	</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_TL_VARIABLE
+	</changeStateCommand>
 
 	<readQueries>
 		<readQuery>
 			<name>ReadState</name>
 			<enum>STATE</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE
+			</const>
 			<query>ReadTLStateQuery</query>
 			<returnType></returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
-
 		<readQuery>
 			<name>ReadDefaultCurrentPhaseDuration</name>
 			<enum>DEFAULT_CURRENT_PHASE_DURATION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION
+			</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType>java.lang.Integer</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
-		
 		<readQuery>
 			<name>ReadControlledLanes</name>
 			<enum>CONTROLLED_LANES</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LANES</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LANES
+			</const>
 			<query>LaneListQuery</query>
 			<returnType></returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
-		
 		<readQuery>
 			<name>ReadControlledLinks</name>
 			<enum>CONTROLLED_LINKS</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LINKS</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CONTROLLED_LINKS
+			</const>
 			<query>ReadControlledLinksQuery</query>
 			<returnType></returnType>
 			<dynamic>false</dynamic>
-		</readQuery>		
-		
+		</readQuery>
 		<readQuery>
 			<name>ReadCurrentPhase</name>
 			<enum>CURRENT_PHASE</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE
+			</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType></returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
-		
+		</readQuery>
 		<readQuery>
 			<name>ReadCurrentProgram</name>
 			<enum>CURRENT_PROGRAM</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PROGRAM</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PROGRAM
+			</const>
 			<query>ReadObjectVarQuery.StringQ</query>
 			<returnType></returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
-		
+		</readQuery>
 		<readQuery>
 			<name>ReadCompleteDefinition</name>
 			<enum>COMPLETE_DEFINITION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_DEFINITION_RYG</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_DEFINITION_RYG
+			</const>
 			<query>ReadCompleteDefinitionQuery</query>
 			<returnType></returnType>
 			<dynamic>false</dynamic>
-		</readQuery>		
-		
+		</readQuery>
 		<readQuery>
 			<name>ReadAssumedNextSwitchTime</name>
 			<enum>ASSUMED_NEXT_SWITCH_TIME</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE
+			</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType></returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 	</readQueries>
 
 	<changeStateQueries>
@@ -110,30 +113,28 @@
 			<name>ChangeLightsState</name>
 			<query>ChangeLightsStateQuery</query>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangePhaseIndex</name>
 			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE
+			</const>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeProgram</name>
 			<query>ChangeObjectVarQuery.ChangeStringQ</query>
 			<const>it.polito.appeal.traci.protocol.Constants.TL_PROGRAM</const>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangePhaseDuration</name>
 			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_DURATION
+			</const>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeCompleteProgramDefinition</name>
 			<query>ChangeCompleteProgramQuery</query>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_PROGRAM_RYG</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_COMPLETE_PROGRAM_RYG
+			</const>
 		</changeStateQuery>
 	</changeStateQueries>
-
 </traciClass>

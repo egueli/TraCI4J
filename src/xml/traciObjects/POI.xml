@@ -24,9 +24,11 @@
 
 	<repos>
 	</repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_POI_VARIABLE</command>
-	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_POI_VARIABLE</changeStateCommand>
+
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_POI_VARIABLE
+	</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_POI_VARIABLE
+	</changeStateCommand>
 
 	<readQueries>
 		<readQuery>
