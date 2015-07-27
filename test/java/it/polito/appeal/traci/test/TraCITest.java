@@ -1052,7 +1052,7 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	@Test
-	public void testGetLaneIndex() throws IOException {
+	public void testVehicleGetLaneIndex() throws IOException {
 		/*
 		 * NOTE: it's too easy to check for the lane index in a one-lane road.
 		 * This should be tested in a simulation scenario with more lanes per
@@ -1064,11 +1064,16 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	@Test
-	public void testGetLaneID() throws IOException {
+	public void testVehicleGetLaneID() throws IOException {
 		getFirstVehicle();
 
 		assertThat(firstVehicle.getLaneId().getID(), equalTo("beg_0"));
 	}
 
-	// TODO add induction loop tests
+	@Test
+	public void testLaneDimensions() throws IOException {
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
+		assertEquals(498.55, lane.getLength(), 0);
+		assertEquals(3.2, lane.getWidth(), 0);
+	}
 }
