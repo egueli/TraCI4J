@@ -60,7 +60,6 @@ import it.polito.appeal.traci.Link;
 import it.polito.appeal.traci.MeMeDetector;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
-import it.polito.appeal.traci.PositionConversionQuery;
 import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
 import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.Repository;
@@ -69,8 +68,6 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
 import it.polito.appeal.traci.VehicleType;
-import it.polito.appeal.traci.protocol.Constants;
-import it.polito.appeal.traci.protocol.RoadmapPosition;
 
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the
@@ -1023,6 +1020,22 @@ public class TraCITest extends SingleSimTraCITest {
 		arq.run();
 
 		assertTrue(conn.getRouteRepository().getAll().containsKey(id));
+	}
+
+	/**
+	 * Checks for the edges of a route.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testRouteGetEdges() throws IOException {
+		Route route = conn.getRouteRepository().getByID("0");
+		List<Edge> edges = route.getRoute();
+		assertEquals(4, edges.size());
+		assertEquals("beg", edges.get(0).getID());
+		assertEquals("middle", edges.get(1).getID());
+		assertEquals("end", edges.get(2).getID());
+		assertEquals("rend", edges.get(3).getID());
 	}
 
 	@Test
