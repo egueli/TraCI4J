@@ -45,6 +45,14 @@
 			<dynamic>false</dynamic>
 		</readQuery>
 		<readQuery>
+			<name>ReadWidth</name>
+			<enum>WIDTH</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_WIDTH</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		<readQuery>
 			<name>ReadLastStepOccupancy</name>
 			<enum>LAST_STEP_OCCUPANCY</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_OCCUPANCY
