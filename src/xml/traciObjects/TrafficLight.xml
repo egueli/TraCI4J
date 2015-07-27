@@ -104,11 +104,6 @@
 	</readQueries>
 
 	<changeStateQueries>
-		
-		<!-- most of the read queries are already declared as dynamic,
-		so those query definitions don't need to explicitly name them
-		as affected by. -->
-		
 		<changeStateQuery>
 			<name>ChangeLightsState</name>
 			<query>ChangeLightsStateQuery</query>
