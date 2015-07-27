@@ -30,7 +30,7 @@
 			<enum>ROUTE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_EDGES</const>
 			<query>RouteQuery</query>
-			<returnType></returnType>
+			<returnType>java.util.List&lt;Edge&gt;</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
 	</readQueries>

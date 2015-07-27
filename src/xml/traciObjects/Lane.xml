@@ -20,9 +20,12 @@
 	</javadoc>
 
 	<repos>
-	<repo>Edge</repo><repo>Lane</repo></repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_LANE_VARIABLE</command>
+		<repo>Edge</repo>
+		<repo>Lane</repo>
+	</repos>
+
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_LANE_VARIABLE
+	</command>
 
 	<readQueries>
 		<readQuery>
@@ -32,106 +35,128 @@
 			<query>ReadShapeQuery</query>
 			<returnType>java.awt.geom.Path2D</returnType>
 			<dynamic>false</dynamic>
-		</readQuery><readQuery>
-            <name>ReadLength</name>
-            <enum>LENGTH</enum>
-            <const>it.polito.appeal.traci.protocol.Constants.VAR_LENGTH</const>
-            <query>ReadObjectVarQuery.DoubleQ</query>
-            <returnType>Double</returnType>
-            <dynamic>false</dynamic>
-        </readQuery><readQuery>
-            <name>ReadLastStepOccupancy</name>
-            <enum>LAST_STEP_OCCUPANCY</enum>
-            <const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_OCCUPANCY</const>
-            <query>ReadObjectVarQuery.DoubleQ</query>
-            <returnType>Double</returnType>
-            <dynamic>true</dynamic>
-        </readQuery><readQuery>
-            <name>ReadMaxSpeed</name>
-            <enum>MAX_SPEED</enum>
-            <const>it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED</const>
-            <query>ReadObjectVarQuery.DoubleQ</query>
-            <returnType>Double</returnType>
-            <dynamic>false</dynamic>
-        </readQuery><readQuery>
+		</readQuery>
+		<readQuery>
+			<name>ReadLength</name>
+			<enum>LENGTH</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LENGTH</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadWidth</name>
+			<enum>WIDTH</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_WIDTH</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadLastStepOccupancy</name>
+			<enum>LAST_STEP_OCCUPANCY</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_OCCUPANCY
+			</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadMaxSpeed</name>
+			<enum>MAX_SPEED</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_MAXSPEED</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>false</dynamic>
+		</readQuery>
+		<readQuery>
 			<name>ReadParentEdge</name>
 			<enum>PARENT_EDGE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.LANE_EDGE_ID</const>
 			<query>ReadObjectVarQuery.EdgeQ</query>
 			<returnType>Edge</returnType>
 			<dynamic>false</dynamic>
-		</readQuery><readQuery>
+		</readQuery>
+		<readQuery>
 			<name>ReadLinks</name>
 			<enum>LINKS</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.LANE_LINKS</const>
 			<query>ReadLinksQuery</query>
 			<returnType>java.util.List&lt;Link&gt;</returnType>
 			<dynamic>false</dynamic>
-		</readQuery><readQuery>
-            <name>ReadLastStepVehicleNumber</name>
-            <enum>LAST_STEP_VEHICLE_NUMBER</enum>
-            <const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_NUMBER</const>
-            <query>ReadObjectVarQuery.IntegerQ</query>
-            <returnType>Integer</returnType>
-            <dynamic>true</dynamic>
-        </readQuery>
+		</readQuery>
+		<readQuery>
+			<name>ReadLastStepVehicleNumber</name>
+			<enum>LAST_STEP_VEHICLE_NUMBER</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_NUMBER
+			</const>
+			<query>ReadObjectVarQuery.IntegerQ</query>
+			<returnType>Integer</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
 		<readQuery>
 			<name>ReadCO2Emission</name>
 			<enum>CO2_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_CO2EMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_CO2EMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadCOEmission</name>
 			<enum>CO_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_COEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadHCEmission</name>
 			<enum>HC_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_HCEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_HCEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadPMXEmission</name>
 			<enum>PMX_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_PMXEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_PMXEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadNOXEmission</name>
 			<enum>NOX_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOXEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOXEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadFuelConsumption</name>
 			<enum>FUEL_CONSUMPTION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_FUELCONSUMPTION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_FUELCONSUMPTION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadNoiseEmission</name>
 			<enum>NOISE_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOISEEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOISEEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
-		
+		</readQuery>
 	</readQueries>
 	<changeStateQueries>
 	</changeStateQueries>

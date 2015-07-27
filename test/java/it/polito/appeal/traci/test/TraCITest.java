@@ -60,7 +60,6 @@ import it.polito.appeal.traci.Link;
 import it.polito.appeal.traci.MeMeDetector;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.POI;
-import it.polito.appeal.traci.PositionConversionQuery;
 import it.polito.appeal.traci.ReadGlobalTravelTimeQuery;
 import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.Repository;
@@ -69,8 +68,6 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
 import it.polito.appeal.traci.VehicleType;
-import it.polito.appeal.traci.protocol.Constants;
-import it.polito.appeal.traci.protocol.RoadmapPosition;
 
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the
@@ -1002,6 +999,19 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	/**
+	 * Checks the length of the vehicle type method.
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testVehicleTypLength() throws IOException {
+		Repository<VehicleType> repo = conn.getVehicleTypeRepository();
+		assertEquals(5, repo.getByID("DEFAULT_VEHTYPE").getLength(), 0);
+		assertEquals(3, repo.getByID("KRAUSS_DEFAULT").getLength(), 0);
+		assertEquals(0.215, repo.getByID("DEFAULT_PEDTYPE").getLength(), 0);
+	}
+
+	/**
 	 * Checks for the correct adding of a new route.
 	 * 
 	 * @throws IOException
@@ -1025,8 +1035,24 @@ public class TraCITest extends SingleSimTraCITest {
 		assertTrue(conn.getRouteRepository().getAll().containsKey(id));
 	}
 
+	/**
+	 * Checks for the edges of a route.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
-	public void testGetLaneIndex() throws IOException {
+	public void testRouteGetEdges() throws IOException {
+		Route route = conn.getRouteRepository().getByID("0");
+		List<Edge> edges = route.getRoute();
+		assertEquals(4, edges.size());
+		assertEquals("beg", edges.get(0).getID());
+		assertEquals("middle", edges.get(1).getID());
+		assertEquals("end", edges.get(2).getID());
+		assertEquals("rend", edges.get(3).getID());
+	}
+
+	@Test
+	public void testVehicleGetLaneIndex() throws IOException {
 		/*
 		 * NOTE: it's too easy to check for the lane index in a one-lane road.
 		 * This should be tested in a simulation scenario with more lanes per
@@ -1038,11 +1064,16 @@ public class TraCITest extends SingleSimTraCITest {
 	}
 
 	@Test
-	public void testGetLaneID() throws IOException {
+	public void testVehicleGetLaneID() throws IOException {
 		getFirstVehicle();
 
 		assertThat(firstVehicle.getLaneId().getID(), equalTo("beg_0"));
 	}
 
-	// TODO add induction loop tests
+	@Test
+	public void testLaneDimensions() throws IOException {
+		Lane lane = conn.getLaneRepository().getByID("beg_0");
+		assertEquals(498.55, lane.getLength(), 0);
+		assertEquals(3.2, lane.getWidth(), 0);
+	}
 }

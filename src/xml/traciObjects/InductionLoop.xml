@@ -20,9 +20,12 @@
 	</javadoc>
 
 	<repos>
-	<repo>Lane</repo><repo>Vehicle</repo></repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_INDUCTIONLOOP_VARIABLE</command>
+		<repo>Lane</repo>
+		<repo>Vehicle</repo>
+	</repos>
+
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_INDUCTIONLOOP_VARIABLE
+	</command>
 
 	<readQueries>
 		<readQuery>
@@ -32,35 +35,43 @@
 			<query>ReadObjectVarQuery.LaneQ</query>
 			<returnType>Lane</returnType>
 			<dynamic>false</dynamic>
-		</readQuery><readQuery>
+		</readQuery>
+		<readQuery>
 			<name>ReadPositionInLane</name>
 			<enum>POSITION</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_POSITION</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
-		</readQuery><readQuery>
+		</readQuery>
+		<readQuery>
 			<name>ReadLastStepVehicleNumber</name>
 			<enum>VEHICLE_NUMBER</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_NUMBER</const>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_NUMBER
+			</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType>Integer</returnType>
 			<dynamic>true</dynamic>
-		</readQuery><readQuery>
+		</readQuery>
+		<readQuery>
 			<name>ReadLastStepMeanSpeed</name>
 			<enum>MEAN_SPEED</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_MEAN_SPEED</const>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_MEAN_SPEED
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery><readQuery>
+		</readQuery>
+		<readQuery>
 			<name>ReadLastStepVehicles</name>
 			<enum>LAST_STEP_VEHICLES</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_ID_LIST</const>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_ID_LIST
+			</const>
 			<query>VehicleSetQuery</query>
 			<returnType>java.util.Set&lt;Vehicle&gt;</returnType>
 			<dynamic>true</dynamic>
-		</readQuery></readQueries>
+		</readQuery>
+	</readQueries>
 
 	<changeStateQueries>
 	</changeStateQueries>

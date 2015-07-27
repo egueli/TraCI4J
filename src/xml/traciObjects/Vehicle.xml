@@ -9,11 +9,7 @@
 	Public License for more details. You should have received a copy of the GNU 
 	General Public License along with TraCI4J. If not, see <http://www.gnu.org/licenses/>. -->
 
-<!-- This file is used to generate a Java class with the same name for a 
-	TraCI object. This saves manually writing a lot of boilerplate code. -->
 <traciClass>
-	<!-- The name of the object. It will be used as the class name. First letter 
-		is capital. Must be equal to this document's file name. -->
 	<name>Vehicle</name>
 
 	<javadoc>
@@ -24,49 +20,25 @@
 	</javadoc>
 
 
-	<!-- Lists all the other repositories that are needed by the queries -->
 	<repos>
 		<repo>Edge</repo>
 		<repo>Lane</repo>
 	</repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE</command>
-	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLE_VARIABLE</changeStateCommand>
-	
 
-	<!-- List of all "read" queries, i.e. those that don't change the state 
-		of the object and return a value -->
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLE_VARIABLE
+	</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLE_VARIABLE
+	</changeStateCommand>
+
 	<readQueries>
-
 		<readQuery>
-
-			<!-- The name of the query. If the name is XXX, the Java class will contain 
-				a method named queryXXX() -->
 			<name>ReadSpeed</name>
-			
-			<!-- The enum name of the query. It will appear as an enum entry
-			in the inner Variable enum, and can be used with the getReadQuery() method -->
 			<enum>SPEED</enum>
-
-			<!-- A numeric value or a constant of type int that tells the variable 
-				ID -->
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_SPEED</const>
-
-			<!-- The Java class name that can make the query. It must be a subclass 
-				of ReadObjectVarQuery. If the class is on the package
-				it.polito.appeal.traci, the package name can be omitted-->
 			<query>ReadObjectVarQuery.DoubleQ</query>
-
-			<!-- The return type of the query. It must be the same type (or a supertype) 
-				of the type parameter V specified in the above class. 
-				Leave it empty to use the query class as the return type. -->
 			<returnType>java.lang.Double</returnType>
-
-			<!-- If true, it means that this value may change at every simulation 
-				step. -->
 			<dynamic>true</dynamic>
 		</readQuery>
-
 		<readQuery>
 			<name>ReadPosition</name>
 			<enum>POSITION</enum>
@@ -78,7 +50,8 @@
 		<readQuery>
 			<name>ReadLanePosition</name>
 			<enum>LANE_POSITION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANEPOSITION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANEPOSITION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
@@ -86,7 +59,8 @@
 		<readQuery>
 			<name>ReadCurrentLaneIndex</name>
 			<enum>LANE_INDEX</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_INDEX</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_INDEX
+			</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType>java.lang.Integer</returnType>
 			<dynamic>true</dynamic>
@@ -115,64 +89,69 @@
 			<returnType>Edge</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
-
-		
 		<readQuery>
 			<name>ReadCO2Emission</name>
 			<enum>CO2_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_CO2EMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_CO2EMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadCOEmission</name>
 			<enum>CO_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_COEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_COEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadHCEmission</name>
 			<enum>HC_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_HCEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_HCEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadPMXEmission</name>
 			<enum>PMX_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_PMXEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_PMXEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadNOXEmission</name>
 			<enum>NOX_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOXEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOXEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadFuelConsumption</name>
 			<enum>FUEL_CONSUMPTION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_FUELCONSUMPTION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_FUELCONSUMPTION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>		
+		</readQuery>
 		<readQuery>
 			<name>ReadNoiseEmission</name>
 			<enum>NOISE_EMISSION</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOISEEMISSION</const>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_NOISEEMISSION
+			</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>	
+		</readQuery>
 		<readQuery>
 			<name>ReadColor</name>
 			<enum>COLOR</enum>
@@ -189,32 +168,20 @@
 			<returnType>java.lang.String</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
-			
 	</readQueries>
 
-	<!-- List of all "change state" queries, i.e. those that change the state 
-		of the object and don't return a value -->
 	<changeStateQueries>
-
-		<!-- The syntax of a changeStateQuery is similar to readQuery, differences 
-			are listed below. -->
 		<changeStateQuery>
 			<name>SetEdgeTravelTime</name>
 			<query>ChangeEdgeTravelTimeQuery</query>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>Reroute</name>
 			<query>RerouteQuery</query>
-			<!-- Lists the read queries that may be changed by the execution of this 
-			query, identified by their name. Calling this query will clear the caches 
-			of the queries contained here. -->
 			<affects>
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
-		
-		
 		<changeStateQuery>
 			<name>ChangeLaneIndex</name>
 			<query>ChangeLaneIndexQuery</query>
@@ -222,7 +189,6 @@
 				<affect>ReadCurrentLaneIndex</affect>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeColor</name>
 			<query>ChangeColorQuery</query>
@@ -231,7 +197,6 @@
 				<affect>ReadColor</affect>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeTarget</name>
 			<query>ChangeTargetQuery</query>
@@ -239,14 +204,12 @@
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeMaxSpeed</name>
 			<query>ChangeMaxSpeedQuery</query>
 			<affects>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeRoute</name>
 			<query>ChangeRouteQuery</query>
@@ -254,7 +217,6 @@
 				<affect>ReadCurrentRoute</affect>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeSpeed</name>
 			<query>ChangeSpeedQuery</query>
@@ -262,13 +224,11 @@
 				<affect>ReadSpeed</affect>
 			</affects>
 		</changeStateQuery>
-
 		<changeStateQuery>
-      <name>ChangeLaneChangeMode</name>
-      <query>ChangeObjectVarQuery.ChangeIntegerQ</query>
-      <const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_CHANGE_MODE</const>
-    </changeStateQuery>
-		 
+			<name>ChangeLaneChangeMode</name>
+			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_LANE_CHANGE_MODE
+			</const>
+		</changeStateQuery>
 	</changeStateQueries>
-
 </traciClass>
