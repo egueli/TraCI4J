@@ -101,6 +101,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco.version>0.7.5.201505241946</jacoco.version>
+		<sourcePathes>src/java;src/java-gen</sourcePathes>
 	</properties>
 
 	<dependencies>
@@ -241,7 +242,7 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-					<sourcePath>src/java*</sourcePath>
+					<sourcePath>${sourcePathes}</sourcePath>
 					<!-- TODO Move the files from ./java*/ to ./ -->
 				</configuration>
 			</plugin>
@@ -315,6 +316,7 @@
 				<version>2.10.3</version>
 				<configuration>
 					<show>private</show>
+					<sourcepath>${sourcePathes}</sourcepath>
 					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
