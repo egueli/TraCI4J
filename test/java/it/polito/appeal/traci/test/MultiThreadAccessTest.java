@@ -32,6 +32,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
@@ -43,10 +44,7 @@ import org.junit.Test;
 public class MultiThreadAccessTest {
 
 	private static final Logger log = Logger.getLogger(MultiThreadAccessTest.class);
-
-	Thread mockServerThread;
-	ServerSocket mockServerSocket;
-	Semaphore replySemaphore = new Semaphore(0);
+	private MockTraciServer mockServer = new MockTraciServer();
 
 	static {
 		// Log4j configuration must be done only once, otherwise output will be duplicated for each test
@@ -60,22 +58,12 @@ public class MultiThreadAccessTest {
 	
 	@Before
 	public void startMockServer() throws IOException {
-		Runnable serverRun = new Runnable() {
-			@Override
-			public void run() {
-		        mockServerThread();
-			}
-			
-		};
-		mockServerThread = new Thread(serverRun, "Mock SUMO Server");
-		mockServerThread.start();
+		mockServer.start();
 	}
 
 	@After
 	public void stopMockServer() throws IOException, InterruptedException {
-		mockServerThread.interrupt();
-		mockServerSocket.close();
-		mockServerThread.join();
+		mockServer.stop();
 	}
 	
 	
@@ -85,51 +73,7 @@ public class MultiThreadAccessTest {
 		conn.getVehicleRepository().getAll();
 	}
 
-	private void mockServerThread() {
-		try {
-			mockServerSocket = new ServerSocket(5000);
-			while (!Thread.interrupted()) {
-				Socket connectionSocket = mockServerSocket.accept();
-				handleConnection(connectionSocket);				
-			}
-		}
-		catch (Exception e) {
-			if (!Thread.interrupted()) {
-				throw new RuntimeException(e);
-			}
-		}
-		log.debug("thread exit due to interruption");
-	}
 
-	private void handleConnection(Socket connectionSocket) throws IOException {
-		DataInputStream dis = new DataInputStream(connectionSocket.getInputStream());
-		DataOutputStream dos = new DataOutputStream(connectionSocket.getOutputStream());
-		while (serve(dis, dos))
-			;
-
-		
-		connectionSocket.close();
-	}
-
-	private boolean serve(DataInputStream dis, DataOutputStream dos)
-			throws IOException {
-		dis.readInt(); // length is ignored
-		
-		int commandLength = dis.readByte();
-		if (commandLength == 0) {
-			commandLength = dis.readInt();
-		}
-		
-		int commandID = dis.readUnsignedByte();
-		
-		log.debug("got message with command " + Integer.toHexString(commandID));
-		
-		//
-		dos.writeInt(23);
-		dos.write(new byte[] {7, -85, 0, 0, 0, 0, 0, 12, -69, 112, 0, 0, 0, 0, 9, 0, 0, 0, 0});
-		
-		return false;
-	}
 	
 	
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -142,5 +86,91 @@ public class MultiThreadAccessTest {
 	        hexChars[j * 3 + 2] = ' ';
 	    }
 	    return new String(hexChars);
+	}
+	
+	static class MockTraciServer {
+		Thread mockServerThread;
+		ServerSocket mockServerSocket;
+		Socket connectionSocket = null;
+		Semaphore replySemaphore = new Semaphore(0);
+
+		public void start() {
+			Runnable serverRun = new Runnable() {
+				@Override
+				public void run() {
+			        mockServerThread();
+				}
+				
+			};
+			mockServerThread = new Thread(serverRun, "Mock SUMO Server");
+			mockServerThread.start();
+
+		}
+		
+		public void stop() throws IOException, InterruptedException {
+			mockServerThread.interrupt();
+			mockServerSocket.close();
+			connectionSocket.close();
+			mockServerThread.join();
+		}
+		
+		private void mockServerThread() {
+			try {
+				mockServerSocket = new ServerSocket(5000);
+				while (!Thread.interrupted()) {
+					connectionSocket = mockServerSocket.accept();
+					handleConnection();				
+				}
+			}
+			catch (Exception e) {
+				if (!Thread.interrupted()) {
+					throw new RuntimeException(e);
+				}
+			}
+			log.debug("thread exit due to interruption");
+		}
+
+		private void handleConnection() throws IOException {
+			try {
+				DataInputStream dis = new DataInputStream(connectionSocket.getInputStream());
+				DataOutputStream dos = new DataOutputStream(connectionSocket.getOutputStream());
+				while (!serve(dis, dos))
+					;
+		
+				}
+			finally {
+				connectionSocket.close();
+				connectionSocket = null;
+			}
+		}
+
+		private boolean serve(DataInputStream dis, DataOutputStream dos)
+				throws IOException {
+			int wholeLength = dis.readInt(); // length is ignored
+
+			byte[] requestMsg = new byte[wholeLength - 4];
+			dis.readFully(requestMsg);
+			log.debug("got message with length " + wholeLength + ": " + Arrays.toString(requestMsg));
+			
+			int commandID = requestMsg[5];
+			commandID += (commandID >= 0) ? 0 : 256; 
+			log.debug("command id: " + Integer.toHexString(commandID));
+			
+			switch(commandID) {
+			case Constants.CMD_GET_SIM_VARIABLE:
+				dos.writeInt(23);
+				dos.write(new byte[] {7, -85, 0, 0, 0, 0, 0, 12, -69, 112, 0, 0, 0, 0, 9, 0, 0, 0, 0});
+				break;
+			case Constants.CMD_GET_VEHICLE_VARIABLE:
+				dos.writeInt(23);
+				dos.write(new byte[] {7, -92, 0, 0, 0, 0, 0, 12, -76, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0});
+				break;
+			default:
+				return true;	
+			}
+			
+			return false;
+		}
+
 	}
 }
