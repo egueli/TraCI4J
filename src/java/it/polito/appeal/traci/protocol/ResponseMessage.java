@@ -19,11 +19,17 @@
 
 package it.polito.appeal.traci.protocol;
 
+import it.polito.appeal.traci.MultiQuery;
+import it.polito.appeal.traci.Utils;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -35,6 +41,8 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class ResponseMessage {
 
+	private static final Logger log = Logger.getLogger(ResponseMessage.class);
+	
 	/**
 	 * The list of IDs of responses that have no response commands. 
 	 */
@@ -80,6 +88,8 @@ public class ResponseMessage {
 		
 		byte[] buffer = new byte[totalLen];
 		dis.readFully(buffer);
+		
+		log.debug("msg len=" + (totalLen+4) + " bytes=" + Arrays.toString(buffer));
 		
 		Storage s = new Storage(buffer);
 		
