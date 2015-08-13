@@ -336,8 +336,7 @@ public class SumoTraciConnection {
 	private void postConnect() throws IOException {
 		traciChannel = new TraciChannel(
 				new DataInputStream(socket.getInputStream()),
-				new DataOutputStream(socket.getOutputStream()),
-				true);
+				new DataOutputStream(socket.getOutputStream()));
 
 		closeQuery = new CloseQuery(traciChannel);
 		simData = new SimulationData(traciChannel);

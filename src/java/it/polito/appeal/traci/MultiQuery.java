@@ -94,9 +94,17 @@ public class MultiQuery {
 				reqMsg.append(req);
 			}
 		}
-		
-		reqMsg.writeTo(traciChannel.out);
-		ResponseMessage respMsg = new ResponseMessage(traciChannel.in);
+
+		ResponseMessage respMsg;
+		traciChannel.accessLock.lock();
+		try {
+//		synchronized(traciChannel) {
+			reqMsg.writeTo(traciChannel.out);
+			respMsg = new ResponseMessage(traciChannel.in);
+		}
+		finally {
+			traciChannel.accessLock.unlock();
+		}
 		Iterator<ResponseContainer> responseIterator = respMsg.responses().iterator();
 		for (Query q : queries) {
 			q.pickResponses(responseIterator);			

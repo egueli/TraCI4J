@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import it.polito.appeal.traci.Lane;
@@ -53,20 +54,32 @@ public class MultiThreadTest extends SingleSimTraCITest {
 
 	
 	@Test
-	public void testSingleThreadBunchOfQueries() throws IOException {
+	public void testSingleThread() throws IOException {
 		runABunchOfQueries();
 	}
 	
 	/**
-	 * Runs lots of queries on parallel worker threads.
-	 * That's not a really elegant implementation: a JVM may decide to fully finish a
+	 * Runs lots of queries on parallel worker threads. It will fail if request/response
+	 * messages don't have any concurrency control.
+	 * 
+	 * That's not a really elegant test implementation: a JVM may decide to fully finish a
 	 * worker thread before starting another one, making this test pass even if there's
 	 * no concurrency control of the TraCI TCP channel.
 	 * 
 	 * @throws IOException
 	 */
 	@Test
-	public void testDoubleThreadQueries() throws IOException {
+	public void testDoubleThread() throws IOException {
+		// This test fails with ConcurrentModificationException if:
+		// - it was run after one test that calls runABunchOfQueries() one or more times
+		// But it passes if
+		// - it was run after two tests that call runABunchOfQueries() one or more times, or
+		// - it runs alone 
+		// - runABunchOfQueries() is run in this test
+		// Why???
+		
+		runABunchOfQueries();
+		
 		final int TASKS = 2;
 		ExecutorService execService = Executors.newFixedThreadPool(TASKS);
 		CompletionService<Void> completionService = new ExecutorCompletionService<Void>(execService);

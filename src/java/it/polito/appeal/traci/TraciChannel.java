@@ -39,16 +39,10 @@ class TraciChannel {
 	final DataOutputStream out;
 	final Lock accessLock;
 	
-	TraciChannel(DataInputStream in, DataOutputStream out, boolean locked) {
+	TraciChannel(DataInputStream in, DataOutputStream out) {
 		this.in = in;
 		this.out = out;
-		
-		if (locked) {
-			accessLock = new ReentrantLock(true);
-		}
-		else {
-			accessLock = new NullLock();
-		}
+		accessLock = new ReentrantLock(true);
 	}
 	
 	
