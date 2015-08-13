@@ -73,6 +73,11 @@ public class MultiThreadAccessTest {
 	}
 
 
+	@Test
+	public void testTwoRequests() throws IOException, InterruptedException {
+		SumoTraciConnection conn = connectToMockServer();
+		conn.getEdgeRepository().getAll();
+	}
 
 	private SumoTraciConnection connectToMockServer() throws IOException,
 			InterruptedException {
@@ -168,6 +173,10 @@ public class MultiThreadAccessTest {
 			case Constants.CMD_GET_VEHICLE_VARIABLE:
 				dos.writeInt(23);
 				dos.write(new byte[] {7, -92, 0, 0, 0, 0, 0, 12, -76, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0});
+				break;
+			case Constants.CMD_GET_EDGE_VARIABLE:
+				dos.writeInt(23);
+				dos.write(new byte[] {7, (byte)0xBA, 0, 0, 0, 0, 0, 12, -76, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0});
 				break;
 			default:
 				log.warn("Unhandled command ID " + toHex(commandID) + ", exiting");
