@@ -69,11 +69,15 @@ public class MultiThreadAccessTest {
 	
 	@Test
 	public void testMockServer() throws IOException, InterruptedException {
-		SumoTraciConnection conn = new SumoTraciConnection(InetAddress.getLoopbackAddress(), 5000);
-		conn.getVehicleRepository().getAll();
+		connectToMockServer();
 	}
 
 
+
+	private SumoTraciConnection connectToMockServer() throws IOException,
+			InterruptedException {
+		return new SumoTraciConnection(InetAddress.getLoopbackAddress(), 5000);
+	}
 	
 	
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
