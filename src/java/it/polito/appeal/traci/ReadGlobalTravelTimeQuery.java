@@ -25,8 +25,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.List;
 
 /**
@@ -39,9 +37,9 @@ public class ReadGlobalTravelTimeQuery extends ReadObjectVarQuery.DoubleQ {
 
 	private int time = -1;
 	
-	ReadGlobalTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
+	ReadGlobalTravelTimeQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 	}
 	
 	/**

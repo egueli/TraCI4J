@@ -20,18 +20,14 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 class SimStepQuery extends ChangeStateQuery {
 
 	private int targetTime;
 
-	SimStepQuery(DataInputStream dis, DataOutputStream dos) {
-		super(dis, dos, Constants.CMD_SIMSTEP2);
+	SimStepQuery(TraciChannel traciChannel) {
+		super(traciChannel, Constants.CMD_SIMSTEP2);
 	}
 
 	public void setTargetTime(int millis) {

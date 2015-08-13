@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.StringList;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.List;
 
 import de.uniluebeck.itm.tcpip.Storage;
@@ -37,9 +35,9 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class ChangeRouteQuery extends ChangeObjectVarQuery<List<Edge>> {
 
-	ChangeRouteQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeRouteQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_ROUTE);
 	}
 	
 	@Override

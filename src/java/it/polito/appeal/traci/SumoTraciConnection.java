@@ -104,9 +104,8 @@ public class SumoTraciConnection {
 
 	private List<String> args = new ArrayList<String>();
 	
-	private DataInputStream dis;
-	private DataOutputStream dos;
-	
+	private TraciChannel traciChannel;
+		
 	private final Set<StepAdvanceListener> stepAdvanceListeners = new HashSet<StepAdvanceListener>();
 
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
@@ -335,21 +334,23 @@ public class SumoTraciConnection {
 	}
 	
 	private void postConnect() throws IOException {
-		dis = new DataInputStream(socket.getInputStream());
-		dos = new DataOutputStream(socket.getOutputStream());
+		traciChannel = new TraciChannel(
+				new DataInputStream(socket.getInputStream()),
+				new DataOutputStream(socket.getOutputStream()),
+				true);
 
-		closeQuery = new CloseQuery(dis, dos);
-		simData = new SimulationData(dis, dos);
+		closeQuery = new CloseQuery(traciChannel);
+		simData = new SimulationData(traciChannel);
 		
 		currentSimStep = simData.queryCurrentSimTime().get() / 1000;
 		
 		vehicles = new HashMap<String, Vehicle>();
 		
-		edgeRepo = new Repository.Edges(dis, dos, 
+		edgeRepo = new Repository.Edges(traciChannel, 
 				newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
 		addStepAdvanceListener(edgeRepo);
 		
-		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, 
+		laneRepo = new Repository.Lanes(traciChannel, edgeRepo, 
 				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
 		
 		vehicleListQuery = newIDListQuery(Constants.CMD_GET_VEHICLE_VARIABLE);
@@ -361,37 +362,37 @@ public class SumoTraciConnection {
 		});
 		vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
 		
-		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
+		vehicleRepo = new Repository.Vehicles(traciChannel, edgeRepo, laneRepo,
 				vehicles, vehicleListQuery);
 		addStepAdvanceListener(vehicleRepo);
 
-		addVehicleQuery = new AddVehicleQuery(dis, dos, vehicleRepo);
+		addVehicleQuery = new AddVehicleQuery(traciChannel, vehicleRepo);
 		
-		removeVehicleQuery = new RemoveVehicleQuery(dis, dos);
+		removeVehicleQuery = new RemoveVehicleQuery(traciChannel);
 		
-		poiRepo = new Repository.POIs(dis, dos,
+		poiRepo = new Repository.POIs(traciChannel,
 				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
 		
-		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
+		inductionLoopRepo = new Repository.InductionLoops(traciChannel, laneRepo,
 				vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
 		addStepAdvanceListener(inductionLoopRepo);
 		
-		trafficLightRepo = new Repository.TrafficLights(dis, dos, laneRepo,
+		trafficLightRepo = new Repository.TrafficLights(traciChannel, laneRepo,
 				newIDListQuery(Constants.CMD_GET_TL_VARIABLE));
 		addStepAdvanceListener(trafficLightRepo);
 		
-		vehicleTypeRepo = new Repository.VehicleTypes(dis, dos, 
+		vehicleTypeRepo = new Repository.VehicleTypes(traciChannel, 
 				newIDListQuery(Constants.CMD_GET_VEHICLETYPE_VARIABLE));
 		
-		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo, 
+		memeDetectorRepo = new Repository.MeMeDetectors(traciChannel, vehicleRepo, 
 				newIDListQuery(Constants.CMD_GET_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE));
 		addStepAdvanceListener(memeDetectorRepo);
 		
-		routeRepo = new Repository.Routes(dis, dos, edgeRepo, 
+		routeRepo = new Repository.Routes(traciChannel, edgeRepo, 
 				newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
 		
-		addRouteQuery = new AddRouteQuery(dis, dos, routeRepo);
+		addRouteQuery = new AddRouteQuery(traciChannel, routeRepo);
 		
 		/*
 		 * TODO add initializers for remaining repositories
@@ -400,7 +401,7 @@ public class SumoTraciConnection {
 	}
 
 	private StringListQ newIDListQuery(final int command) {
-		return new StringListQ(dis, dos,
+		return new StringListQ(traciChannel,
 				command, "", Constants.ID_LIST);
 	}
 
@@ -552,20 +553,20 @@ public class SumoTraciConnection {
 		 */
 		StringListQ teleportStartQ;
 		StringListQ teleportEndQ;
-		MultiQuery multi = new MultiQuery(dos, dis);
+		MultiQuery multi = new MultiQuery(traciChannel);
 		{ // begin multi-query
-			SimStepQuery ssq = new SimStepQuery(dis, dos);
+			SimStepQuery ssq = new SimStepQuery(traciChannel);
 			ssq.setTargetTime(currentSimStep * 1000);
 			multi.add(ssq);
 
 			multi.add(vehicleListQuery);
 
-			teleportStartQ = new StringListQ(dis, dos,
+			teleportStartQ = new StringListQ(traciChannel,
 					Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
 			multi.add(teleportStartQ);
 
-			teleportEndQ = new StringListQ(dis, dos,
+			teleportEndQ = new StringListQ(traciChannel,
 					Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
 			multi.add(teleportEndQ);
@@ -600,7 +601,7 @@ public class SumoTraciConnection {
 			}
 		}
 		for (String departedID : departedIDs) {
-			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
+			Vehicle departed = new Vehicle(traciChannel, departedID, edgeRepo, laneRepo);
 			if(log.isDebugEnabled())
 				log.debug(" departedID = "+departedID+" Vehicle = "+departed);
 			addStepAdvanceListener(departed);
@@ -807,7 +808,7 @@ public class SumoTraciConnection {
 	 * @return a new instance of {@link MultiQuery} bound to this server connection.
 	 */
 	public MultiQuery makeMultiQuery() {
-		return new MultiQuery(dos, dis);
+		return new MultiQuery(traciChannel);
 	}
 
 	/**

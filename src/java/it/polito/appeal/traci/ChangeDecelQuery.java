@@ -21,17 +21,13 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeDoubleQ;
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeDecelQuery extends ChangeDoubleQ {
 
-	ChangeDecelQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeDecelQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLETYPE_VARIABLE, objectID, Constants.VAR_DECEL);
+		super(traciChannel, Constants.CMD_SET_VEHICLETYPE_VARIABLE, objectID, Constants.VAR_DECEL);
 	}
 	
 	@Override

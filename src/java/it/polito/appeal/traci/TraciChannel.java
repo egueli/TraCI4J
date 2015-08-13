@@ -1,5 +1,5 @@
 /*   
-    Copyright (C) 2013 ApPeAL Group, Politecnico di Torino
+    Copyright (C) 2015 ApPeAL Group, Politecnico di Torino
 
     This file is part of TraCI4J.
 
@@ -17,29 +17,39 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * 
- */
 package it.polito.appeal.traci;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * A query for reading an ordered list of {@link Edge}s that make a route.
+ * This class contains the minimum amount of objects needed to communicate with the
+ * TraCI/SUMO server.
+ * 
+ * To avoid data interleaving and corruption in concurrent code, every access should be
+ * protected using the {@link #accessLock} member.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
-public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
-
-	RouteQuery(TraciChannel traciChannel, int commandID, String vehicleID, int varID, Repository<Edge> repo) {
-		super(traciChannel, commandID, repo, vehicleID, varID);
+class TraciChannel {
+	final DataInputStream in;
+	final DataOutputStream out;
+	final Lock accessLock;
+	
+	TraciChannel(DataInputStream in, DataOutputStream out, boolean locked) {
+		this.in = in;
+		this.out = out;
+		
+		if (locked) {
+			accessLock = new ReentrantLock(true);
+		}
+		else {
+			accessLock = new NullLock();
+		}
 	}
-
-	@Override
-	protected List<Edge> makeCollection() {
-		return new ArrayList<Edge>();
-	}
+	
 	
 }

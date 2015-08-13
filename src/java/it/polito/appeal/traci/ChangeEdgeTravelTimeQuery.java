@@ -20,10 +20,6 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -38,9 +34,9 @@ public class ChangeEdgeTravelTimeQuery extends ChangeObjectStateQuery {
 	private Edge edge;
 	private double travelTime;
 
-	ChangeEdgeTravelTimeQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeEdgeTravelTimeQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_EDGE_TRAVELTIME);
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_EDGE_TRAVELTIME);
 	}
 
 	@Override

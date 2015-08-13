@@ -22,9 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 /**
  * Query for reading a TLS state.
  * 
@@ -34,9 +31,9 @@ import java.io.DataOutputStream;
  */
 public class ReadTLStateQuery extends ReadObjectVarQuery<TLState> {
 
-	ReadTLStateQuery(DataInputStream dis, DataOutputStream dos,
+	ReadTLStateQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 	}
 
 	@Override

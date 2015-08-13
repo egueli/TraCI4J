@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +39,9 @@ public class ReadLinksQuery extends ReadObjectVarQuery<List<Link>> {
 
 	private Repository<Lane> laneRepo;
 
-	ReadLinksQuery(DataInputStream dis, DataOutputStream dos,
+	ReadLinksQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int varID, Repository<Lane> laneRepo) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 		this.laneRepo = laneRepo;
 	}
 

@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,9 +29,9 @@ import java.util.Set;
  *
  */
 public class VehicleSetQuery extends ObjectCollectionQuery<Vehicle, Set<Vehicle>> {
-	VehicleSetQuery(DataInputStream dis, DataOutputStream dos,
+	VehicleSetQuery(TraciChannel traciChannel,
 			int commandID, String objectID,	int varID, Repository<Vehicle> repository) {
-		super(dis, dos, commandID, repository, objectID, varID);
+		super(traciChannel, commandID, repository, objectID, varID);
 	}
 
 	@Override

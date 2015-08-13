@@ -20,8 +20,6 @@
 package it.polito.appeal.traci;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -40,12 +38,10 @@ import java.io.IOException;
 public abstract class ValueReadQuery<V> extends Query {
 	private V value = null;
 
-	protected final DataInputStream dis;
-	protected final DataOutputStream dos;
+	protected final TraciChannel traciChannel;
 
-	ValueReadQuery(DataInputStream dis, DataOutputStream dos) {
-		this.dis = dis;
-		this.dos = dos;
+	ValueReadQuery(TraciChannel traciChannel) {
+		this.traciChannel = traciChannel;
 	}
 	
 	/**
@@ -72,7 +68,7 @@ public abstract class ValueReadQuery<V> extends Query {
 		if (hasValue())
 			return value;
 		else {
-			MultiQuery mq = new MultiQuery(dos, dis);
+			MultiQuery mq = new MultiQuery(traciChannel);
 			mq.add(this);
 			mq.run();
 			if (!hasValue())

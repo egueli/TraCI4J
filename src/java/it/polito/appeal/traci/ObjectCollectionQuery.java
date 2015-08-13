@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.StringList;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -48,9 +46,9 @@ public abstract class ObjectCollectionQuery<V extends TraciObject<?>, C extends 
 
 	private final Repository<V> repository;
 
-	ObjectCollectionQuery(DataInputStream dis, DataOutputStream dos,
+	ObjectCollectionQuery(TraciChannel traciChannel,
 			int commandID, Repository<V> repository, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 		this.repository = repository;
 	}
 

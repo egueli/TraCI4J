@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Constants;
 
 import java.awt.geom.Point2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -32,9 +30,9 @@ import de.uniluebeck.itm.tcpip.Storage;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  */
 public class ChangePositionQuery extends ChangeObjectVarQuery<Point2D> {
-	ChangePositionQuery(DataInputStream dis, DataOutputStream dos,
+	ChangePositionQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_POSITION);
+		super(traciChannel, Constants.CMD_SET_POI_VARIABLE, objectID, Constants.VAR_POSITION);
 	}
 
 	/**

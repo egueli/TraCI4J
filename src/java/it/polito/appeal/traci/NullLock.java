@@ -1,5 +1,5 @@
 /*   
-    Copyright (C) 2013 ApPeAL Group, Politecnico di Torino
+    Copyright (C) 2015 ApPeAL Group, Politecnico di Torino
 
     This file is part of TraCI4J.
 
@@ -17,29 +17,46 @@
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * 
- */
 package it.polito.appeal.traci;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 /**
- * A query for reading an ordered list of {@link Edge}s that make a route.
- * 
+ * A Lock implementation that doesn't really lock anything. Used when locking is not needed,
+ * i.e. to improve performance in single-threaded applications.
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
-public class RouteQuery extends ObjectCollectionQuery<Edge, List<Edge>> {
+public class NullLock implements Lock {
 
-	RouteQuery(TraciChannel traciChannel, int commandID, String vehicleID, int varID, Repository<Edge> repo) {
-		super(traciChannel, commandID, repo, vehicleID, varID);
+	@Override
+	public void lock() {
 	}
 
 	@Override
-	protected List<Edge> makeCollection() {
-		return new ArrayList<Edge>();
+	public void lockInterruptibly() throws InterruptedException {
 	}
-	
+
+	@Override
+	public boolean tryLock() {
+		return true;
+	}
+
+	@Override
+	public boolean tryLock(long time, TimeUnit unit)
+			throws InterruptedException {
+		return true;
+	}
+
+	@Override
+	public void unlock() {
+	}
+
+	@Override
+	public Condition newCondition() {
+		throw new UnsupportedOperationException();
+	}
+
 }

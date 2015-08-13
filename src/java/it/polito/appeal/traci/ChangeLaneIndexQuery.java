@@ -19,17 +19,12 @@
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
-import de.uniluebeck.itm.tcpip.Storage;
 import it.polito.appeal.traci.protocol.Constants;
+import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeLaneIndexQuery extends ChangeObjectVarQuery<LaneIndexQueryParameter> {
-	ChangeLaneIndexQuery(DataInputStream dis, DataOutputStream dos, String objectID ) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGELANE);
+	ChangeLaneIndexQuery(TraciChannel traciChannel, String objectID ) {
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_CHANGELANE);
 	}
 
 	@Override

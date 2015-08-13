@@ -21,8 +21,6 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
@@ -39,8 +37,8 @@ public class RemoveVehicleQuery extends ChangeStateQuery {
 	private int reason;
 //	private int commandID;
 
-	RemoveVehicleQuery(DataInputStream dis, DataOutputStream dos) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE);
+	RemoveVehicleQuery(TraciChannel traciChannel) {
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE);
 //		this.commandID = commandID;
 	}
 

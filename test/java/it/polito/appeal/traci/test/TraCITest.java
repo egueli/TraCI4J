@@ -29,13 +29,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import it.polito.appeal.traci.AddRouteQuery;
 import it.polito.appeal.traci.AddVehicleQuery;
-import it.polito.appeal.traci.ChangeColorQuery;
 import it.polito.appeal.traci.ChangeEdgeTravelTimeQuery;
 import it.polito.appeal.traci.ChangeGlobalTravelTimeQuery;
-import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeStringQ;
-import it.polito.appeal.traci.ChangePositionQuery;
-import it.polito.appeal.traci.ChangeRouteQuery;
-import it.polito.appeal.traci.ChangeTargetQuery;
 import it.polito.appeal.traci.Edge;
 import it.polito.appeal.traci.Lane;
 import it.polito.appeal.traci.Link;
@@ -47,7 +42,6 @@ import it.polito.appeal.traci.RemoveVehicleQuery;
 import it.polito.appeal.traci.Repository;
 import it.polito.appeal.traci.Route;
 import it.polito.appeal.traci.SumoTraciConnection;
-import it.polito.appeal.traci.ValueReadQuery;
 import it.polito.appeal.traci.Vehicle;
 import it.polito.appeal.traci.VehicleLifecycleObserver;
 import it.polito.appeal.traci.VehicleType;
@@ -66,13 +60,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import org.apache.log4j.Logger;
 
 /**
  * Main test case for TraCI4J. This class tries to test and describe all the basic

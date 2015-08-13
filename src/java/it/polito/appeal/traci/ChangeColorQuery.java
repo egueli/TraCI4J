@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Constants;
 
 import java.awt.Color;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -32,9 +30,9 @@ import de.uniluebeck.itm.tcpip.Storage;
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  */
 public class ChangeColorQuery extends ChangeObjectVarQuery<Color> {
-	ChangeColorQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeColorQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int variableID) {
-		super(dis, dos, commandID, objectID, variableID);
+		super(traciChannel, commandID, objectID, variableID);
 	}
 
 	/**

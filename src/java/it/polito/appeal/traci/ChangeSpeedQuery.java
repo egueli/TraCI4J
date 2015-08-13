@@ -20,16 +20,12 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeSpeedQuery extends ChangeObjectVarQuery<Double> {
 		
-	ChangeSpeedQuery(DataInputStream dis, DataOutputStream dos, String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_SPEED);
+	ChangeSpeedQuery(TraciChannel traciChannel, String objectID) {
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_SPEED);
 	}
 	
 	

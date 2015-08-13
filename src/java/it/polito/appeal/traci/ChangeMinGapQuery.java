@@ -21,16 +21,12 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeDoubleQ;
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 public class ChangeMinGapQuery extends ChangeDoubleQ {
 
-	ChangeMinGapQuery(DataInputStream dis, DataOutputStream dos, String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLETYPE_VARIABLE, objectID,
+	ChangeMinGapQuery(TraciChannel traciChannel, String objectID) {
+		super(traciChannel, Constants.CMD_SET_VEHICLETYPE_VARIABLE, objectID,
 				Constants.VAR_MINGAP);
 	}
 

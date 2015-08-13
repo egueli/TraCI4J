@@ -20,10 +20,6 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -37,9 +33,9 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 
 	private V value;
 	
-	ChangeObjectVarQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeObjectVarQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int variableID) {
-		super(dis, dos, commandID, objectID, variableID);
+		super(traciChannel, commandID, objectID, variableID);
 	}
 
 	/**
@@ -75,9 +71,9 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	 *
 	 */
 	public static class ChangeStringQ extends ChangeObjectVarQuery<String> {
-		ChangeStringQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		ChangeStringQ(TraciChannel traciChannel, int commandID,
 				String objectID, int variableID) {
-			super(dis, dos, commandID, objectID, variableID);
+			super(traciChannel, commandID, objectID, variableID);
 		}
 
 		@Override
@@ -95,9 +91,9 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	 */
 	public static class ChangeIntegerQ extends ChangeObjectVarQuery<Integer> {
 
-		ChangeIntegerQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		ChangeIntegerQ(TraciChannel traciChannel, int commandID,
 				String objectID, int variableID) {
-			super(dis, dos, commandID, objectID, variableID);
+			super(traciChannel, commandID, objectID, variableID);
 		}
 
 		@Override
@@ -115,9 +111,9 @@ public abstract class ChangeObjectVarQuery<V> extends ChangeObjectStateQuery {
 	 */
 	public static class ChangeDoubleQ extends ChangeObjectVarQuery<Double> {
 
-		ChangeDoubleQ(DataInputStream dis, DataOutputStream dos,
+		ChangeDoubleQ(TraciChannel traciChannel,
 				int commandID, String objectID, int variableID) {
-			super(dis, dos, commandID, objectID, variableID);
+			super(traciChannel, commandID, objectID, variableID);
 		}
 
 		@Override

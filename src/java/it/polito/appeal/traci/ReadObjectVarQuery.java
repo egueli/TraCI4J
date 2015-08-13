@@ -28,8 +28,6 @@ import it.polito.appeal.traci.protocol.StringList;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,8 +54,8 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	private final String objectID;
 	private final int varID;
 	
-	ReadObjectVarQuery(DataInputStream dis, DataOutputStream dos, int commandID, String objectID, int varID) {
-		super(dis, dos);
+	ReadObjectVarQuery(TraciChannel traciChannel, int commandID, String objectID, int varID) {
+		super(traciChannel);
 		this.commandID = commandID;
 		this.objectID = objectID;
 		this.varID = varID;
@@ -102,9 +100,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class IntegerQ extends ReadObjectVarQuery<Integer> {
 
-		IntegerQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		IntegerQ(TraciChannel traciChannel, int commandID,
 				String objectID, int varID) {
-			super(dis, dos, commandID, objectID, varID);
+			super(traciChannel, commandID, objectID, varID);
 		}
 
 		@Override
@@ -126,8 +124,8 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class DoubleQ extends ReadObjectVarQuery<Double> {
 
-		DoubleQ(DataInputStream dis, DataOutputStream dos, int commandID, String objectID, int varID) {
-			super(dis, dos, commandID, objectID, varID);
+		DoubleQ(TraciChannel traciChannel, int commandID, String objectID, int varID) {
+			super(traciChannel, commandID, objectID, varID);
 		}
 
 		@Override
@@ -147,9 +145,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class ColorQ extends ReadObjectVarQuery<Color> {
 
-		ColorQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		ColorQ(TraciChannel traciChannel, int commandID,
 				String objectID, int varID) {
-			super(dis, dos, commandID, objectID, varID);
+			super(traciChannel, commandID, objectID, varID);
 		}
 
 		@Override
@@ -175,8 +173,8 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 
 		private int positionType = Constants.POSITION_2D;
 		
-		PositionQ(DataInputStream dis, DataOutputStream dos, int commandID, String vehicleID, int varID) {
-			super(dis, dos, commandID, vehicleID, varID);
+		PositionQ(TraciChannel traciChannel, int commandID, String vehicleID, int varID) {
+			super(traciChannel, commandID, vehicleID, varID);
 		}
 		
 		/**
@@ -215,8 +213,8 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class StringQ extends ReadObjectVarQuery<String> {
 		
-		StringQ(DataInputStream dis, DataOutputStream dos, int commandID, String objectID, int varID) {
-			super(dis, dos, commandID, objectID, varID);
+		StringQ(TraciChannel traciChannel, int commandID, String objectID, int varID) {
+			super(traciChannel, commandID, objectID, varID);
 		}
 		
 		protected String readValue(Command resp) throws TraCIException {
@@ -235,9 +233,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class StringListQ extends ReadObjectVarQuery<List<String>> {
 
-		StringListQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		StringListQ(TraciChannel traciChannel, int commandID,
 				String objectID, int varID) {
-			super(dis, dos, commandID, objectID, varID);
+			super(traciChannel, commandID, objectID, varID);
 		}
 
 		@Override
@@ -256,8 +254,8 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 */
 	public static class BoundingBoxQ extends ReadObjectVarQuery<Rectangle2D> {
 
-		BoundingBoxQ(DataInputStream dis, DataOutputStream dos, int commandID, String vehicleID, int varID) {
-			super(dis, dos, commandID, vehicleID, varID);
+		BoundingBoxQ(TraciChannel traciChannel, int commandID, String vehicleID, int varID) {
+			super(traciChannel, commandID, vehicleID, varID);
 		}
 
 		@Override
@@ -278,9 +276,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 
 		private final Repository<V> repo;
 		
-		TraciObjectQ(DataInputStream dis, DataOutputStream dos,
+		TraciObjectQ(TraciChannel traciChannel,
 				int commandID, String objectID, int varID, Repository<V> repo) {
-			super(dis, dos, commandID, objectID, varID);
+			super(traciChannel, commandID, objectID, varID);
 			this.repo = repo;
 		}
 
@@ -305,9 +303,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 * 
 	 */
 	public static class EdgeQ extends TraciObjectQ<Edge> {
-		EdgeQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		EdgeQ(TraciChannel traciChannel, int commandID,
 				String objectID, int varID, Repository<Edge> repo) {
-			super(dis, dos, commandID, objectID, varID, repo);
+			super(traciChannel, commandID, objectID, varID, repo);
 		}
 	}
 	
@@ -319,9 +317,9 @@ public abstract class ReadObjectVarQuery<V> extends ValueReadQuery<V> {
 	 * 
 	 */
 	public static class LaneQ extends TraciObjectQ<Lane> {
-		LaneQ(DataInputStream dis, DataOutputStream dos, int commandID,
+		LaneQ(TraciChannel traciChannel, int commandID,
 				String objectID, int varID, Repository<Lane> repo) {
-			super(dis, dos, commandID, objectID, varID, repo);
+			super(traciChannel, commandID, objectID, varID, repo);
 		}
 	}
 

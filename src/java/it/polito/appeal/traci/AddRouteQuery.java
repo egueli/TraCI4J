@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.StringList;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,9 +39,9 @@ public class AddRouteQuery extends ChangeStateQuery {
 	private StringList edges;
 	private final Repository<Route> routes;
 
-	AddRouteQuery(DataInputStream dis, DataOutputStream dos,
+	AddRouteQuery(TraciChannel traciChannel,
 			Repository<Route> routes) {
-		super(dis, dos, Constants.CMD_SET_ROUTE_VARIABLE);
+		super(traciChannel, Constants.CMD_SET_ROUTE_VARIABLE);
 		this.routes = routes;
 	}
 

@@ -23,8 +23,6 @@ import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Polygon;
 
 import java.awt.geom.Path2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 /**
  * Specialization of {@link ReadObjectVarQuery} whose value type is a
@@ -35,9 +33,9 @@ import java.io.DataOutputStream;
  */
 public class ReadShapeQuery extends ReadObjectVarQuery<Path2D> {
 
-	ReadShapeQuery(DataInputStream dis, DataOutputStream dos,
+	ReadShapeQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 	}
 
 	@Override

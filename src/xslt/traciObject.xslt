@@ -73,8 +73,6 @@ END underscore-to-mixedCase conversion
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -106,8 +104,7 @@ implements StepAdvanceListener
 	</xsl:for-each>
 	
 	<xsl:value-of select="name"/> (
-		DataInputStream dis,
-		DataOutputStream dos, 
+		TraciChannel traciChannel,
 		String id
 		<xsl:for-each select="repos/repo">
 			, Repository&lt;<xsl:apply-templates/>&gt; repo<xsl:apply-templates/>
@@ -122,7 +119,7 @@ implements StepAdvanceListener
 		<xsl:variable name="query-class" select="query" />
 		<xsl:variable name="query-data" select="$queries/queries/query[class=$query-class]" />
 		addReadQuery(Variable.<xsl:value-of select="enum"/>, 
-				new <xsl:value-of select="query"/> (dis, dos, 
+				new <xsl:value-of select="query"/> (traciChannel, 
 				<xsl:value-of select="../../command"/>, 
 				id, 
 				<xsl:value-of select="const"/>
@@ -137,7 +134,7 @@ implements StepAdvanceListener
 		 * initialization of change state queries
 		 */
 		<xsl:for-each select="changeStateQueries/changeStateQuery">
-		csqvar_<xsl:value-of select="name"/> = new <xsl:value-of select="query"/>(dis, dos
+		csqvar_<xsl:value-of select="name"/> = new <xsl:value-of select="query"/>(traciChannel
 		<xsl:if test="const">, <xsl:value-of select="../../changeStateCommand"/></xsl:if>
 		, id
 		<xsl:if test="const">, <xsl:value-of select="const"/></xsl:if>)

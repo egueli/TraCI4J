@@ -24,8 +24,6 @@ import it.polito.appeal.traci.protocol.RequestMessage;
 import it.polito.appeal.traci.protocol.ResponseContainer;
 import it.polito.appeal.traci.protocol.ResponseMessage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,14 +48,12 @@ public class MultiQuery {
 	
 	private static final Logger log = Logger.getLogger(MultiQuery.class);
 	
-	private final DataOutputStream dos;
-	private final DataInputStream dis;
+	private final TraciChannel traciChannel;
 	
 	private final List<Query> queries = new ArrayList<Query>();
 	
-	MultiQuery(DataOutputStream dos, DataInputStream dis) {
-		this.dos = dos;
-		this.dis = dis;
+	MultiQuery(TraciChannel traciChannel) {
+		this.traciChannel = traciChannel;
 	}
 	
 	/**
@@ -99,8 +95,8 @@ public class MultiQuery {
 			}
 		}
 		
-		reqMsg.writeTo(dos);
-		ResponseMessage respMsg = new ResponseMessage(dis);
+		reqMsg.writeTo(traciChannel.out);
+		ResponseMessage respMsg = new ResponseMessage(traciChannel.in);
 		Iterator<ResponseContainer> responseIterator = respMsg.responses().iterator();
 		for (Query q : queries) {
 			q.pickResponses(responseIterator);			

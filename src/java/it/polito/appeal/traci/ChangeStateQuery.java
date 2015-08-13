@@ -23,8 +23,6 @@ import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.ResponseContainer;
 import it.polito.appeal.traci.protocol.StatusResponse;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -53,12 +51,10 @@ import de.uniluebeck.itm.tcpip.Storage;
 public abstract class ChangeStateQuery extends Query {
 
 	private final int commandID;
-	private final DataInputStream dis;
-	private final DataOutputStream dos;
+	private final TraciChannel traciChannel;
 	
-	ChangeStateQuery(DataInputStream dis, DataOutputStream dos, int commandID) {
-		this.dis = dis;
-		this.dos = dos;
+	ChangeStateQuery(TraciChannel traciChannel, int commandID) {
+		this.traciChannel = traciChannel;
 		this.commandID = commandID;
 	}
 
@@ -89,7 +85,7 @@ public abstract class ChangeStateQuery extends Query {
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
-		MultiQuery multi = new MultiQuery(dos, dis);
+		MultiQuery multi = new MultiQuery(traciChannel);
 		multi.add(this);
 		multi.run();
 	}

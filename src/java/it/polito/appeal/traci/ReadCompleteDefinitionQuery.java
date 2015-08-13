@@ -21,9 +21,6 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Command;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -33,9 +30,8 @@ import de.uniluebeck.itm.tcpip.Storage;
  * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Traffic_Lights_Value_Retrieval.html">TraCI docs</a>
  */
 public class ReadCompleteDefinitionQuery extends ReadObjectVarQuery<Program> {
-	ReadCompleteDefinitionQuery(DataInputStream dis,
-			DataOutputStream dos, int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+	ReadCompleteDefinitionQuery(TraciChannel traciChannel, int commandID, String objectID, int varID) {
+		super(traciChannel, commandID, objectID, varID);
 	}
 
 	@Override

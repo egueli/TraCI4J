@@ -21,8 +21,6 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -183,24 +181,24 @@ public class Repository<V extends TraciObject<?>> {
 	}
 	
 	static class Edges extends UpdatableRepository<Edge> {
-		Edges(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+		Edges(final TraciChannel traciChannel, StringListQ idListQuery) {
 			super(new ObjectFactory<Edge>() {
 				@Override
 				public Edge newObject(String objectID) {
-					return new Edge(dis, dos, objectID);
+					return new Edge(traciChannel, objectID);
 				}
 			}, idListQuery);
 		}
 	}
 	
 	static class Lanes extends Repository<Lane> {
-		Lanes(final DataInputStream dis, final DataOutputStream dos, final Repository<Edge> edges, StringListQ idListQuery) {
+		Lanes(final TraciChannel traciChannel, final Repository<Edge> edges, StringListQ idListQuery) {
 			super(null, idListQuery);
 			
 			setObjectFactory(new ObjectFactory<Lane>() {
 				@Override
 				public Lane newObject(String objectID) {
-					return new Lane(dis, dos, objectID, edges, Lanes.this);
+					return new Lane(traciChannel, objectID, edges, Lanes.this);
 				}
 			});
 		}
@@ -209,8 +207,7 @@ public class Repository<V extends TraciObject<?>> {
 	static class Vehicles extends UpdatableRepository<Vehicle> {
 
 		Vehicles(
-				final DataInputStream dis, 
-				final DataOutputStream dos, 
+				final TraciChannel traciChannel, 
 				final Repository<Edge> edges, 
 				final Repository<Lane> lanes, 
 				final Map<String, Vehicle> vehicles,
@@ -234,11 +231,11 @@ public class Repository<V extends TraciObject<?>> {
 	}
 	
 	static class POIs extends Repository<POI> {
-		public POIs(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+		public POIs(final TraciChannel traciChannel, StringListQ idListQuery) {
 			super(new ObjectFactory<POI>() {
 				@Override
 				public POI newObject(String objectID) {
-					return new POI(dis, dos, objectID);
+					return new POI(traciChannel, objectID);
 				}
 			}, idListQuery);
 		}
@@ -246,15 +243,14 @@ public class Repository<V extends TraciObject<?>> {
 	
 	static class InductionLoops extends UpdatableRepository<InductionLoop> {
 		public InductionLoops(
-				final DataInputStream dis, 
-				final DataOutputStream dos, 
+				final TraciChannel traciChannel, 
 				final Repository<Lane> lanes, 
 				final Repository<Vehicle> vehicles,
 				StringListQ idListQuery) {
 			super(new ObjectFactory<InductionLoop>() {
 				@Override
 				public InductionLoop newObject(String objectID) {
-					return new InductionLoop(dis, dos, objectID, lanes, vehicles);
+					return new InductionLoop(traciChannel, objectID, lanes, vehicles);
 				}
 			}, idListQuery);
 		}
@@ -263,25 +259,24 @@ public class Repository<V extends TraciObject<?>> {
 	static class TrafficLights extends UpdatableRepository<TrafficLight> {
 
 		public TrafficLights(
-				final DataInputStream dis, 
-				final DataOutputStream dos, 
+				final TraciChannel traciChannel, 
 				final Repository<Lane> lanes, 
 				StringListQ idListQuery) {
 			super(new ObjectFactory<TrafficLight>() {
 				@Override
 				public TrafficLight newObject(String objectID) {
-					return new TrafficLight(dis, dos, objectID, lanes);
+					return new TrafficLight(traciChannel, objectID, lanes);
 				}
 			}, idListQuery);
 		}
 	}
 	
 	static class VehicleTypes extends Repository<VehicleType> {
-		public VehicleTypes(final DataInputStream dis, final DataOutputStream dos, StringListQ idListQuery) {
+		public VehicleTypes(final TraciChannel traciChannel, StringListQ idListQuery) {
 			super(new ObjectFactory<VehicleType>() {
 				@Override
 				public VehicleType newObject(String objectID) {
-					return new VehicleType(dis, dos, objectID);
+					return new VehicleType(traciChannel, objectID);
 				}
 			}, idListQuery);
 		}
@@ -289,14 +284,13 @@ public class Repository<V extends TraciObject<?>> {
 	
 	static class MeMeDetectors extends UpdatableRepository<MeMeDetector> {
 		public MeMeDetectors(
-				final DataInputStream dis, 
-				final DataOutputStream dos, 
+				final TraciChannel traciChannel, 
 				final Repository<Vehicle> vehicles, 
 				StringListQ idListQuery) {
 			super(new ObjectFactory<MeMeDetector>() {
 				@Override
 				public MeMeDetector newObject(String objectID) {
-					return new MeMeDetector(dis, dos, objectID, vehicles);
+					return new MeMeDetector(traciChannel, objectID, vehicles);
 				}
 			}, idListQuery);
 		}
@@ -304,14 +298,13 @@ public class Repository<V extends TraciObject<?>> {
 	
 	static class Routes extends UpdatableRepository<Route> {
 		public Routes(
-				final DataInputStream dis, 
-				final DataOutputStream dos, 
+				final TraciChannel traciChannel, 
 				final Repository<Edge> edges, 
 				StringListQ idListQuery) {
 			super(new ObjectFactory<Route>() {
 				@Override
 				public Route newObject(String objectID) {
-					return new Route(dis, dos, objectID, edges);
+					return new Route(traciChannel, objectID, edges);
 				}
 			}, idListQuery);
 		}

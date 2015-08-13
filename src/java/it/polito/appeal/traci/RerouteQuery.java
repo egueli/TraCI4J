@@ -20,10 +20,6 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -34,9 +30,9 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class RerouteQuery extends ChangeObjectStateQuery {
 
-	RerouteQuery(DataInputStream dis, DataOutputStream dos,
+	RerouteQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_REROUTE_TRAVELTIME);
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.CMD_REROUTE_TRAVELTIME);
 	}
 
 	@Override

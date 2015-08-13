@@ -19,9 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import it.polito.appeal.traci.ChangeObjectVarQuery.ChangeDoubleQ;
 import it.polito.appeal.traci.protocol.Constants;
 
@@ -33,9 +30,9 @@ import it.polito.appeal.traci.protocol.Constants;
  */
 public class ChangeMaxSpeedQuery extends ChangeDoubleQ {
 
-	ChangeMaxSpeedQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeMaxSpeedQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_MAXSPEED);
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE, objectID, Constants.VAR_MAXSPEED);
 	}
 
 }

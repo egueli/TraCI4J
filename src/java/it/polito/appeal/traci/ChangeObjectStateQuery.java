@@ -19,9 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -36,9 +33,9 @@ public abstract class ChangeObjectStateQuery extends ChangeStateQuery {
 	private final String objectID;
 	private final int variableID;
 	
-	ChangeObjectStateQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeObjectStateQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int variableID) {
-		super(dis, dos, commandID);
+		super(traciChannel, commandID);
 		this.objectID = objectID;
 		this.variableID = variableID;
 	}

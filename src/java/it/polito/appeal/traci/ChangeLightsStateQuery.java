@@ -20,10 +20,6 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -33,9 +29,9 @@ import de.uniluebeck.itm.tcpip.Storage;
  *
  */
 public class ChangeLightsStateQuery extends ChangeObjectVarQuery<TLState> {
-	ChangeLightsStateQuery(DataInputStream dis, DataOutputStream dos,
+	ChangeLightsStateQuery(TraciChannel traciChannel,
 			String objectID) {
-		super(dis, dos, Constants.CMD_SET_TL_VARIABLE, objectID,
+		super(traciChannel, Constants.CMD_SET_TL_VARIABLE, objectID,
 				Constants.TL_RED_YELLOW_GREEN_STATE);
 	}
 

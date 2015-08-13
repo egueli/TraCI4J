@@ -22,8 +22,6 @@ package it.polito.appeal.traci;
 import it.polito.appeal.traci.protocol.Constants;
 
 import java.awt.geom.Rectangle2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 /**
  * Representation of the simulation-level data object, that encloses some
@@ -36,8 +34,7 @@ import java.io.DataOutputStream;
  */
 public class SimulationData extends TraciObject<SimulationData.Variable> implements StepAdvanceListener {
 
-	private final DataInputStream dis;
-	private final DataOutputStream dos;
+	private final TraciChannel traciChannel;
 	
 	
 	enum Variable {
@@ -50,23 +47,22 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 		}
 	}
 	
-	SimulationData(DataInputStream dis, DataOutputStream dos) {
+	SimulationData(TraciChannel traciChannel) {
 		super("", Variable.class);
 		
 		addReadQuery(Variable.CURRENT_SIM_TIME,
-				new ReadObjectVarQuery.IntegerQ(dis, dos,
+				new ReadObjectVarQuery.IntegerQ(traciChannel,
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.CURRENT_SIM_TIME.id) {
 			
 		});
 		
 		addReadQuery(Variable.NET_BOUNDARIES,
-				new ReadObjectVarQuery.BoundingBoxQ(dis, dos,
+				new ReadObjectVarQuery.BoundingBoxQ(traciChannel,
 						Constants.CMD_GET_SIM_VARIABLE, "",
 						Variable.NET_BOUNDARIES.id));
 		
-		this.dis = dis;
-		this.dos = dos;
+		this.traciChannel = traciChannel;
 		
 
 	}
@@ -101,7 +97,7 @@ public class SimulationData extends TraciObject<SimulationData.Variable> impleme
 	 * @return a query to do position conversion
 	 */
 	public PositionConversionQuery queryPositionConversion() {
-		return new PositionConversionQuery(dis, dos,
+		return new PositionConversionQuery(traciChannel,
 				Constants.CMD_GET_SIM_VARIABLE, "",
 				Constants.POSITION_CONVERSION);
 

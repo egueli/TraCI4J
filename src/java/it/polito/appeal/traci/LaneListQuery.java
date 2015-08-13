@@ -19,8 +19,6 @@
 
 package it.polito.appeal.traci;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +29,9 @@ import java.util.List;
  *
  */
 public class LaneListQuery extends ObjectCollectionQuery<Lane, List<Lane>> {
-	LaneListQuery(DataInputStream dis, DataOutputStream dos, int commandID,
+	LaneListQuery(TraciChannel traciChannel, int commandID,
 			String objectID, int varID, Repository<Lane> repository) {
-		super(dis, dos, commandID, repository, objectID, varID);
+		super(traciChannel, commandID, repository, objectID, varID);
 	}
 	@Override
 	protected List<Lane> makeCollection() {

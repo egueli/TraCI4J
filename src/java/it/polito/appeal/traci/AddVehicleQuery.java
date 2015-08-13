@@ -21,8 +21,6 @@ package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import de.uniluebeck.itm.tcpip.Storage;
@@ -46,9 +44,9 @@ public class AddVehicleQuery extends ChangeStateQuery {
 	private final Repository<Vehicle> vehicles;
 	private int departureTime;
 
-	AddVehicleQuery(DataInputStream dis, DataOutputStream dos,
+	AddVehicleQuery(TraciChannel traciChannel,
 			Repository<Vehicle> vehicles) {
-		super(dis, dos, Constants.CMD_SET_VEHICLE_VARIABLE);
+		super(traciChannel, Constants.CMD_SET_VEHICLE_VARIABLE);
 		this.vehicles = vehicles;
 	}
 

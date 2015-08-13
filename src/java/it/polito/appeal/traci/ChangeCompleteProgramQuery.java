@@ -20,10 +20,6 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 /**
@@ -35,9 +31,8 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class ChangeCompleteProgramQuery extends ChangeObjectVarQuery<Logic> {
 
-	ChangeCompleteProgramQuery(DataInputStream dis,
-			DataOutputStream dos, int commandID, String objectID, int variableID) {
-		super(dis, dos, commandID, objectID, variableID);
+	ChangeCompleteProgramQuery(TraciChannel traciChannel, int commandID, String objectID, int variableID) {
+		super(traciChannel, commandID, objectID, variableID);
 	}
 
 	@Override

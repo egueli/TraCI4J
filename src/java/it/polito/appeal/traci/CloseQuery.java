@@ -20,16 +20,12 @@
 package it.polito.appeal.traci;
 
 import it.polito.appeal.traci.protocol.Constants;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 import de.uniluebeck.itm.tcpip.Storage;
 
 class CloseQuery extends ChangeStateQuery {
 
-	CloseQuery(DataInputStream dis, DataOutputStream dos) {
-		super(dis, dos, Constants.CMD_CLOSE);
+	CloseQuery(TraciChannel traciChannel) {
+		super(traciChannel, Constants.CMD_CLOSE);
 	}
 
 	@Override

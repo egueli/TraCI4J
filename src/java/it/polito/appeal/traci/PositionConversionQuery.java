@@ -27,8 +27,6 @@ import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
 
 import java.awt.geom.Point2D;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.List;
 
 /**
@@ -52,9 +50,9 @@ public class PositionConversionQuery extends ReadObjectVarQuery.PositionQ {
 	private RoadmapPosition roadmapPos;
 	private boolean destLonLat;
 	
-	PositionConversionQuery(DataInputStream dis, DataOutputStream dos,
+	PositionConversionQuery(TraciChannel traciChannel,
 			int commandID, String objectID, int varID) {
-		super(dis, dos, commandID, objectID, varID);
+		super(traciChannel, commandID, objectID, varID);
 	}
 	
 	/**
