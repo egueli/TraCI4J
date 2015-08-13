@@ -57,6 +57,14 @@ public class MultiThreadTest extends SingleSimTraCITest {
 		runABunchOfQueries();
 	}
 	
+	/**
+	 * Runs lots of queries on parallel worker threads.
+	 * That's not a really elegant implementation: a JVM may decide to fully finish a
+	 * worker thread before starting another one, making this test pass even if there's
+	 * no concurrency control of the TraCI TCP channel.
+	 * 
+	 * @throws IOException
+	 */
 	@Test
 	public void testDoubleThreadQueries() throws IOException {
 		final int TASKS = 2;
