@@ -158,7 +158,7 @@ public class MultiThreadAccessTest {
 			
 			int commandID = requestMsg[5];
 			commandID += (commandID >= 0) ? 0 : 256; 
-			log.debug("command id: " + Integer.toHexString(commandID));
+			log.debug("command id: " + toHex(commandID));
 			
 			switch(commandID) {
 			case Constants.CMD_GET_SIM_VARIABLE:
@@ -170,10 +170,15 @@ public class MultiThreadAccessTest {
 				dos.write(new byte[] {7, -92, 0, 0, 0, 0, 0, 12, -76, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0});
 				break;
 			default:
+				log.warn("Unhandled command ID " + toHex(commandID) + ", exiting");
 				return true;	
 			}
 			
 			return false;
+		}
+
+		private String toHex(int value) {
+			return Integer.toHexString(value).toUpperCase();
 		}
 
 	}
