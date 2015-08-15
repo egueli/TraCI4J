@@ -93,5 +93,4 @@ public abstract class ChangeStateQuery extends Query {
 		multi.add(this);
 		multi.run();
 	}
-
 }

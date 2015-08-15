@@ -100,6 +100,7 @@ public class MultiQuery {
 		}
 		
 		reqMsg.writeTo(dos);
+		dos.flush();
 		ResponseMessage respMsg = new ResponseMessage(dis);
 		Iterator<ResponseContainer> responseIterator = respMsg.responses().iterator();
 		for (Query q : queries) {
