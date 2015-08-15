@@ -26,6 +26,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -335,8 +337,8 @@ public class SumoTraciConnection {
 	}
 	
 	private void postConnect() throws IOException {
-		dis = new DataInputStream(socket.getInputStream());
-		dos = new DataOutputStream(socket.getOutputStream());
+		dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+		dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
 		closeQuery = new CloseQuery(dis, dos);
 		simData = new SimulationData(dis, dos);
