@@ -34,12 +34,12 @@ public class NonzeroBeginTimeTest extends SingleSimTraCITest {
 	
 	@Test
 	public void testFirstStep() {
-		assertEquals(50000, conn.getCurrentSimStep());
+		assertEquals(50000000, conn.getCurrentSimTime());
 	}
 	
 	@Test
 	public void testNextStep() throws IllegalStateException, IOException {
 		conn.nextSimStep();
-		assertEquals(50001, conn.getCurrentSimStep());
+		assertEquals(50001000, conn.getCurrentSimTime());
 	}
 }

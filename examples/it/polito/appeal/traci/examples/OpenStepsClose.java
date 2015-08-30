@@ -44,7 +44,7 @@ public class OpenStepsClose {
 			System.out.println("Map bounds are: " + conn.queryBounds());
 			
 			for (int i = 0; i < 10; i++) {
-				int time = conn.getCurrentSimStep();
+				int time = conn.getCurrentSimTime() / 1000;
 				Collection<Vehicle> vehicles = conn.getVehicleRepository().getAll().values();
 				
 				System.out.println("At time step " + time + ", there are "

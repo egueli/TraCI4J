@@ -251,10 +251,10 @@ public class TrafficLightsTest extends SingleSimTraCITest {
 		for (int p = 0; p < PHASES.length; p++) {
 			TLState tlState = query.get();
 			final LightState[] states = tlState.lightStates;
-			log.info("state at t=" + conn.getCurrentSimStep() + "\n" 
+			log.info("state at t=" + conn.getCurrentSimTime() + "ms\n" 
 					+ "  expected " + Arrays.toString(PHASES[p]) + "\n"
 					+ "  actual   " + Arrays.toString(states));
-			assertArrayEquals("state at t=" + conn.getCurrentSimStep(), PHASES[p], states);
+			assertArrayEquals("state at t=" + conn.getCurrentSimTime() + "ms", PHASES[p], states);
 			
 			for (int t=0; t<PHASES_DURATION[p]; t++)
 				conn.nextSimStep();

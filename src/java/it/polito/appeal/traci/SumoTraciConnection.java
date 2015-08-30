@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,7 +99,7 @@ public class SumoTraciConnection {
 	private int randomSeed;
 	private Socket socket;
 
-	/** The current simulation step, in seconds. */
+	/** The current simulation step, in ms. */
 	private int currentSimStep;
 	private Process sumoProcess;
 
@@ -135,6 +136,11 @@ public class SumoTraciConnection {
 	private Repository.MeMeDetectors memeDetectorRepo;
 	private Repository.LaArDetectors laarDetectorRepo;
 	private Repository.Routes routeRepo;
+
+	/**
+	 * Duration of a step in ms
+	 */
+	private int steplength = 1000;
 
 	/*
 	 * TODO add repositories for remaining SUMO object classes
@@ -362,7 +368,7 @@ public class SumoTraciConnection {
 		closeQuery = new CloseQuery(dis, dos);
 		simData = new SimulationData(dis, dos);
 
-		currentSimStep = simData.queryCurrentSimTime().get() / 1000;
+		currentSimStep = simData.queryCurrentSimTime().get();
 
 		vehicles = new HashMap<String, Vehicle>();
 
@@ -454,10 +460,13 @@ public class SumoTraciConnection {
 		args.add(2, configFile);
 		args.add(3, "--remote-port");
 		args.add(4, Integer.toString(remotePort));
+		args.add(5, "--step-length");
+
+		args.add(6, String.format(Locale.ENGLISH, "%.3f", (double) steplength / 1000));
 
 		if (randomSeed != -1) {
-			args.add(5, "--seed");
-			args.add(6, Integer.toString(randomSeed));
+			args.add(7, "--seed");
+			args.add(8, Integer.toString(randomSeed));
 		}
 
 		if (log.isDebugEnabled())
@@ -560,12 +569,12 @@ public class SumoTraciConnection {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
 
-		currentSimStep++;
+		currentSimStep += steplength;
 
 		/*
 		 * forces querying of vehicle IDs when requested
 		 */
-		simData.nextStep(currentSimStep * 1000);
+		simData.nextStep(currentSimStep);
 
 		/*
 		 * constructs a multi-query that advances one step, reads the list of
@@ -576,7 +585,7 @@ public class SumoTraciConnection {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		{ // begin multi-query
 			SimStepQuery ssq = new SimStepQuery(dis, dos);
-			ssq.setTargetTime(currentSimStep * 1000);
+			ssq.setTargetTime(currentSimStep);
 			multi.add(ssq);
 
 			multi.add(vehicleListQuery);
@@ -663,9 +672,9 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Returns the current simulation step number.
+	 * Returns the current simulation step time in ms.
 	 */
-	public int getCurrentSimStep() {
+	public int getCurrentSimTime() {
 		return currentSimStep;
 	}
 
@@ -765,7 +774,7 @@ public class SumoTraciConnection {
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
 	}
-	
+
 	/**
 	 * 
 	 * @return the {@link Repository} containing all the lane area detectors in
@@ -846,6 +855,16 @@ public class SumoTraciConnection {
 	 */
 	public PositionConversionQuery queryPositionConversion() {
 		return simData.queryPositionConversion();
+	}
+
+	/**
+	 * Set the duration of a step
+	 * 
+	 * @param length
+	 *            the time in ms
+	 */
+	public void setStepLength(int steplength) {
+		this.steplength = steplength;
 	}
 
 	/**

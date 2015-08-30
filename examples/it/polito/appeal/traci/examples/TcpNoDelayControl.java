@@ -80,7 +80,7 @@ public class TcpNoDelayControl {
 			int i;
 
 			for (i = 0; i < 20; i++) {
-				int time = conn.getCurrentSimStep();
+				int time = conn.getCurrentSimTime() / 1000;
 
 				long bgn;
 				long end;
