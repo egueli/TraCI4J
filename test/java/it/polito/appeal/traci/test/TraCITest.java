@@ -1076,4 +1076,15 @@ public class TraCITest extends SingleSimTraCITest {
 		assertEquals(498.55, lane.getLength(), 0);
 		assertEquals(3.2, lane.getWidth(), 0);
 	}
+
+	@Test
+	public void test500msStep() throws IOException, InterruptedException {
+		conn.close();
+		conn = new SumoTraciConnection(getSimConfigFileLocation(), 0);
+		conn.setStepLength(500);
+		conn.runServer();
+		assertEquals(0, conn.getCurrentSimTime());
+		conn.nextSimStep();
+		assertEquals(500, conn.getCurrentSimTime());
+	}
 }
