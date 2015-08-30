@@ -119,7 +119,7 @@ public class TraCITest extends SingleSimTraCITest {
 	 */
 	@Test
 	public void testFirstStepIsZero() {
-		assertEquals(0, conn.getCurrentSimStep());
+		assertEquals(0, conn.getCurrentSimTime());
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class TraCITest extends SingleSimTraCITest {
 	@Test
 	public void testNextSimStepGoesToOne() throws IOException {
 		conn.nextSimStep();
-		assertEquals(1, conn.getCurrentSimStep());
+		assertEquals(1000, conn.getCurrentSimTime());
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class TraCITest extends SingleSimTraCITest {
 	public void testVehicleSet() throws IllegalStateException, IOException {
 		for (int i = 0; i < 10; i++) {
 			conn.nextSimStep();
-			int t = conn.getCurrentSimStep();
+			int t = conn.getCurrentSimTime() / 1000;
 			Map<String, Vehicle> vehicles = conn.getVehicleRepository().getAll();
 			log.info(t + "\t" + vehicles.keySet());
 			assertTrue(vehicles.size() > 0);
@@ -364,7 +364,7 @@ public class TraCITest extends SingleSimTraCITest {
 		cttq.run();
 
 		ReadGlobalTravelTimeQuery rgttq = edge.queryReadGlobalTravelTime();
-		rgttq.setTime(conn.getCurrentSimStep());
+		rgttq.setTime(conn.getCurrentSimTime() / 1000);
 		double newTravelTime = rgttq.get();
 		assertEquals(10000, newTravelTime, DELTA);
 
@@ -431,7 +431,7 @@ public class TraCITest extends SingleSimTraCITest {
 	public void testMultiQueryPerformance() throws IllegalStateException, IOException {
 		final int RETRIES = 5;
 
-		while (conn.getCurrentSimStep() < 300)
+		while (conn.getCurrentSimTime() < 300000)
 			conn.nextSimStep();
 
 		long start = System.currentTimeMillis();
@@ -560,7 +560,7 @@ public class TraCITest extends SingleSimTraCITest {
 
 		while (!conn.isClosed()) {
 			conn.nextSimStep();
-			log.info("step " + conn.getCurrentSimStep());
+			log.info("step " + conn.getCurrentSimTime() / 1000);
 		}
 
 	}
@@ -954,7 +954,7 @@ public class TraCITest extends SingleSimTraCITest {
 		Lane lane = conn.getLaneRepository().getAll().values().iterator().next();
 		VehicleType vType = conn.getVehicleTypeRepository().getByID("KRAUSS_DEFAULT");
 
-		int now = conn.getCurrentSimStep() * 1000; // time is in ms
+		int now = conn.getCurrentSimTime(); // time is in ms
 
 		/*
 		 * Add one vehicle now and one at a later time.
