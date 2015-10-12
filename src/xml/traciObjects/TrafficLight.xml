@@ -95,8 +95,7 @@
 		<readQuery>
 			<name>ReadAssumedNextSwitchTime</name>
 			<enum>ASSUMED_NEXT_SWITCH_TIME</enum>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_RED_YELLOW_GREEN_STATE
-			</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_NEXT_SWITCH</const>
 			<query>ReadObjectVarQuery.IntegerQ</query>
 			<returnType></returnType>
 			<dynamic>true</dynamic>
@@ -111,8 +110,7 @@
 		<changeStateQuery>
 			<name>ChangePhaseIndex</name>
 			<query>ChangeObjectVarQuery.ChangeIntegerQ</query>
-			<const>it.polito.appeal.traci.protocol.Constants.TL_CURRENT_PHASE
-			</const>
+			<const>it.polito.appeal.traci.protocol.Constants.TL_PHASE_INDEX</const>
 		</changeStateQuery>
 		<changeStateQuery>
 			<name>ChangeProgram</name>
