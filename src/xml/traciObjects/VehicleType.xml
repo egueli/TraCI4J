@@ -14,26 +14,28 @@
 
 	<javadoc>
 	Representation of a class of vehicles in the SUMO environment.
-	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Definition_of_Vehicles,_Vehicle_Types,_and_Routes.html#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/Definition_of_Vehicles,_Vehicle_Types,_and_Routes#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/TraCI/VehicleType_Value_Retrieval"&gt;TraCI documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 
 	<repos>
 	</repos>
-	
-	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE</command>
-  <changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLETYPE_VARIABLE</changeStateCommand>
-	
+
+	<command>it.polito.appeal.traci.protocol.Constants.CMD_GET_VEHICLETYPE_VARIABLE
+	</command>
+	<changeStateCommand>it.polito.appeal.traci.protocol.Constants.CMD_SET_VEHICLETYPE_VARIABLE
+	</changeStateCommand>
+
 	<readQueries>
 		<readQuery>
-			<name>ReadGlobalTravelTime</name>
+			<name>ReadLength</name>
 			<enum>LENGTH</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_LENGTH</const>
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
-		
 		<readQuery>
 			<name>ReadAccel</name>
 			<enum>ACCEL</enum>
@@ -42,7 +44,6 @@
 			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
-		
 		<readQuery>
 			<name>ReadDecel</name>
 			<enum>DECEL</enum>
@@ -51,8 +52,6 @@
 			<returnType>Double</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
-		
-				
 		<readQuery>
 			<name>ReadMaxSpeed</name>
 			<enum>MAXSPEED</enum>
@@ -61,8 +60,6 @@
 			<returnType>Double</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
-		
-		
 		<readQuery>
 			<name>ReadMinGap</name>
 			<enum>MINGAP</enum>
@@ -71,20 +68,17 @@
 			<returnType>Double</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
-		
 	</readQueries>
 
 	<changeStateQueries>
-	
 		<changeStateQuery>
 			<name>ChangeAccel</name>
-      <query>ChangeObjectVarQuery.ChangeDoubleQ</query>
-      <const>it.polito.appeal.traci.protocol.Constants.VAR_ACCEL</const>
-      <affects>
+			<query>ChangeObjectVarQuery.ChangeDoubleQ</query>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_ACCEL</const>
+			<affects>
 				<affect>ReadAccel</affect>
 			</affects>
 		</changeStateQuery>
-	
 		<changeStateQuery>
 			<name>ChangeDecel</name>
 			<query>ChangeDecelQuery</query>
@@ -92,8 +86,6 @@
 				<affect>ReadDecel</affect>
 			</affects>
 		</changeStateQuery>
-		
-		
 		<changeStateQuery>
 			<name>ChangeMaxSpeed</name>
 			<query>ChangeMaxSpeedQuery</query>
@@ -101,7 +93,6 @@
 				<affect>ReadMaxSpeed</affect>
 			</affects>
 		</changeStateQuery>
-		
 		<changeStateQuery>
 			<name>ChangeMinGap</name>
 			<query>ChangeMinGapQuery</query>
@@ -109,6 +100,5 @@
 				<affect>ReadMinGap</affect>
 			</affects>
 		</changeStateQuery>
-	
 	</changeStateQueries>
 </traciClass>

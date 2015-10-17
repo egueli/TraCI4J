@@ -1,5 +1,0 @@
-# Ignore everything in this directory
-# (it will contain auto-generated files, that should not be versioned)
-*
-# Except this file
-!.gitignore

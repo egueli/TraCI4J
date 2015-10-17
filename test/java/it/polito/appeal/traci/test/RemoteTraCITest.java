@@ -26,7 +26,8 @@ import java.net.InetAddress;
 
 import it.polito.appeal.traci.SumoTraciConnection;
 
-import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,15 +35,13 @@ import org.junit.Test;
 @SuppressWarnings("javadoc")
 public class RemoteTraCITest {
 
+	private Logger log = LogManager.getLogger();
+
 	private Process sumoProcess;
 
 	private SumoTraciConnection conn;
 	
 	private static final int PORT = 5450;
-	
-	static {
-		BasicConfigurator.configure();
-	}
 	
 	@Before
 	public void setUp() throws IOException, InterruptedException {
@@ -50,10 +49,14 @@ public class RemoteTraCITest {
 		if (exe == null) {
 			exe = "sumo";
 		}
+
+		if (System.getProperty(SumoTraciConnection.OS_ARCH_PROPERTY).contains("64") && System.getProperty(SumoTraciConnection.OS_NAME_PROPERTY).contains("Win")) {
+			exe += "64";
+		}
 		
 		String[] args = new String[] {
 			exe,
-			"-c", "test/sumo_maps/variable_speed_signs/test.sumo.cfg",
+			"-c", "test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg",
 			"--remote-port", Integer.toString(PORT),
 		};
 		
@@ -64,7 +67,7 @@ public class RemoteTraCITest {
 			throw new IOException("SUMO died with exit value " + exitVal);
 		}
 		catch (IllegalThreadStateException e) {
-			// all OK, it's alive
+			log.debug("All OK, it's alive", e);
 		}
 		
 		conn = new SumoTraciConnection(InetAddress.getLocalHost(), PORT);

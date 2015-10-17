@@ -19,13 +19,15 @@
 
 package it.polito.appeal.traci.test;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.RequestMessage;
-import it.polito.appeal.traci.protocol.ResponseMessage;
 import it.polito.appeal.traci.protocol.ResponseContainer;
+import it.polito.appeal.traci.protocol.ResponseMessage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,11 +37,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.apache.log4j.Logger;
 
 /**
  * Here we verify some assumptions about the TraCI protocol and the behaviour of
@@ -51,7 +53,7 @@ import org.apache.log4j.Logger;
 @SuppressWarnings("javadoc")
 public class TraCIServerTest {
 	
-	private static final int API_VERSION = 6;
+	private static final int API_VERSION = 9;
 
 	/**
 	 * The system property name to get the executable path and name to run.
@@ -66,7 +68,7 @@ public class TraCIServerTest {
 
 	private Process sumoProcess;
 	
-	private static final Logger log = Logger.getLogger(TraCIServerTest.class);
+	private static final Logger log = LogManager.getLogger();
 	
 	@Before
 	public void setUp() throws UnknownHostException, IOException, InterruptedException {
@@ -88,10 +90,14 @@ public class TraCIServerTest {
 		if (sumoEXE == null)
 			sumoEXE = "sumo";
 
+		if (System.getProperty(SumoTraciConnection.OS_ARCH_PROPERTY).contains("64") && System.getProperty(SumoTraciConnection.OS_NAME_PROPERTY).contains("Win")) {
+			sumoEXE += "64";
+		}
+
 		String[] args;
 		args = new String[] { 
 				sumoEXE, 
-				"-c", "test/sumo_maps/box1l/test.sumo.cfg", 
+				"-c", "test/resources/sumo_maps/box1l/test.sumo.cfg", 
 				"--remote-port", Integer.toString(TRACI_PORT)
 				};
 

@@ -14,7 +14,8 @@
 
 	<javadoc>
 	Representation of a route in the SUMO environment.
-	@see &lt;a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Definition_of_Vehicles,_Vehicle_Types,_and_Routes.html#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/Definition_of_Vehicles,_Vehicle_Types,_and_Routes#Vehicle_Types"&gt;SUMO documentation&lt;/a&gt;
+	@see &lt;a href="http://sumo.dlr.de/wiki/TraCI/Route_Value_Retrieval"&gt;TraCI documentation&lt;/a&gt;
 	@author Enrico Gueli &amp;lt;enrico.gueli@polito.it&amp;gt;
 	</javadoc>
 
@@ -29,7 +30,7 @@
 			<enum>ROUTE</enum>
 			<const>it.polito.appeal.traci.protocol.Constants.VAR_EDGES</const>
 			<query>RouteQuery</query>
-			<returnType></returnType>
+			<returnType>java.util.List&lt;Edge&gt;</returnType>
 			<dynamic>false</dynamic>
 		</readQuery>
 	</readQueries>

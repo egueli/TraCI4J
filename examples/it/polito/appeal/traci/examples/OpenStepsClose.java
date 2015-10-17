@@ -24,8 +24,6 @@ import it.polito.appeal.traci.Vehicle;
 
 import java.util.Collection;
 
-import org.apache.log4j.BasicConfigurator;
-
 /**
  * This code picks a vehicle from the active ones and queries its current route.
  * 
@@ -36,8 +34,6 @@ public class OpenStepsClose {
 
 	/** main method */
 	public static void main(String[] args) {
-		BasicConfigurator.configure();
-		
 		SumoTraciConnection conn = new SumoTraciConnection(
 				"test/sumo_maps/box1l/test.sumo.cfg",  // config file
 				12345                                  // random seed
@@ -48,7 +44,7 @@ public class OpenStepsClose {
 			System.out.println("Map bounds are: " + conn.queryBounds());
 			
 			for (int i = 0; i < 10; i++) {
-				int time = conn.getCurrentSimStep();
+				int time = conn.getCurrentSimTime() / 1000;
 				Collection<Vehicle> vehicles = conn.getVehicleRepository().getAll().values();
 				
 				System.out.println("At time step " + time + ", there are "

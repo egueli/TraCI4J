@@ -29,17 +29,17 @@ public class NonzeroBeginTimeTest extends SingleSimTraCITest {
 
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/box1l/test-nonzero-begin-time.sumo.cfg";
+		return "test/resources/sumo_maps/box1l/test-nonzero-begin-time.sumo.cfg";
 	}
 	
 	@Test
 	public void testFirstStep() {
-		assertEquals(50000, conn.getCurrentSimStep());
+		assertEquals(50000000, conn.getCurrentSimTime());
 	}
 	
 	@Test
 	public void testNextStep() throws IllegalStateException, IOException {
 		conn.nextSimStep();
-		assertEquals(50001, conn.getCurrentSimStep());
+		assertEquals(50001000, conn.getCurrentSimTime());
 	}
 }

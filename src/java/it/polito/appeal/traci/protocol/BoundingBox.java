@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci.protocol;
 
@@ -33,14 +33,17 @@ import de.uniluebeck.itm.tcpip.Storage;
 
 /**
  * Represents a bounding box in the SUMO world.
- * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Protocol.html#Boundary_Box_.28ubyte_identifier:_0x05.29">TraCI docs</a> 
+ * 
+ * @see <a
+ *      href="http://sumo.sourceforge.net/doc/current/docs/userdoc/TraCI/Protocol.html#Boundary_Box_.28ubyte_identifier:_0x05.29">TraCI
+ *      docs</a>
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
 public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	private final Rectangle2D.Double rect;
-	
+
 	/**
 	 * Constructor from a {@link Storage} object.
 	 * 
@@ -50,7 +53,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 *            a {@link TraCIException}.
 	 * @throws TraCIException
 	 */
-	public BoundingBox(Storage storage, boolean verifyType) throws TraCIException {
+	public BoundingBox(Storage storage, boolean verifyType)
+			throws TraCIException {
 		if (verifyType) {
 			if (storage.readByte() != Constants.TYPE_BOUNDINGBOX)
 				throw new TraCIException("bounding box expected");
@@ -60,11 +64,10 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 		double llY = storage.readDouble();
 		double urX = storage.readDouble();
 		double urY = storage.readDouble();
-		
+
 		rect = new Rectangle2D.Double(llX, llY, urX - llX, urY - llY);
 	}
-	
-	@Override
+
 	public void writeTo(Storage out, boolean withTypeID) {
 		if (withTypeID)
 			out.writeByte(Constants.TYPE_BOUNDINGBOX);
@@ -74,7 +77,6 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 		out.writeDouble(rect.y + rect.height);
 	}
 
-	
 	/**
 	 * @param newx
 	 * @param newy
@@ -101,7 +103,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#clone()
 	 */
 	public Object clone() {
@@ -113,7 +115,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 * @param y
 	 * @param w
 	 * @param h
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#contains(double, double, double, double)
 	 */
 	public boolean contains(double x, double y, double w, double h) {
@@ -123,7 +125,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param x
 	 * @param y
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#contains(double, double)
 	 */
 	public boolean contains(double x, double y) {
@@ -132,7 +134,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param arg0
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#contains(java.awt.geom.Point2D)
 	 */
 	public boolean contains(Point2D arg0) {
@@ -141,7 +143,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param arg0
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#contains(java.awt.geom.Rectangle2D)
 	 */
 	public boolean contains(Rectangle2D arg0) {
@@ -150,7 +152,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param r
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#createIntersection(java.awt.geom.Rectangle2D)
 	 */
 	public Rectangle2D createIntersection(Rectangle2D r) {
@@ -159,7 +161,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param r
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#createUnion(java.awt.geom.Rectangle2D)
 	 */
 	public Rectangle2D createUnion(Rectangle2D r) {
@@ -168,7 +170,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param obj
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
@@ -176,7 +178,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getBounds()
 	 */
 	public Rectangle getBounds() {
@@ -184,7 +186,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#getBounds2D()
 	 */
 	public Rectangle2D getBounds2D() {
@@ -192,7 +194,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getCenterX()
 	 */
 	public double getCenterX() {
@@ -200,7 +202,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getCenterY()
 	 */
 	public double getCenterY() {
@@ -208,7 +210,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getFrame()
 	 */
 	public Rectangle2D getFrame() {
@@ -216,7 +218,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getHeight()
 	 */
 	public double getHeight() {
@@ -224,7 +226,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getMaxX()
 	 */
 	public double getMaxX() {
@@ -232,7 +234,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getMaxY()
 	 */
 	public double getMaxY() {
@@ -240,7 +242,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getMinX()
 	 */
 	public double getMinX() {
@@ -248,7 +250,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getMinY()
 	 */
 	public double getMinY() {
@@ -258,8 +260,9 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param at
 	 * @param flatness
-
-	 * @see java.awt.geom.Rectangle2D#getPathIterator(java.awt.geom.AffineTransform, double)
+	 * 
+	 * @see java.awt.geom.Rectangle2D#getPathIterator(java.awt.geom.AffineTransform,
+	 *      double)
 	 */
 	public PathIterator getPathIterator(AffineTransform at, double flatness) {
 		return rect.getPathIterator(at, flatness);
@@ -267,7 +270,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param at
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#getPathIterator(java.awt.geom.AffineTransform)
 	 */
 	public PathIterator getPathIterator(AffineTransform at) {
@@ -275,7 +278,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getWidth()
 	 */
 	public double getWidth() {
@@ -283,7 +286,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getX()
 	 */
 	public double getX() {
@@ -291,7 +294,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#getY()
 	 */
 	public double getY() {
@@ -299,7 +302,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#hashCode()
 	 */
 	public int hashCode() {
@@ -311,7 +314,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 * @param y
 	 * @param w
 	 * @param h
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#intersects(double, double, double, double)
 	 */
 	public boolean intersects(double x, double y, double w, double h) {
@@ -320,7 +323,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param arg0
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#intersects(java.awt.geom.Rectangle2D)
 	 */
 	public boolean intersects(Rectangle2D arg0) {
@@ -332,8 +335,9 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 * @param y1
 	 * @param x2
 	 * @param y2
-
-	 * @see java.awt.geom.Rectangle2D#intersectsLine(double, double, double, double)
+	 * 
+	 * @see java.awt.geom.Rectangle2D#intersectsLine(double, double, double,
+	 *      double)
 	 */
 	public boolean intersectsLine(double x1, double y1, double x2, double y2) {
 		return rect.intersectsLine(x1, y1, x2, y2);
@@ -341,7 +345,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param l
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#intersectsLine(java.awt.geom.Line2D)
 	 */
 	public boolean intersectsLine(Line2D l) {
@@ -349,7 +353,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.awt.geom.RectangularShape#isEmpty()
 	 */
 	public boolean isEmpty() {
@@ -359,7 +363,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param x
 	 * @param y
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#outcode(double, double)
 	 */
 	public int outcode(double x, double y) {
@@ -368,7 +372,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 
 	/**
 	 * @param p
-
+	 * 
 	 * @see java.awt.geom.Rectangle2D#outcode(java.awt.geom.Point2D)
 	 */
 	public int outcode(Point2D p) {
@@ -389,7 +393,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param arg0
 	 * @param arg1
-	 * @see java.awt.geom.RectangularShape#setFrame(java.awt.geom.Point2D, java.awt.geom.Dimension2D)
+	 * @see java.awt.geom.RectangularShape#setFrame(java.awt.geom.Point2D,
+	 *      java.awt.geom.Dimension2D)
 	 */
 	public void setFrame(Point2D arg0, Dimension2D arg1) {
 		rect.setFrame(arg0, arg1);
@@ -408,7 +413,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 * @param arg1
 	 * @param arg2
 	 * @param arg3
-	 * @see java.awt.geom.RectangularShape#setFrameFromCenter(double, double, double, double)
+	 * @see java.awt.geom.RectangularShape#setFrameFromCenter(double, double,
+	 *      double, double)
 	 */
 	public void setFrameFromCenter(double arg0, double arg1, double arg2,
 			double arg3) {
@@ -418,7 +424,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param arg0
 	 * @param arg1
-	 * @see java.awt.geom.RectangularShape#setFrameFromCenter(java.awt.geom.Point2D, java.awt.geom.Point2D)
+	 * @see java.awt.geom.RectangularShape#setFrameFromCenter(java.awt.geom.Point2D,
+	 *      java.awt.geom.Point2D)
 	 */
 	public void setFrameFromCenter(Point2D arg0, Point2D arg1) {
 		rect.setFrameFromCenter(arg0, arg1);
@@ -429,7 +436,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	 * @param arg1
 	 * @param arg2
 	 * @param arg3
-	 * @see java.awt.geom.RectangularShape#setFrameFromDiagonal(double, double, double, double)
+	 * @see java.awt.geom.RectangularShape#setFrameFromDiagonal(double, double,
+	 *      double, double)
 	 */
 	public void setFrameFromDiagonal(double arg0, double arg1, double arg2,
 			double arg3) {
@@ -439,7 +447,8 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	/**
 	 * @param arg0
 	 * @param arg1
-	 * @see java.awt.geom.RectangularShape#setFrameFromDiagonal(java.awt.geom.Point2D, java.awt.geom.Point2D)
+	 * @see java.awt.geom.RectangularShape#setFrameFromDiagonal(java.awt.geom.Point2D,
+	 *      java.awt.geom.Point2D)
 	 */
 	public void setFrameFromDiagonal(Point2D arg0, Point2D arg1) {
 		rect.setFrameFromDiagonal(arg0, arg1);
@@ -465,7 +474,7 @@ public class BoundingBox extends Rectangle2D implements WriteableToStorage {
 	}
 
 	/**
-
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

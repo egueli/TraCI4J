@@ -15,12 +15,9 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci;
-
-import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
-import it.polito.appeal.traci.protocol.Constants;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -39,11 +36,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
+
+import it.polito.appeal.traci.ReadObjectVarQuery.StringListQ;
+import it.polito.appeal.traci.StreamLogger.StreamLoggerTyp;
+import it.polito.appeal.traci.protocol.Constants;
 
 /**
  * Models a TCP/IP connection to a local or remote SUMO server via the TraCI
@@ -83,21 +86,25 @@ public class SumoTraciConnection {
 	 */
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
-    /**
-     * The system property name to get user defined tcp_nodedelay for the tcp socket.
-     */
-    public static final String TCP_NODELAY_PROPERTY = "it.polito.appeal.traci.tcp_nodelay";
+	public static final String OS_ARCH_PROPERTY = "os.arch";
+	public static final String OS_NAME_PROPERTY = "os.name";
 
-	private static final Logger log = Logger.getLogger(SumoTraciConnection.class);
+	/**
+	 * The system property name to get user defined tcp_nodedelay for the tcp
+	 * socket.
+	 */
+	public static final String TCP_NODELAY_PROPERTY = "it.polito.appeal.traci.tcp_nodelay";
+
+	private static final Logger log = LogManager.getLogger();
 
 	private String configFile;
 	private int randomSeed;
 	private Socket socket;
-	
-	/** The current simulation step, in seconds. */
+
+	/** The current simulation step, in ms. */
 	private int currentSimStep;
 	private Process sumoProcess;
-	
+
 	private static final int CONNECT_RETRIES = 9;
 
 	private CloseQuery closeQuery;
@@ -105,22 +112,22 @@ public class SumoTraciConnection {
 	private SumoHttpRetriever httpRetriever;
 
 	private List<String> args = new ArrayList<String>();
-	
+
 	private DataInputStream dis;
 	private DataOutputStream dos;
-	
+
 	private final Set<StepAdvanceListener> stepAdvanceListeners = new HashSet<StepAdvanceListener>();
 
 	private final Set<VehicleLifecycleObserver> vehicleLifecycleObservers = new HashSet<VehicleLifecycleObserver>();
-	
+
 	private Map<String, Vehicle> vehicles;
 	private StringListQ vehicleListQuery;
 	private Set<String> vehicleListBefore;
-	
+
 	private AddVehicleQuery addVehicleQuery;
 	private RemoveVehicleQuery removeVehicleQuery;
 	private AddRouteQuery addRouteQuery;
-	
+
 	private Repository.Edges edgeRepo;
 	private Repository.Lanes laneRepo;
 	private Repository.Vehicles vehicleRepo;
@@ -129,18 +136,24 @@ public class SumoTraciConnection {
 	private Repository.TrafficLights trafficLightRepo;
 	private Repository.VehicleTypes vehicleTypeRepo;
 	private Repository.MeMeDetectors memeDetectorRepo;
+	private Repository.LaArDetectors laarDetectorRepo;
 	private Repository.Routes routeRepo;
+
+	/**
+	 * Duration of a step in ms
+	 */
+	private int steplength = 1000;
 
 	/*
 	 * TODO add repositories for remaining SUMO object classes
 	 */
-	
+
 	private SimulationData simData;
 
-	
 	/**
-	 * Creates an instance of this class that runs an own instance of SUMO.
-	 * The constructor won't run SUMO immediately; for that, call {@link #runServer()}.
+	 * Creates an instance of this class that runs an own instance of SUMO. The
+	 * constructor won't run SUMO immediately; for that, call
+	 * {@link #runServer()}.
 	 * 
 	 * @param configFile
 	 *            the file name of the SUMO XML configuration file
@@ -173,17 +186,17 @@ public class SumoTraciConnection {
 	 *            config file or, if absent, the system time
 	 */
 	@Deprecated
-	public SumoTraciConnection(String configFile, int randomSeed,
-			boolean useGeoOffset) {
+	public SumoTraciConnection(String configFile, int randomSeed, boolean useGeoOffset) {
 		this(configFile, randomSeed);
 	}
 
-	
 	/**
 	 * Creates an instance of this class and connects to a running instance of
 	 * SUMO.
 	 * 
-	 * <br/><br/> Note that TCP_NODELAY on the socket connection to SUMO will be
+	 * <br/>
+	 * <br/>
+	 * Note that TCP_NODELAY on the socket connection to SUMO will be
 	 * <b>enabled</b> by default. You can modify this behaviour later before the
 	 * call to <code>runServer()</code>.
 	 * 
@@ -195,12 +208,11 @@ public class SumoTraciConnection {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public SumoTraciConnection(InetAddress addr, int port) throws IOException,
-			InterruptedException {
+	public SumoTraciConnection(InetAddress addr, int port) throws IOException, InterruptedException {
 
-	   // Set TCP_NODELAY as enabled by default.
-	   enableTcpNoDelay();
-	   
+		// Set TCP_NODELAY as enabled by default.
+		enableTcpNoDelay();
+
 		tryConnect(addr, port, null);
 		postConnect();
 	}
@@ -220,35 +232,57 @@ public class SumoTraciConnection {
 		if (value != null)
 			args.add(value);
 	}
-	
+
 	/**
 	 * Runs a SUMO instance and tries to connect at it.
 	 * 
 	 * @throws IOException
 	 *             if something wrong occurs while starting SUMO or connecting
 	 *             at it.
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
+	 * 
+	 * @see {@link #runServer(boolean)}
 	 */
 	public void runServer() throws IOException, InterruptedException {
-		retrieveFromURLs();		
-		
+		runServer(false);
+	}
+
+	/**
+	 * Runs a SUMO instance and tries to connect at it.
+	 * 
+	 * @param withGui
+	 *            Start sumo with gui or not
+	 * @throws IOException
+	 *             if something wrong occurs while starting SUMO or connecting
+	 *             at it.
+	 * @throws InterruptedException
+	 * 
+	 * @see {@link #runServer()}
+	 */
+	public void runServer(boolean withGui) throws IOException, InterruptedException {
+		retrieveFromURLs();
+
 		int port = findAvailablePort();
 
-		runSUMO(port);
+		runSUMO(port, withGui);
 
 		tryConnect(InetAddress.getLocalHost(), port, sumoProcess);
 		postConnect();
 
 	}
-	
+
 	/**
 	 * Tries to connect to the TraCI server reachable at the given address and
 	 * TCP port. If also specified, checks that the SUMO process is present.
-	 * @param addr the address of the TraCI server
-	 * @param port the TCP port of the TraCI server
-	 * @param process a reference to a {@link Process} object representing SUMO
-	 * @throws IOException 
-	 * @throws InterruptedException 
+	 * 
+	 * @param addr
+	 *            the address of the TraCI server
+	 * @param port
+	 *            the TCP port of the TraCI server
+	 * @param process
+	 *            a reference to a {@link Process} object representing SUMO
+	 * @throws IOException
+	 * @throws InterruptedException
 	 */
 	private void tryConnect(InetAddress addr, int port, Process process) throws IOException, InterruptedException {
 		int waitTime = 500; // milliseconds
@@ -256,11 +290,9 @@ public class SumoTraciConnection {
 			if (process != null) {
 				try {
 					int retVal = process.exitValue();
-					throw new IOException(
-							"SUMO process terminated unexpectedly with value "
-							+ retVal);
+					throw new IOException("SUMO process terminated unexpectedly with value " + retVal);
 				} catch (IllegalThreadStateException e) {
-					// it's alive, go ahead.
+					log.debug("It's alive, go ahead", e);
 				}
 			}
 
@@ -270,8 +302,7 @@ public class SumoTraciConnection {
 			if (tryConnectOnce(addr, port)) {
 				log.info("Connection to SUMO established.");
 				break;
-			}
-			else {
+			} else {
 				log.debug("Server not ready, retrying in " + waitTime + "ms");
 				Thread.sleep(waitTime);
 				waitTime *= 2;
@@ -289,126 +320,117 @@ public class SumoTraciConnection {
 	 * 
 	 * @return true if active and false otherwise.
 	 */
-	public boolean isTcpNoDelayActive()
-   {
-      return Boolean.getBoolean(TCP_NODELAY_PROPERTY);
-   }
-   
-	/**
-    * Enables TCP_NODELAY in the socket connection to SUMO
-    */
-   public void enableTcpNoDelay()
-   {
-      setTcpNoDelay(true);      
-   }
-   
-   /**
-    * Disables TCP_NODELAY in the socket connection to SUMO
-    */
-   public void disableTcpNoDelay()
-   {
-      setTcpNoDelay(false);
-   }
-   
-   /**
-    * Forcibly set TCP_NODELAY_PROPERTY
-    *  
-    * @param on If true TCP_NODELAY will be turned on. Else turned off.
-    */
-   public void setTcpNoDelay(boolean on)
-   {
-      System.setProperty(TCP_NODELAY_PROPERTY, String.valueOf(on));
-   }
-   
-	private boolean tryConnectOnce(InetAddress addr, int port)
-	      throws UnknownHostException, IOException
-   {
-	  boolean tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
-
-	  socket = new Socket();
-	  socket.setTcpNoDelay(tcpNoDelay);
-	  
-	  try {
-	    socket.connect(new InetSocketAddress(addr, port));
-	    return true;
-	  } catch (ConnectException ce) {
-	    return false;
-	  }
+	public boolean isTcpNoDelayActive() {
+		return Boolean.getBoolean(TCP_NODELAY_PROPERTY);
 	}
-	
+
+	/**
+	 * Enables TCP_NODELAY in the socket connection to SUMO
+	 */
+	public void enableTcpNoDelay() {
+		setTcpNoDelay(true);
+	}
+
+	/**
+	 * Disables TCP_NODELAY in the socket connection to SUMO
+	 */
+	public void disableTcpNoDelay() {
+		setTcpNoDelay(false);
+	}
+
+	/**
+	 * Forcibly set TCP_NODELAY_PROPERTY
+	 * 
+	 * @param on
+	 *            If true TCP_NODELAY will be turned on. Else turned off.
+	 */
+	public void setTcpNoDelay(boolean on) {
+		System.setProperty(TCP_NODELAY_PROPERTY, String.valueOf(on));
+	}
+
+	private boolean tryConnectOnce(InetAddress addr, int port) throws UnknownHostException, IOException {
+		boolean tcpNoDelay = Boolean.getBoolean(TCP_NODELAY_PROPERTY);
+
+		socket = new Socket();
+		socket.setTcpNoDelay(tcpNoDelay);
+
+		try {
+			socket.connect(new InetSocketAddress(addr, port));
+			return true;
+		} catch (ConnectException ce) {
+			log.debug(ce);
+			return false;
+		}
+	}
+
 	private void postConnect() throws IOException {
 		dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
 		closeQuery = new CloseQuery(dis, dos);
 		simData = new SimulationData(dis, dos);
-		
-		currentSimStep = simData.queryCurrentSimTime().get() / 1000;
-		
+
+		currentSimStep = simData.queryCurrentSimTime().get();
+
 		vehicles = new HashMap<String, Vehicle>();
-		
-		edgeRepo = new Repository.Edges(dis, dos, 
-				newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
+
+		edgeRepo = new Repository.Edges(dis, dos, newIDListQuery(Constants.CMD_GET_EDGE_VARIABLE));
 		addStepAdvanceListener(edgeRepo);
-		
-		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, 
-				newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
-		
+
+		laneRepo = new Repository.Lanes(dis, dos, edgeRepo, newIDListQuery(Constants.CMD_GET_LANE_VARIABLE));
+
 		vehicleListQuery = newIDListQuery(Constants.CMD_GET_VEHICLE_VARIABLE);
 		addStepAdvanceListener(new StepAdvanceListener() {
-			@Override
 			public void nextStep(double step) {
 				vehicleListQuery.setObsolete();
 			}
 		});
 		vehicleListBefore = new HashSet<String>(vehicleListQuery.get());
-		
-		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo,
-				vehicles, vehicleListQuery);
+
+		vehicleRepo = new Repository.Vehicles(dis, dos, edgeRepo, laneRepo, vehicles, vehicleListQuery);
 		addStepAdvanceListener(vehicleRepo);
 
 		addVehicleQuery = new AddVehicleQuery(dis, dos, vehicleRepo);
-		
+
 		removeVehicleQuery = new RemoveVehicleQuery(dis, dos);
-		
-		poiRepo = new Repository.POIs(dis, dos,
-				newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
-		
-		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo,
-				vehicleRepo,
+
+		poiRepo = new Repository.POIs(dis, dos, newIDListQuery(Constants.CMD_GET_POI_VARIABLE));
+
+		inductionLoopRepo = new Repository.InductionLoops(dis, dos, laneRepo, vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_INDUCTIONLOOP_VARIABLE));
 		addStepAdvanceListener(inductionLoopRepo);
-		
+
 		trafficLightRepo = new Repository.TrafficLights(dis, dos, laneRepo,
 				newIDListQuery(Constants.CMD_GET_TL_VARIABLE));
 		addStepAdvanceListener(trafficLightRepo);
-		
-		vehicleTypeRepo = new Repository.VehicleTypes(dis, dos, 
-				newIDListQuery(Constants.CMD_GET_VEHICLETYPE_VARIABLE));
-		
-		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo, 
+
+		vehicleTypeRepo = new Repository.VehicleTypes(dis, dos, newIDListQuery(Constants.CMD_GET_VEHICLETYPE_VARIABLE));
+
+		memeDetectorRepo = new Repository.MeMeDetectors(dis, dos, vehicleRepo,
 				newIDListQuery(Constants.CMD_GET_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE));
 		addStepAdvanceListener(memeDetectorRepo);
-		
-		routeRepo = new Repository.Routes(dis, dos, edgeRepo, 
-				newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
-		
+
+		laarDetectorRepo = new Repository.LaArDetectors(dis, dos, laneRepo, vehicleRepo,
+				newIDListQuery(Constants.CMD_GET_LANE_AREA_DETECTOR_VARIABLE));
+		addStepAdvanceListener(laarDetectorRepo);
+
+		routeRepo = new Repository.Routes(dis, dos, edgeRepo, newIDListQuery(Constants.CMD_GET_ROUTE_VARIABLE));
+
 		addRouteQuery = new AddRouteQuery(dis, dos, routeRepo);
-		
+
 		/*
 		 * TODO add initializers for remaining repositories
 		 */
-		
+
 	}
 
 	private StringListQ newIDListQuery(final int command) {
-		return new StringListQ(dis, dos,
-				command, "", Constants.ID_LIST);
+		return new StringListQ(dis, dos, command, "", Constants.ID_LIST);
 	}
 
 	private void retrieveFromURLs() throws IOException {
 		if (configFile.startsWith("http://")) {
-			
+
 			httpRetriever = new SumoHttpRetriever(configFile);
 
 			log.info("Downloading config file from " + configFile);
@@ -417,27 +439,36 @@ public class SumoTraciConnection {
 			} catch (SAXException e) {
 				throw new IOException(e);
 			}
-			
+
 			configFile = httpRetriever.getConfigFileName();
 		}
-			
+
 	}
 
-	private void runSUMO(int remotePort) throws IOException {
+	private void runSUMO(int remotePort, boolean withGui) throws IOException {
 		String sumoEXE = System.getProperty(SUMO_EXE_PROPERTY);
 		if (sumoEXE == null)
 			sumoEXE = "sumo";
 
+		if (withGui)
+			sumoEXE += "-gui";
+
+		// only on windows x64 (since version 0.23.0)
+		if (System.getProperty(OS_ARCH_PROPERTY).contains("64") && System.getProperty(OS_NAME_PROPERTY).contains("Win"))
+			sumoEXE += "64";
+
 		args.add(0, sumoEXE);
-		
-		args.add("-c");
-		args.add(configFile);
-		args.add("--remote-port");
-		args.add(Integer.toString(remotePort));
-		
+		args.add(1, "-c");
+		args.add(2, configFile);
+		args.add(3, "--remote-port");
+		args.add(4, Integer.toString(remotePort));
+		args.add(5, "--step-length");
+
+		args.add(6, String.format(Locale.ENGLISH, "%.3f", (double) steplength / 1000));
+
 		if (randomSeed != -1) {
-			args.add("--seed");
-			args.add(Integer.toString(randomSeed));
+			args.add(7, "--seed");
+			args.add(8, Integer.toString(randomSeed));
 		}
 
 		if (log.isDebugEnabled())
@@ -447,11 +478,10 @@ public class SumoTraciConnection {
 		args.toArray(argsArray);
 		sumoProcess = Runtime.getRuntime().exec(argsArray);
 
-		// String logProcessName = SUMO_EXE.substring(SUMO_EXE.lastIndexOf("\\")
-		// + 1);
-
-		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO-err:", log);
-		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO-out:", log);
+		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO", log,
+				StreamLoggerTyp.ERROR);
+		StreamLogger outStreamLogger = new StreamLogger(sumoProcess.getInputStream(), "SUMO", log,
+				StreamLoggerTyp.INFO);
 		new Thread(errStreamLogger, "StreamLogger-SUMO-err").start();
 		new Thread(outStreamLogger, "StreamLogger-SUMO-out").start();
 	}
@@ -464,8 +494,7 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * Closes the connection, quits the simulator and frees any stale
-	 * resources.
+	 * Closes the connection, quits the simulator and frees any stale resources.
 	 * <p>
 	 * NOTE: this method must be called when any of the methods throw an
 	 * exception, to allow to free all resources.
@@ -492,21 +521,22 @@ public class SumoTraciConnection {
 			}
 			socket = null;
 		}
-		
+
 		if (sumoProcess != null) {
 			sumoProcess.waitFor();
 			sumoProcess = null;
 		}
-		
+
 		if (httpRetriever != null)
 			httpRetriever.close();
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the connection was closed by the user.
 	 * <p>
 	 * NOTE: it may not return <code>true</code> if an error occurred and the
 	 * connection with SUMO is broken.
+	 * 
 	 * @see #close()
 	 */
 	public boolean isClosed() {
@@ -524,7 +554,7 @@ public class SumoTraciConnection {
 	public Rectangle2D queryBounds() throws IOException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
-	
+
 		return getSimulationData().queryNetBoundaries().get();
 	}
 
@@ -540,14 +570,14 @@ public class SumoTraciConnection {
 	public void nextSimStep() throws IOException, IllegalStateException {
 		if (isClosed())
 			throw new IllegalStateException("connection is closed");
-		
-		currentSimStep++;
+
+		currentSimStep += steplength;
 
 		/*
 		 * forces querying of vehicle IDs when requested
 		 */
-		simData.nextStep(currentSimStep * 1000);
-		
+		simData.nextStep(currentSimStep);
+
 		/*
 		 * constructs a multi-query that advances one step, reads the list of
 		 * active vehicles, the list of teleport-starting and teleport-ending
@@ -557,18 +587,16 @@ public class SumoTraciConnection {
 		MultiQuery multi = new MultiQuery(dos, dis);
 		{ // begin multi-query
 			SimStepQuery ssq = new SimStepQuery(dis, dos);
-			ssq.setTargetTime(currentSimStep * 1000);
+			ssq.setTargetTime(currentSimStep);
 			multi.add(ssq);
 
 			multi.add(vehicleListQuery);
 
-			teleportStartQ = new StringListQ(dis, dos,
-					Constants.CMD_GET_SIM_VARIABLE, "",
+			teleportStartQ = new StringListQ(dis, dos, Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_STARTING_VEHICLES_IDS);
 			multi.add(teleportStartQ);
 
-			teleportEndQ = new StringListQ(dis, dos,
-					Constants.CMD_GET_SIM_VARIABLE, "",
+			teleportEndQ = new StringListQ(dis, dos, Constants.CMD_GET_SIM_VARIABLE, "",
 					Constants.VAR_TELEPORT_ENDING_VEHICLES_IDS);
 			multi.add(teleportEndQ);
 		} // end multi-query
@@ -579,23 +607,23 @@ public class SumoTraciConnection {
 		 */
 		List<String> teleportStart = teleportStartQ.get();
 		List<String> teleportEnd = teleportEndQ.get();
-		
+
 		Set<String> vehicleListAfter = new HashSet<String>(vehicleListQuery.get());
 
 		Set<String> departedIDs = Utils.getAddedItems(vehicleListBefore, vehicleListAfter);
 		departedIDs.removeAll(teleportEnd);
-		
+
 		Set<String> arrivedIDs = Utils.getRemovedItems(vehicleListBefore, vehicleListAfter);
 		arrivedIDs.removeAll(teleportStart);
-		
+
 		/*
 		 * now update the vehicles map and notify listeners
 		 */
-		
+
 		for (String arrivedID : arrivedIDs) {
 			Vehicle arrived = vehicles.remove(arrivedID);
-			if(log.isDebugEnabled())
-				log.debug(" arrivedID = "+arrivedID+" Vehicle = "+arrived);
+			if (log.isDebugEnabled())
+				log.debug(" arrivedID = " + arrivedID + " Vehicle = " + arrived);
 			removeStepAdvanceListener(arrived);
 			for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
 				observer.vehicleArrived(arrived);
@@ -603,8 +631,8 @@ public class SumoTraciConnection {
 		}
 		for (String departedID : departedIDs) {
 			Vehicle departed = new Vehicle(dis, dos, departedID, edgeRepo, laneRepo);
-			if(log.isDebugEnabled())
-				log.debug(" departedID = "+departedID+" Vehicle = "+departed);
+			if (log.isDebugEnabled())
+				log.debug(" departedID = " + departedID + " Vehicle = " + departed);
 			addStepAdvanceListener(departed);
 			vehicles.put(departedID, departed);
 		}
@@ -613,44 +641,42 @@ public class SumoTraciConnection {
 				observer.vehicleDeparted(vehicles.get(departedID));
 			}
 		}
-		
+
 		for (VehicleLifecycleObserver observer : vehicleLifecycleObservers) {
-			
+
 			for (String teleportStarting : teleportStart) {
 				Vehicle vehicle = vehicles.get(teleportStarting);
-				if (vehicle != null){
-					if(log.isDebugEnabled())
-						log.debug(" Vehicle "+teleportStarting+" started teleporting.");
+				if (vehicle != null) {
+					if (log.isDebugEnabled())
+						log.debug(" Vehicle " + teleportStarting + " started teleporting.");
 					observer.vehicleTeleportStarting(vehicle);
-				}
-				else
-					log.warn(" Teleporting vehicle "+teleportStarting+" not found!");
+				} else
+					log.warn(" Teleporting vehicle " + teleportStarting + " not found!");
 			}
 			for (String teleportEnding : teleportEnd) {
 				Vehicle vehicle = vehicles.get(teleportEnding);
-				if (vehicle != null){
-					if(log.isDebugEnabled())
-						log.debug(" Vehicle "+teleportEnding+" ended teleporting.");
+				if (vehicle != null) {
+					if (log.isDebugEnabled())
+						log.debug(" Vehicle " + teleportEnding + " ended teleporting.");
 					observer.vehicleTeleportEnding(vehicle);
-				}
-				else
-					log.warn(" Teleporting vehicle "+teleportEnding+" not found!");
+				} else
+					log.warn(" Teleporting vehicle " + teleportEnding + " not found!");
 			}
 		}
-		
+
 		/*
 		 * notify any interested listener that we advances one step
 		 */
 		for (StepAdvanceListener listener : stepAdvanceListeners)
 			listener.nextStep(currentSimStep);
-		
+
 		vehicleListBefore = vehicleListAfter;
 	}
 
 	/**
-	 * Returns the current simulation step number.
+	 * Returns the current simulation step time in ms.
 	 */
-	public int getCurrentSimStep() {
+	public int getCurrentSimTime() {
 		return currentSimStep;
 	}
 
@@ -661,7 +687,7 @@ public class SumoTraciConnection {
 	public Repository<Vehicle> getVehicleRepository() {
 		return vehicleRepo;
 	}
-	
+
 	/**
 	 * 
 	 * @return an {@link AddVehicleQuery} that allows to add vehicles into the
@@ -670,7 +696,7 @@ public class SumoTraciConnection {
 	public AddVehicleQuery queryAddVehicle() {
 		return addVehicleQuery;
 	}
-	
+
 	/**
 	 * 
 	 * @return a {@link RemoveVehicleQuery} that allows to remove a vehicle into
@@ -679,16 +705,16 @@ public class SumoTraciConnection {
 	public RemoveVehicleQuery queryRemoveVehicle() {
 		return removeVehicleQuery;
 	}
-	
+
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the edges the network is made
-	 *         of.
+	 * @return the {@link Repository} containing all the edges the network is
+	 *         made of.
 	 */
 	public Repository<Edge> getEdgeRepository() {
 		return edgeRepo;
 	}
-	
+
 	/**
 	 * 
 	 * @return the {@link SimulationData} object that provides global info about
@@ -697,16 +723,16 @@ public class SumoTraciConnection {
 	public SimulationData getSimulationData() {
 		return simData;
 	}
-	
+
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the lanes the network is made
-	 *         of.
+	 * @return the {@link Repository} containing all the lanes the network is
+	 *         made of.
 	 */
 	public Repository<Lane> getLaneRepository() {
 		return laneRepo;
 	}
-	
+
 	/**
 	 * 
 	 * @return the {@link Repository} containing all the POIs in the network.
@@ -714,31 +740,34 @@ public class SumoTraciConnection {
 	public Repository<POI> getPOIRepository() {
 		return poiRepo;
 	}
-	
+
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the induction loops in the network.
+	 * @return the {@link Repository} containing all the induction loops in the
+	 *         network.
 	 */
 	public Repository<InductionLoop> getInductionLoopRepository() {
 		return inductionLoopRepo;
 	}
-	
+
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the traffic lights in the network.
+	 * @return the {@link Repository} containing all the traffic lights in the
+	 *         network.
 	 */
 	public Repository<TrafficLight> getTrafficLightRepository() {
 		return trafficLightRepo;
 	}
-	
+
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the known vehicle types in the simulation.
+	 * @return the {@link Repository} containing all the known vehicle types in
+	 *         the simulation.
 	 */
 	public Repository<VehicleType> getVehicleTypeRepository() {
 		return vehicleTypeRepo;
 	}
-	
+
 	/**
 	 * 
 	 * @return the {@link Repository} containing all the multi-entry/multi-exit
@@ -747,7 +776,16 @@ public class SumoTraciConnection {
 	public Repository<MeMeDetector> getMeMeDetectorRepository() {
 		return memeDetectorRepo;
 	}
-	
+
+	/**
+	 * 
+	 * @return the {@link Repository} containing all the lane area detectors in
+	 *         the network.
+	 */
+	public Repository<LaArDetector> getLaArDetectorRepository() {
+		return laarDetectorRepo;
+	}
+
 	/**
 	 * 
 	 * @return an {@link AddVehicleQuery} that allows to add vehicles into the
@@ -757,20 +795,20 @@ public class SumoTraciConnection {
 		return addRouteQuery;
 	}
 
-	
 	/**
 	 * 
-	 * @return the {@link Repository} containing all the known routes in the simulation.
+	 * @return the {@link Repository} containing all the known routes in the
+	 *         simulation.
 	 */
 	public Repository<Route> getRouteRepository() {
 		return routeRepo;
 	}
-	
+
 	/*
-	 * TODO add repository getters (in the form of getXXXXRepository())
-	 * for remaining SUMO object classes
+	 * TODO add repository getters (in the form of getXXXXRepository()) for
+	 * remaining SUMO object classes
 	 */
-	
+
 	/**
 	 * Allows a {@link VehicleLifecycleObserver}-implementing object to be
 	 * notified about vehicles' creation and destruction.
@@ -786,7 +824,7 @@ public class SumoTraciConnection {
 	public void removeVehicleLifecycleObserver(VehicleLifecycleObserver observer) {
 		vehicleLifecycleObservers.remove(observer);
 	}
-	
+
 	/**
 	 * Registers a listener for any simulation step advancements.
 	 * 
@@ -795,7 +833,7 @@ public class SumoTraciConnection {
 	public void addStepAdvanceListener(StepAdvanceListener listener) {
 		stepAdvanceListeners.add(listener);
 	}
-	
+
 	/**
 	 * Un-registers a listener for any simulation step advancements.
 	 * 
@@ -806,7 +844,8 @@ public class SumoTraciConnection {
 	}
 
 	/**
-	 * @return a new instance of {@link MultiQuery} bound to this server connection.
+	 * @return a new instance of {@link MultiQuery} bound to this server
+	 *         connection.
 	 */
 	public MultiQuery makeMultiQuery() {
 		return new MultiQuery(dos, dis);
@@ -819,30 +858,40 @@ public class SumoTraciConnection {
 	public PositionConversionQuery queryPositionConversion() {
 		return simData.queryPositionConversion();
 	}
-	
+
+	/**
+	 * Set the duration of a step
+	 * 
+	 * @param length
+	 *            the time in ms
+	 */
+	public void setStepLength(int steplength) {
+		this.steplength = steplength;
+	}
+
 	/**
 	 * If set to true, the roadmap position of all vehicle is read at every
 	 * simulation step. This will increase performance, since the query for all
 	 * vehicles is made in a single TraCI query at the next sim step.
 	 * 
 	 * @deprecated this method will do nothing now. All the vehicles' positions
-	 * can be read using a {@link MultiQuery}.
+	 *             can be read using a {@link MultiQuery}.
 	 * @param booleanProperty
 	 */
 	@Deprecated
 	public void setGetVehiclesEdgeAtSimStep(boolean booleanProperty) {
-		
+
 	}
 
 	/**
 	 * @return the geo-coordinates (as longitude-latitude) of the network.
 	 * @deprecated since the mechanism to obtain this data must be rewritten
-	 * from scratch after changes in the XML network file format; it's better
-	 * to obtain this data directly from TraCI, that is currently not supported
+	 *             from scratch after changes in the XML network file format;
+	 *             it's better to obtain this data directly from TraCI, that is
+	 *             currently not supported
 	 */
 	@Deprecated
 	public Point2D getGeoOffset() {
 		return null;
 	}
 }
-

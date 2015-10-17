@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.uniluebeck.itm.tcpip.Storage;
 
@@ -46,14 +47,16 @@ import de.uniluebeck.itm.tcpip.Storage;
  */
 public class RequestMessage {
 
-	private static final Logger log = Logger.getLogger(RequestMessage.class);
+	private static final Logger log = LogManager.getLogger();
 
 	private final List<Command> commands = new ArrayList<Command>();
 
 	/**
 	 * Adds a command to the tail of this message.
+	 * 
 	 * @param c
-	 * @throws NullPointerException if the command is <code>null</code>.
+	 * @throws NullPointerException
+	 *             if the command is <code>null</code>.
 	 */
 	public void append(Command c) {
 		if (c == null)
@@ -64,6 +67,7 @@ public class RequestMessage {
 	/**
 	 * Writes the commands to the specified {@link DataOutputStream} object, in
 	 * the same order as the calls of {@link #append(Command)}.
+	 * 
 	 * @param dos
 	 * @throws IOException
 	 */
@@ -78,11 +82,10 @@ public class RequestMessage {
 		if (log.isDebugEnabled()) {
 			checksum = new CRC32();
 			log.debug("sending a message " + totalLen + " bytes long");
-			
-		}
-		
-		dos.writeInt(totalLen);
 
+		}
+
+		dos.writeInt(totalLen);
 
 		for (Command cmd : commands) {
 			Storage s = new Storage();
@@ -94,15 +97,15 @@ public class RequestMessage {
 			log.debug("message checksum (without len) = " + checksum.getValue());
 	}
 
-	private void writeStorage(Storage storage, OutputStream os, Checksum checksum)
-			throws IOException {
-		
+	private void writeStorage(Storage storage, OutputStream os,
+			Checksum checksum) throws IOException {
+
 		byte[] buf = new byte[storage.getStorageList().size()];
 		int n = 0;
 		for (Byte b : storage.getStorageList()) {
 			if (checksum != null)
 				checksum.update(b);
-			
+
 			buf[n] = b;
 			n++;
 		}

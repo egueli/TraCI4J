@@ -9,26 +9,18 @@
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <path id="TraCI4J.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="lib/junit.jar"/>
-        <pathelement location="lib/log4j.jar"/>
-        <pathelement location="lib/resolver.jar"/>
-        <pathelement location="lib/serializer.jar"/>
-        <pathelement location="lib/xercesImpl.jar"/>
-    	<!-- TODO put these in a separate path for testing only -->
-        <pathelement location="lib/xml-apis.jar"/>
-    	<pathelement location="lib/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+        <pathelement location="target"/>
     </path>
     <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
+        <mkdir dir="target"/>
+        <copy includeemptydirs="false" todir="target">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
                 <exclude name="sumo/traci/"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="target">
             <fileset dir="test/java">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
@@ -36,44 +28,24 @@
         </copy>
     </target>
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="target"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
-    <target depends="init,generate" name="build-project">
+    <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target" includeantruntime="false">
             <src path="src"/>
             <exclude name="sumo/traci/"/>
             <classpath refid="TraCI4J.classpath"/>
         </javac>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target" includeantruntime="false">
             <src path="test/java"/>
             <classpath refid="TraCI4J.classpath"/>
         </javac>
     </target>
 	
-	<target name="clean-old-generated" depends="init">
-		<dependset>
-			<srcfileset dir="src/xml/traciObjects/"/>
-			<srcfileset file="src/xml/queries.xml"/>
-			<targetfileset dir="src/java-gen/it/polito/appeal/traci"/>
-		</dependset>
-	</target>
-	
-	<target name="generate" depends="init,clean-old-generated">
-		<xslt 
-			basedir="src/xml/traciObjects"
-			includes="*.xml"
-			destdir="src/java-gen/it/polito/appeal/traci"
-			extension=".java"
-			style="src/xslt/traciObject.xslt">
-			<param 
-				name="queries-file-name" 
-				expression="../xml/queries.xml" />
-		</xslt>
-	</target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target name="TraCITest">
         <mkdir dir="${junit.output.dir}"/>
@@ -127,19 +99,5 @@
 	    	version="true">
             <link href="http://java.sun.com/javase/6/docs/api/"/>
         </javadoc>
-    </target>
-
-	<target name="deploy" depends="build">
-        <jar destfile="traci4j.jar"
-        	duplicate="fail"
-        	update="yes">
-            <fileset dir="bin"/>
-	    </jar>
-		<jar destfile="traci4j-sources.jar"
-			duplicate="fail"
-	    	update="yes">
-	        <fileset dir="src/java"/>
-			<fileset dir="src/java-gen" />
-		</jar>
     </target>
 </project>

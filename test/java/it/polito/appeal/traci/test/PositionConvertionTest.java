@@ -15,23 +15,19 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import it.polito.appeal.traci.MultiQuery;
 import it.polito.appeal.traci.PositionConversionQuery;
-import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.protocol.RoadmapPosition;
-
-import static org.junit.Assert.*;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
-import org.apache.log4j.BasicConfigurator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,18 +37,16 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 
 	private static final String EDGE_NAME = "-105254616#1";
 	private static final int LANE_NUM = 0;
-	private static final Point2D LOCATION_LOCAL = new Point2D.Double(1071.38, 1561.38);
-	private static final Point2D LOCATION_GEO = new Point2D.Double(7.659806, 45.064683);
-	
-	static {
-		BasicConfigurator.configure();
-	}
-	
+	private static final Point2D LOCATION_LOCAL = new Point2D.Double(1071.38,
+			1561.38);
+	private static final Point2D LOCATION_GEO = new Point2D.Double(7.659806,
+			45.064683);
+
 	@Override
 	protected String getSimConfigFileLocation() {
-		return "test/sumo_maps/polito/test.sumo.cfg";
+		return "test/resources/sumo_maps/polito/test.sumo.cfg";
 	}
-	
+
 	@Before
 	public void setUp() throws Exception {
 		TraCITest.printSeparator();
@@ -67,7 +61,6 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 		assertEquals(LOCATION_GEO.getY(), out.getY(), 1e-5);
 	}
 
-
 	@Test
 	public void testConvertXYToLonLat() throws IOException {
 		PositionConversionQuery conv = conn.queryPositionConversion();
@@ -77,7 +70,8 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 		assertEquals(LOCATION_GEO.getY(), out.getY(), 1e-5);
 	}
 
-	@Ignore // because it just fails. I suspect a bug in SUMO.
+	@Ignore
+	// because it just fails. I suspect a bug in SUMO.
 	@Test
 	public void testConvertLonLatToXY() throws IOException {
 		PositionConversionQuery conv = conn.queryPositionConversion();
@@ -86,31 +80,32 @@ public class PositionConvertionTest extends SingleSimTraCITest {
 		assertEquals(LOCATION_LOCAL.getX(), out.getX(), 1e-5);
 		assertEquals(LOCATION_LOCAL.getY(), out.getY(), 1e-5);
 	}
-	
+
 	@Test
 	public void testMultiConvert() throws IOException {
 		MultiQuery mq = conn.makeMultiQuery();
-		
+
 		PositionConversionQuery conv1 = conn.queryPositionConversion();
 		conv1.setPositionToConvert(LOCATION_LOCAL, true);
 		mq.add(conv1);
 
 		PositionConversionQuery conv2 = conn.queryPositionConversion();
-		Point2D loc2 = new Point2D.Double(LOCATION_LOCAL.getX() + 5, LOCATION_LOCAL.getY() + 5);
+		Point2D loc2 = new Point2D.Double(LOCATION_LOCAL.getX() + 5,
+				LOCATION_LOCAL.getY() + 5);
 		conv2.setPositionToConvert(loc2, false);
 		mq.add(conv2);
-		
+
 		mq.run();
-		
+
 		Point2D out1 = conv1.get();
 		Point2D out2 = conv2.get();
 
-    assertEquals(LOCATION_GEO.getX(), out1.getX(), 1e-5);
-    assertEquals(LOCATION_GEO.getY(), out1.getY(), 1e-5);
-    assertFalse(out2.getX() + " should be different than " + out1.getX(), Math.abs(out2.getX() - out1.getX()) < 1e-5);
-		assertFalse(out2.getY() + " should be different than " + out1.getY(), Math.abs(out2.getY() - out1.getY()) < 1e-5);
+		assertEquals(LOCATION_GEO.getX(), out1.getX(), 1e-5);
+		assertEquals(LOCATION_GEO.getY(), out1.getY(), 1e-5);
+		assertFalse(out2.getX() + " should be different than " + out1.getX(),
+				Math.abs(out2.getX() - out1.getX()) < 1e-5);
+		assertFalse(out2.getY() + " should be different than " + out1.getY(),
+				Math.abs(out2.getY() - out1.getY()) < 1e-5);
 
-		
-				
 	}
 }

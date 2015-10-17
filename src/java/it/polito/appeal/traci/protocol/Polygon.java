@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with TraCI4J.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package it.polito.appeal.traci.protocol;
 
@@ -29,14 +29,17 @@ import de.uniluebeck.itm.tcpip.Storage;
  * Representation of a polygon in the SUMO environment.
  * 
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
- * @see <a href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Shapes.html">SUMO documentation</a>
+ * @see <a
+ *      href="http://sumo.sourceforge.net/doc/current/docs/userdoc/Simulation/Shapes.html">SUMO
+ *      documentation</a>
  */
 public class Polygon implements WriteableToStorage {
 
 	private final Path2D shape;
-	
+
 	/**
-	 * De-serializes a polygon from a {@link Storage}. 
+	 * De-serializes a polygon from a {@link Storage}.
+	 * 
 	 * @param packet
 	 * @param verifyType
 	 * @throws TraCIException
@@ -47,21 +50,21 @@ public class Polygon implements WriteableToStorage {
 			if (packet.readUnsignedByte() != Constants.TYPE_POLYGON)
 				throw new TraCIException("polygon expected");
 		}
-		
+
 		shape = new Path2D.Double();
-		
+
 		int count = packet.readUnsignedByte();
-		for (int i=0; i<count; i++) {
+		for (int i = 0; i < count; i++) {
 			double x = packet.readDouble();
 			double y = packet.readDouble();
-			if (i==0)
+			if (i == 0)
 				shape.moveTo(x, y);
 			else
 				shape.lineTo(x, y);
-				
+
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return the shape that describes this polygon
@@ -70,7 +73,6 @@ public class Polygon implements WriteableToStorage {
 		return shape;
 	}
 
-	@Override
 	public void writeTo(Storage storage, boolean withTypeID) {
 		throw new UnsupportedOperationException("to be done");
 	}

@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /*
  * Modifications by Enrico Gueli:
  * - added generic type to Vector
@@ -18,6 +21,8 @@ public class Socket {
 	protected		java.net.Socket	socketConnection = null;
 	protected		InputStream 	inStream;
 	protected		OutputStream 	outStream;	
+
+	private Logger log = LogManager.getLogger();
 	
 	public Socket(String host, int port)
 	{
@@ -39,7 +44,7 @@ public class Socket {
 	
 	public void accept() throws IOException
 	{
-        System.out.println("accept");
+        log.debug("accept");
         serverSocket = new ServerSocket(port);
         socketConnection = serverSocket.accept();
         socketConnection.setTcpNoDelay(true);
@@ -50,7 +55,7 @@ public class Socket {
 	
 	public void connect() throws UnknownHostException, IOException
 	{
-        System.out.println("connect");
+		log.debug("connect");
         socketConnection = new java.net.Socket(host, port);
         socketConnection.setTcpNoDelay(true);
 
@@ -71,7 +76,7 @@ public class Socket {
 		for (int i=0; i < numBytes; i++)
 			buffer[i] = ((Integer)(data.get(i))).byteValue();
 		
-//		System.err.println ("Send " + numBytes + " bytes via tcpip::socket: " + data.toString());
+		log.trace("Send " + numBytes + " bytes via tcpip::socket: " + data.toString());
 		outStream.write(buffer);
 	}
 
@@ -93,13 +98,18 @@ public class Socket {
 		for (int i=0; i < storageToSend.size(); i++)
 			buffer[i+4] = storageToSend.getStorageList().get(i).byteValue();
 
-/*
-		System.err.print("Send " + length + " bytes via tcpip::socket: ");
-		for (int i = 0; i < length; ++i)
-			System.err.print( " " + buffer[i] + " ");
-		System.err.println("]");
-*/	
-		outStream.write(buffer);		
+		if (log.isTraceEnabled()) {
+			StringBuffer buf = new StringBuffer("Send " + length + " bytes via tcpip::socket: ");
+			for (int i = 0; i < length; ++i) {
+				buf.append(" ");
+				buf.append(buffer[i]);
+				buf.append(" ");
+			}
+			buf.append("]");
+			log.trace(buf.toString());
+		}
+
+		outStream.write(buffer);
 	}
 
 	
@@ -132,7 +142,7 @@ public class Socket {
 			}
 		}
 		
-//		System.err.println("Rcvd " + bytesRead + " bytes via tcpip::socket: " + buffer);
+		log.trace("Rcvd " + bytesRead + " bytes via tcpip::socket: " + buffer);
 		
 		return returnData;
 	}
@@ -162,12 +172,18 @@ public class Socket {
 			
 			bytesRead += readThisTime;
 		}
-/*		
-		System.err.print("Rcvd " + bytesRead + " bytes via tcpip::socket: ");
-		for (int i = 0; i < bytesRead; ++i)
-			System.err.print( " " + buffer[i] + " ");
-		System.err.println("]");
-*/		
+
+		if (log.isTraceEnabled()) {
+			StringBuffer buf = new StringBuffer("Rcvd " + bytesRead + " bytes via tcpip::socket: ");
+			for (int i = 0; i < bytesRead; ++i) {
+				buf.append(" ");
+				buf.append(buffer[i]);
+				buf.append(" ");
+			}
+			buf.append("]");
+			log.trace(buf.toString());
+		}
+
 		return buffer;
 	}
 	

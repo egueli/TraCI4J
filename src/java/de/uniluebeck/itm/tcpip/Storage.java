@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /*
  * Modifications by Enrico Gueli:
  * - replaced LinkedList to ArrayList
@@ -26,6 +29,8 @@ public class Storage {
 	private List<Byte> storageList;
 	private int position;
 	private ListIterator<Byte> listIt;
+
+	private Logger log = LogManager.getLogger();
 	
 	public Storage()
 	{
@@ -177,7 +182,7 @@ public class Storage {
 			dataOut.writeShort(value);
 			dataOut.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		bytes = byteOut.toByteArray();
 		for (int i=0; i<2; i++)
@@ -205,7 +210,7 @@ public class Storage {
 			result = dataIn.readShort();
 			dataIn.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		
 		return result;
@@ -226,7 +231,7 @@ public class Storage {
 			dataOut.writeInt(value);
 			dataOut.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		bytes = byteOut.toByteArray();
 		for (int i=0; i<4; i++)
@@ -255,7 +260,7 @@ public class Storage {
 			result = dataIn.readInt();
 			dataIn.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		
 		return result;
@@ -276,7 +281,7 @@ public class Storage {
 			dataOut.writeFloat(value);
 			dataOut.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		bytes = byteOut.toByteArray();
 		for (int i=0; i<4; i++)
@@ -305,7 +310,7 @@ public class Storage {
 			result = dataIn.readFloat();
 			dataIn.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		
 		return result;
@@ -326,7 +331,7 @@ public class Storage {
 			dataOut.writeDouble(value);
 			dataOut.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		bytes = byteOut.toByteArray();
 		for (int i=0; i<8; i++)
@@ -355,7 +360,7 @@ public class Storage {
 			result = dataIn.readDouble();
 			dataIn.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		
 		return result;
@@ -413,7 +418,7 @@ public class Storage {
 		try {
 			bytes = value.getBytes(charset);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 			return;
 		}
 		
@@ -485,7 +490,8 @@ public class Storage {
 			result = new String(content, charset);
 			
 		} catch (UnsupportedEncodingException e) {
-			assert false : e;
+			log.error(e);
+			throw new AssertionError(e);
 		}
 		
 		return result;
