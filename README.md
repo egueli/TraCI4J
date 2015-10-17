@@ -3,7 +3,7 @@ What is TraCI4J
 
 TraCI4J is a Java library for interfacing [SUMO](http://sumo.sourceforge.net) with a Java program to control and/or watch a traffic simulation via SUMO's [TraCI](http://sumo-sim.org/userdoc/TraCI.html) interface.
 
-It is developed by members at [ApPeAL (Applied Pervasive Architectures Lab)](http://omero.polito.it/appeal/home.html)  in [Politecnico di Torino](http://www.polito.it).
+It was initially developed by members at [ApPeAL (Applied Pervasive Architectures Lab)](http://www.dauin.polito.it/it/la_ricerca/gruppi_di_ricerca/appeal_applied_pervasive_architectures_lab) in [Politecnico di Torino](http://www.polito.it).
 
 What can TraCI4J do
 ---
@@ -42,10 +42,10 @@ How to use it
 
 First of all, you need:
 
-* A working SUMO installation (0.16.0 or higher)
+* A working SUMO installation (0.23.0 or higher)
 * Be familiar with SUMO, i.e. know its basic principles, how to set up the input files, how to run it...
 * A SUMO file set (a config file, a net description file and a routes file at least)
-* A Java SE 1.6 virtual machine
+* A Java SE 1.7 virtual machine
 
 You can find some usage examples [in this directory](examples/it/polito/appeal/traci/examples).
 
