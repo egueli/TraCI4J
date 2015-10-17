@@ -33,7 +33,7 @@
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
-    <target depends="init,generate" name="build-project">
+    <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="target" includeantruntime="false">
             <src path="src"/>
@@ -46,26 +46,6 @@
         </javac>
     </target>
 	
-	<target name="clean-old-generated" depends="init">
-		<dependset>
-			<srcfileset dir="src/xml/traciObjects/"/>
-			<srcfileset file="src/xml/queries.xml"/>
-			<targetfileset dir="src/java-gen/it/polito/appeal/traci"/>
-		</dependset>
-	</target>
-	
-	<target name="generate" depends="init,clean-old-generated">
-		<xslt 
-			basedir="src/xml/traciObjects"
-			includes="*.xml"
-			destdir="src/java-gen/it/polito/appeal/traci"
-			extension=".java"
-			style="src/xslt/traciObject.xslt">
-			<param 
-				name="queries-file-name" 
-				expression="../xml/queries.xml" />
-		</xslt>
-	</target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target name="TraCITest">
         <mkdir dir="${junit.output.dir}"/>
