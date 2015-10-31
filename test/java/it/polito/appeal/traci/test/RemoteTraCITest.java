@@ -58,6 +58,10 @@ public class RemoteTraCITest {
 			exe,
 			"-c", "test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg",
 			"--remote-port", Integer.toString(PORT),
+			// this avoids validation of the input xml files; if SUMO_HOME is not set correctly,
+			// sumo will try to download the schema files from the web and may wait 30 seconds at startup
+			// for the connection to time out.
+			"--xml-validation", "never"
 		};
 		
 		sumoProcess = Runtime.getRuntime().exec(args);
