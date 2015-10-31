@@ -53,8 +53,12 @@ public abstract class SingleSimTraCITest {
 	 */
 	@Before
 	public void startSumoConnection() throws IOException, InterruptedException  {
-		conn = new SumoTraciConnection(getSimConfigFileLocation(), 0);
+		conn = makeConnection();
 		conn.runServer();
+	}
+
+	protected SumoTraciConnection makeConnection() {
+		return new SumoTraciConnection(getSimConfigFileLocation(), 0);
 	}
 	
 	@After
