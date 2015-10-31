@@ -64,6 +64,15 @@ public class RemoteTraCITest {
 			"--xml-validation", "never"
 		};
 		
+		if (log.isDebugEnabled()) {
+			StringBuilder cmdLine = new StringBuilder();
+			for (String arg : args) {
+				cmdLine.append(arg);
+				cmdLine.append(" ");
+			}
+			log.debug("running " + cmdLine.toString());
+		}
+		
 		sumoProcess = Runtime.getRuntime().exec(args);
 		
 		try {
@@ -71,7 +80,7 @@ public class RemoteTraCITest {
 			throw new IOException("SUMO died with exit value " + exitVal);
 		}
 		catch (IllegalThreadStateException e) {
-			log.debug("All OK, it's alive", e);
+			log.debug("All OK, it's alive");
 		}
 		
 		conn = new SumoTraciConnection(InetAddress.getLocalHost(), PORT);
