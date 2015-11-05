@@ -95,7 +95,7 @@ implements StepAdvanceListener
 		<xsl:for-each select="readQueries/readQuery">
 		/** 
 		 * Query "<xsl:value-of select="name"/>"
-		 * @see {@link #query<xsl:value-of select="name"/>}
+		 * @see #query<xsl:value-of select="name"/>
 		 */
 		<xsl:value-of select="enum"/>,
 		</xsl:for-each>
