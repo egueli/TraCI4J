@@ -50,17 +50,31 @@ public class RemoteTraCITest {
 			exe = "sumo";
 		}
 
+		// Issue #20 (since version 0.24.0 it was always sumo.exe)
+		String exe64 = exe;
 		if (System.getProperty(SumoTraciConnection.OS_ARCH_PROPERTY).contains("64") && System.getProperty(SumoTraciConnection.OS_NAME_PROPERTY).contains("Win")) {
-			exe += "64";
+			exe64 += "64";
 		}
 		
 		String[] args = new String[] {
-			exe,
+			exe64,
 			"-c", "test/resources/sumo_maps/variable_speed_signs/test.sumo.cfg",
 			"--remote-port", Integer.toString(PORT),
 		};
 		
-		sumoProcess = Runtime.getRuntime().exec(args);
+		try {
+			sumoProcess = Runtime.getRuntime().exec(args);
+		}
+		catch (Exception e) {
+			// Issue #20 (since version 0.24.0 it was always sumo.exe)
+			if (!exe64.equals(exe)) {
+				log.debug("Try it again (x64).");
+				args[0] = exe;
+				sumoProcess = Runtime.getRuntime().exec(args);
+			} else {
+				throw e;
+			}
+		}
 		
 		try {
 			int exitVal = sumoProcess.exitValue();

@@ -453,11 +453,13 @@ public class SumoTraciConnection {
 		if (withGui)
 			sumoEXE += "-gui";
 
+		String sumoEXE64 = sumoEXE;
 		// only on windows x64 (since version 0.23.0)
+		// Issue #20 (since version 0.24.0 it was always sumo.exe)
 		if (System.getProperty(OS_ARCH_PROPERTY).contains("64") && System.getProperty(OS_NAME_PROPERTY).contains("Win"))
-			sumoEXE += "64";
+			sumoEXE64 += "64";
 
-		args.add(0, sumoEXE);
+		args.add(0, sumoEXE64);
 		args.add(1, "-c");
 		args.add(2, configFile);
 		args.add(3, "--remote-port");
@@ -476,7 +478,18 @@ public class SumoTraciConnection {
 
 		String[] argsArray = new String[args.size()];
 		args.toArray(argsArray);
-		sumoProcess = Runtime.getRuntime().exec(argsArray);
+		try {
+			sumoProcess = Runtime.getRuntime().exec(argsArray);
+		} catch (Exception e) {
+			// Issue #20 (since version 0.24.0 it was always sumo.exe)
+			if (!sumoEXE64.equals(sumoEXE)) {
+				log.debug("Try it again (x64).");
+				argsArray[0] = sumoEXE;
+				sumoProcess = Runtime.getRuntime().exec(argsArray);
+			} else {
+				throw e;
+			}
+		}
 
 		StreamLogger errStreamLogger = new StreamLogger(sumoProcess.getErrorStream(), "SUMO", log,
 				StreamLoggerTyp.ERROR);
