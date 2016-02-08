@@ -184,40 +184,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>generate</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<id>ant-magic</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<property name="build.compiler" value="extJavac" />
-										<property name="runtime_classpath" refid="maven.runtime.classpath" />
-										<property name="compile_classpath" refid="maven.compile.classpath" />
-										<property name="test_classpath" refid="maven.test.classpath" />
-										<property name="plugin_classpath" refid="maven.plugin.classpath" />
-										<property name="outputDir" value="${project.build.outputDirectory}" />
-										<property name="sourceDir"
-											value="${project.build.sourceDirectory}/java-gen" />
-										<ant antfile="${basedir}/build.xml" target="generate" />
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 	<build>
@@ -229,6 +195,35 @@
 				<directory>test/resources</directory>
 			</testResource>
 		</testResources>
+
+		<plugins>
+			<plugin>
+				<groupId>net.sf.xsltmp</groupId>
+				<artifactId>xslt-generator-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>generate-traci-objects-src</id>
+						<goals>
+							<goal>many-to-many</goal>
+						</goals>
+						<configuration>
+							<xslTemplate>src/xslt/traciObject.xslt</xslTemplate>
+							<srcDir>src/xml/traciObjects</srcDir>
+							<srcIncludes>*.xml</srcIncludes>
+							<destDir>${project.build.directory}/src/java-gen/it/polito/appeal/traci</destDir>
+							<addDestDirTo>sources</addDestDirTo>
+							<fileNameRegex>\.xml</fileNameRegex>
+							<fileNameReplacement>\.java</fileNameReplacement>
+							<parameters>
+								<queries-file-name>../xml/queries.xml</queries-file-name>
+							</parameters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
 	</build>
 
 	<reporting>
