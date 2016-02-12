@@ -83,6 +83,13 @@
 
 	<url>https://github.com/egueli/TraCI4J</url>
 
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+    			<url>http://www.gnu.org/licenses/gpl.txt</url>
+  		</license>
+	</licenses>
+	
 	<distributionManagement>
 		<site>
 			<id>amor.cms.hu-berlin.de</id>
