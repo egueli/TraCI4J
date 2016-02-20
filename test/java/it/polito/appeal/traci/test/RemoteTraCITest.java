@@ -44,7 +44,7 @@ public class RemoteTraCITest {
 	private static final int PORT = 5450;
 	
 	@Before
-	public void setUp() throws IOException, InterruptedException {
+	public void setUp() throws Exception {
 		String exe = System.getProperty(SumoTraciConnection.SUMO_EXE_PROPERTY);
 		if (exe == null) {
 			exe = "sumo";
