@@ -1,8 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.polito.appeal.traci</groupId>
+	<groupId>com.github.egueli</groupId>
 	<artifactId>TraCI4J</artifactId>
 	<version>2.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -75,36 +80,29 @@
 	</organization>
 
 	<scm>
-		<connection>scm::git::https://github.com/egueli/TraCI4J.git</connection>
-		<developerConnection>scm::git::https://github.com/egueli/TraCI4J.git</developerConnection>
+		<connection>scm:git:git@github.com:egueli/TraCI4J.git</connection>
+		<developerConnection>scm:git:git@github.com:egueli/TraCI4J.git</developerConnection>
 		<url>https://github.com/egueli/TraCI4J</url>
-		<tag>master</tag>
+		<tag>TraCI4J-2.4</tag>
 	</scm>
-
-	<url>https://github.com/egueli/TraCI4J</url>
 
 	<licenses>
 		<license>
 			<name>GNU General Public License (GPL)</name>
-    			<url>http://www.gnu.org/licenses/gpl.txt</url>
-  		</license>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+		</license>
 	</licenses>
-	
-	<distributionManagement>
-		<site>
-			<id>amor.cms.hu-berlin.de</id>
-			<url>scp://amor.cms.hu-berlin.de/home/informatik/zyweckch/public_html/traci4j</url>
-		</site>
-	</distributionManagement>
 
 	<name>TraCI4J</name>
 	<description>TraCI4J is a Java library for interfacing SUMO with a Java program to control and/or watch a traffic simulation via SUMO's TraCI interface.</description>
+	<url>http://www.github.com/egueli/TraCI4J</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jacoco.version>0.7.5.201505241946</jacoco.version>
 		<sourcePathes>src/java;src/java-gen</sourcePathes>
+		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 	</properties>
 
 	<dependencies>
@@ -134,7 +132,7 @@
 	<profiles>
 		<profile>
 			<activation>
-				<activeByDefault></activeByDefault>
+				<activeByDefault />
 			</activation>
 			<id>build</id>
 			<build>
@@ -222,6 +220,22 @@
 			</testResource>
 		</testResources>
 
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.4.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+
 		<plugins>
 			<plugin>
 				<groupId>net.sf.xsltmp</groupId>
@@ -248,20 +262,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<plugin>
-                		<groupId>org.apache.maven.plugins</groupId>
-		                <artifactId>maven-gpg-plugin</artifactId>
-		                <executions>
-                		    <execution>
-                        		<id>sign-artifacts</id>
-                        		<phase>verify</phase>
-                        		<goals>
-                            			<goal>sign</goal>
-		                        </goals>
-                		    </execution>
-                		</executions>
-            		</plugin>
 		</plugins>
 
 	</build>
