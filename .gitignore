@@ -9,6 +9,5 @@ junit/
 
 .DS_Store
 
-# can be un-ignored when Javadoc is complete enough
 doc/
 /target/
