@@ -86,6 +86,14 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<distributionManagement>
+	    <repository>
+	        <id>bintray-egueli-e_gueli</id>
+	        <name>egueli-e_gueli</name>
+	        <url>https://api.bintray.com/maven/egueli/e_gueli/TraCI4J/;publish=1</url>
+	    </repository>
+	</distributionManagement>
+
 	<licenses>
 		<license>
 			<name>GNU General Public License (GPL)</name>
