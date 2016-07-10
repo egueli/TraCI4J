@@ -53,7 +53,7 @@ import org.junit.Test;
 @SuppressWarnings("javadoc")
 public class TraCIServerTest {
 	
-	private static final int API_VERSION = 10;
+	private static final int API_VERSION = 11;
 
 	/**
 	 * The system property name to get the executable path and name to run.
