@@ -71,6 +71,25 @@
 			<returnType>java.util.Set&lt;Vehicle&gt;</returnType>
 			<dynamic>true</dynamic>
 		</readQuery>
+		<readQuery>
+			<name>ReadLastStepVehicleData</name>
+			<enum>LAST_STEP_VEHICLE_DATA</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_VEHICLE_DATA
+			</const>
+			<query>LastStepDataQuery</query>
+			<!--  <returnType>java.util.Set&lt;ReadObjectVarQuery.LastStepPacket&gt;</returnType> -->
+			<returnType>LastStepVehicleData</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
+		<readQuery>
+			<name>ReadLastStepTimeSinceDetection</name>
+			<enum>LAST_STEP_TIME</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.LAST_STEP_TIME_SINCE_DETECTION
+			</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>
 	</readQueries>
 
 	<changeStateQueries>

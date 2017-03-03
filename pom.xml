@@ -263,7 +263,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
 	</build>
 
 	<reporting>

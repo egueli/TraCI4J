@@ -55,7 +55,16 @@
 			<query>ReadObjectVarQuery.DoubleQ</query>
 			<returnType>java.lang.Double</returnType>
 			<dynamic>true</dynamic>
-		</readQuery>
+		</readQuery>		
+		<readQuery>
+			<name>ReadDistance</name>
+			<enum>DISTANCE</enum>
+			<const>it.polito.appeal.traci.protocol.Constants.VAR_DISTANCE
+			</const>
+			<query>ReadObjectVarQuery.DoubleQ</query>
+			<returnType>java.lang.Double</returnType>
+			<dynamic>true</dynamic>
+		</readQuery>		
 		<readQuery>
 			<name>ReadCurrentLaneIndex</name>
 			<enum>LANE_INDEX</enum>
