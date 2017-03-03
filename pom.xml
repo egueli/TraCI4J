@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.egueli</groupId>
 	<artifactId>TraCI4J</artifactId>
-	<version>2.5.1-SNAPSHOT</version>
+	<version>2.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<developers>
