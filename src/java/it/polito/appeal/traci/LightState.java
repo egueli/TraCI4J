@@ -12,7 +12,9 @@ public enum LightState {
 	/** yellow light w/out deceleration (?) */ YELLOW_NODECEL('Y'),
 	/** green light */                         GREEN         ('g'),
 	/** green light w/out deceleration */      GREEN_NODECEL ('G'),
-	/** light off */                           OFF           ('O');
+	/** red yellow light */                    RED_YELLOW    ('u'),
+	/** light off */                           OFF           ('O'),
+	/** light off (yellow flashing) */         OFF_NODECEL   ('o');
 	
 	final char symbol;
 	LightState(char symbol) {
@@ -21,6 +23,9 @@ public enum LightState {
 	/** @return <code>true</code> if it's a red light */
 	public boolean isRed()    { return symbol=='R' || symbol=='r'; }
 	
+	/** @return <code>true</code> if it's a red yellow light */
+	public boolean isRedYellow() { return symbol=='u'; }
+	
 	/** @return <code>true</code> if it's a yellow light */
 	public boolean isYellow() { return symbol=='Y' || symbol=='y'; }
 	
@@ -28,7 +33,7 @@ public enum LightState {
 	public boolean isGreen()  { return symbol=='G' || symbol=='g'; }
 	
 	/** @return <code>true</code> if this light is off */
-	public boolean isOff()    { return symbol=='O'; }
+	public boolean isOff()    { return symbol=='O' || symbol=='o'; }
 	
 	/** @return <code>true</code> if vehicles will decelerate with this light  */
 	public boolean willDecelerate() {return Character.isLowerCase(symbol); }

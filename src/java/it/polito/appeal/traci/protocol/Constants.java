@@ -289,6 +289,8 @@ public class Constants {
 	public static final int TYPE_COMPOUND = 0x0F;
 	/** color (four ubytes) */
 	public static final int TYPE_COLOR = 0x11;
+	
+	public static final int TYPE_LAST_STEP_PACKET = 0x17;
 
 	// ****************************************
 	// RESULT TYPES
@@ -504,6 +506,8 @@ public class Constants {
 
 	/** position (1D along lane) (get: vehicle) */
 	public static final int VAR_LANEPOSITION = 0x56;
+	
+	public static final int VAR_DISTANCE = 0x84;
 
 	/** route (set: vehicles) */
 	public static final int VAR_ROUTE = 0x57;
