@@ -1,4 +1,4 @@
-/*   
+/*
     Copyright (C) 2013 ApPeAL Group, Politecnico di Torino
 
     This file is part of TraCI4J.
@@ -19,16 +19,12 @@
 
 package it.polito.appeal.traci.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import it.polito.appeal.traci.SumoTraciConnection;
 import it.polito.appeal.traci.protocol.Command;
 import it.polito.appeal.traci.protocol.Constants;
 import it.polito.appeal.traci.protocol.RequestMessage;
 import it.polito.appeal.traci.protocol.ResponseContainer;
 import it.polito.appeal.traci.protocol.ResponseMessage;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,23 +32,23 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Here we verify some assumptions about the TraCI protocol and the behaviour of
  * SUMO.
- * 
+ *
  * @author Enrico Gueli &lt;enrico.gueli@polito.it&gt;
  *
  */
 @SuppressWarnings("javadoc")
 public class TraCIServerTest {
-	
+
 	private static final int API_VERSION = 10;
 
 	/**
@@ -61,26 +57,26 @@ public class TraCIServerTest {
 	public static final String SUMO_EXE_PROPERTY = "it.polito.appeal.traci.sumo_exe";
 
 	private static final int TRACI_PORT = 15000;
-	
+
 	private DataInputStream inStream;
 	private DataOutputStream outStream;
 	private Socket socket;
 
 	private Process sumoProcess;
-	
+
 	private static final Logger log = LogManager.getLogger();
-	
+
 	@Before
 	public void setUp() throws UnknownHostException, IOException, InterruptedException {
-		
+
 		runSUMO();
-		
+
 		Thread.sleep(1000);
-		
+
 		socket = new Socket();
 		socket.connect(new InetSocketAddress(InetAddress.getLocalHost(),
 				TRACI_PORT));
-		
+
 		inStream = new DataInputStream(socket.getInputStream());
 		outStream = new DataOutputStream(socket.getOutputStream());
 	}
@@ -95,35 +91,35 @@ public class TraCIServerTest {
 		}
 
 		String[] args;
-		args = new String[] { 
-				sumoEXE, 
-				"-c", "test/resources/sumo_maps/box1l/test.sumo.cfg", 
+		args = new String[] {
+				sumoEXE,
+				"-c", "test/resources/sumo_maps/box1l/test.sumo.cfg",
 				"--remote-port", Integer.toString(TRACI_PORT)
 				};
 
 		sumoProcess = Runtime.getRuntime().exec(args);
 
 	}
-	
+
 	@After
 	public void tearDown() throws IOException, InterruptedException {
 		inStream.close();
 		outStream.close();
 		sumoProcess.waitFor();
 	}
-	
+
 	@Test
 	public void testJustConnect() {
-		
+
 	}
-	
+
 	@Test
 	public void testGetVersionLowLevel() throws IOException {
 		outStream.writeInt(6); // msg length
 		outStream.writeByte(2); // cmd length
 		outStream.writeByte(Constants.CMD_GETVERSION);
 
-		
+
 		int msgLength = inStream.readInt();
 		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength >= 21);
@@ -134,17 +130,17 @@ public class TraCIServerTest {
 		log.info(Arrays.toString(all));
 		fail();
 		*/
-		
+
 		testVersionResponseLowLevel();
 	}
 
 	private void testVersionResponseLowLevel() throws IOException {
-		
+
 		assertEquals("status resp len", 7, inStream.readByte());
 		assertEquals("status resp ID", Constants.CMD_GETVERSION, inStream.readByte());
 		assertEquals("status code OK", 0, inStream.readByte());
 		assertEquals("status descr empty", 0, inStream.readInt());
-		
+
 		int respLen = inStream.readByte();
 		log.info("response length = " + respLen);
 		assertTrue("minimum response length", respLen > 5);
@@ -166,7 +162,7 @@ public class TraCIServerTest {
 		outStream.writeByte(2); // cmd length
 		outStream.writeByte(Constants.CMD_GETVERSION);
 
-		
+
 		int msgLength = inStream.readInt();
 		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength > 21);
@@ -185,13 +181,13 @@ public class TraCIServerTest {
 	@Test
 	public void testLongMessageLowLevel() throws IOException {
 		final int REPETITIONS = 30;
-		
+
 		outStream.writeInt(4 + 2 * REPETITIONS);
 		for (int i=0; i<REPETITIONS; i++) {
 			outStream.writeByte(2); // cmd length
 			outStream.writeByte(Constants.CMD_GETVERSION);
 		}
-		
+
 		int msgLength = inStream.readInt();
 		log.info("message length = " + msgLength);
 		assertTrue("minimum message length", msgLength > 255);
@@ -200,38 +196,40 @@ public class TraCIServerTest {
 			testVersionResponseLowLevel();
 		}
 	}
-	
+
 	@Test
 	public void testGetVersionHighLevel() throws IOException {
 		RequestMessage reqm = new RequestMessage();
 		reqm.append(new Command(Constants.CMD_GETVERSION));
 		reqm.writeTo(outStream);
-		
+
 		ResponseMessage respm = new ResponseMessage(inStream);
 		assertEquals(1, respm.responses().size());
-		
+
 		ResponseContainer pair = respm.responses().get(0);
 		assertEquals(Constants.CMD_GETVERSION, pair.getStatus().id());
-		
+
 		Command resp = pair.getResponse();
 		assertEquals(Constants.CMD_GETVERSION, resp.id());
-		assertEquals(API_VERSION, resp.content().readInt());
+		final int actualVersion = resp.content().readInt();
+		assertTrue("SUMO version must support at least API v" + API_VERSION,
+				actualVersion >= API_VERSION);
 		log.info(resp.content().readStringASCII());
 	}
-	
+
 	@Test
 	public void testCloseHighLevel() throws IOException {
 		RequestMessage reqm = new RequestMessage();
 		reqm.append(new Command(Constants.CMD_CLOSE));
 		reqm.writeTo(outStream);
-		
+
 		ResponseMessage respm = new ResponseMessage(inStream);
 		assertEquals(1, respm.responses().size());
-		
+
 		ResponseContainer pair = respm.responses().get(0);
 		assertEquals(Constants.CMD_CLOSE, pair.getStatus().id());
-		
+
 		assertNull(pair.getResponse());
 	}
-	
+
 }
