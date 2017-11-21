@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -9,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.egueli</groupId>
 	<artifactId>TraCI4J</artifactId>
-	<version>2.5-SNAPSHOT</version>
+	<version>2.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<developers>
@@ -94,7 +96,9 @@
 	</licenses>
 
 	<name>TraCI4J</name>
-	<description>TraCI4J is a Java library for interfacing SUMO with a Java program to control and/or watch a traffic simulation via SUMO's TraCI interface.</description>
+	<description>TraCI4J is a Java library for interfacing SUMO with a Java program to control and/or
+		watch a traffic simulation via SUMO's TraCI interface.
+	</description>
 	<url>http://www.github.com/egueli/TraCI4J</url>
 
 	<properties>
@@ -132,7 +136,7 @@
 	<profiles>
 		<profile>
 			<activation>
-				<activeByDefault />
+				<activeByDefault/>
 			</activation>
 			<id>build</id>
 			<build>
@@ -143,6 +147,7 @@
 						<configuration>
 							<source>1.7</source>
 							<target>1.7</target>
+							<generatedSourcesDirectory>src/java-gen</generatedSourcesDirectory>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -212,7 +217,7 @@
 
 	<build>
 		<defaultGoal>compile</defaultGoal>
-		<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src/java</sourceDirectory>
 		<testSourceDirectory>test/java</testSourceDirectory>
 		<testResources>
 			<testResource>
